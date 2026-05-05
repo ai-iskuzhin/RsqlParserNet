@@ -29,15 +29,17 @@ Stable versions should use plain SemVer:
 dotnet test RsqlParserNet.sln
 dotnet pack src/RsqlParserNet/RsqlParserNet.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Release --output artifacts/packages
+dotnet pack src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj --configuration Release --output artifacts/packages
 ```
 
-If releasing only the core package, the LINQ adapter pack step can be skipped.
+If releasing only one package, the other package-specific pack steps can be skipped.
 
 5. Inspect the generated packages:
 
 ```bash
 unzip -l artifacts/packages/RsqlParserNet.<version>.nupkg
 unzip -l artifacts/packages/RsqlParserNet.Linq.<version>.nupkg
+unzip -l artifacts/packages/RsqlParserNet.AspNetCore.<version>.nupkg
 ```
 
 ## Package Versions
@@ -49,6 +51,7 @@ Current package identities:
 ```text
 RsqlParserNet
 RsqlParserNet.Linq
+RsqlParserNet.AspNetCore
 ```
 
 ## Tagging
@@ -90,6 +93,8 @@ The workflow attaches:
 - `RsqlParserNet.<version>.snupkg`
 - `RsqlParserNet.Linq.<version>.nupkg`
 - `RsqlParserNet.Linq.<version>.snupkg`
+- `RsqlParserNet.AspNetCore.<version>.nupkg`
+- `RsqlParserNet.AspNetCore.<version>.snupkg`
 
 When packages have different versions, the GitHub release will attach the versions currently defined in each package project unless a workflow explicitly overrides them.
 
@@ -119,6 +124,14 @@ For the LINQ adapter:
 git_ref: main
 version: 0.1.0-preview.1
 package: RsqlParserNet.Linq
+```
+
+For the ASP.NET Core adapter:
+
+```text
+git_ref: main
+version: 0.1.0-preview.1
+package: RsqlParserNet.AspNetCore
 ```
 
 The `git_ref` should usually be the release tag. This keeps the package published to NuGet identical to the package attached to the GitHub release.

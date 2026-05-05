@@ -19,6 +19,7 @@ on:
         options:
           - RsqlParserNet
           - RsqlParserNet.Linq
+          - RsqlParserNet.AspNetCore
 
 permissions:
   contents: read
@@ -61,6 +62,10 @@ jobs:
             RsqlParserNet.Linq)
               echo "project=src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj" >> "$GITHUB_OUTPUT"
               echo "id=RsqlParserNet.Linq" >> "$GITHUB_OUTPUT"
+              ;;
+            RsqlParserNet.AspNetCore)
+              echo "project=src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj" >> "$GITHUB_OUTPUT"
+              echo "id=RsqlParserNet.AspNetCore" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "Unsupported package '$PACKAGE'" >&2

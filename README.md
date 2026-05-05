@@ -20,11 +20,18 @@ LINQ adapter:
 dotnet add package RsqlParserNet.Linq --prerelease
 ```
 
+ASP.NET Core binding:
+
+```bash
+dotnet add package RsqlParserNet.AspNetCore --prerelease
+```
+
 For local development, reference the project directly:
 
 ```xml
 <ProjectReference Include="src/RsqlParserNet/RsqlParserNet.csproj" />
 <ProjectReference Include="src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj" />
+<ProjectReference Include="src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj" />
 ```
 
 ## Quick Start
@@ -229,6 +236,31 @@ name==Bo*d  -> StartsWith("Bo") && EndsWith("d")
 See [docs/linq-adapter.md](docs/linq-adapter.md) for wildcard behavior, value conversion, and adapter limitations.
 See [docs/aspnet-core-usage.md](docs/aspnet-core-usage.md) for ASP.NET Core request handling examples.
 
+## ASP.NET Core Binding
+
+`RsqlParserNet.AspNetCore` adds a bindable `RsqlQueryFilter` wrapper for request query strings. Minimal APIs can accept it directly and reuse the parsed `RsqlQuery`:
+
+```csharp
+builder.Services.AddRsqlQueryFilter(options =>
+{
+    options.ParseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
+});
+
+app.MapGet("/products", (RsqlQueryFilter filter, IQueryable<Product> products) =>
+{
+    if (!filter.IsValid)
+    {
+        return Results.ValidationProblem(filter.ToValidationErrors());
+    }
+
+    var query = filter.HasQuery
+        ? products.ApplyRsql(filter.Query!, ProductRsqlProfile.Instance)
+        : products;
+
+    return Results.Ok(query.Take(100).ToList());
+});
+```
+
 ## Adapter Direction
 
 Expression trees are a good fit for LINQ and Entity Framework Core integration, but they belong in separate adapter packages rather than the parser core.
@@ -253,6 +285,7 @@ dotnet build RsqlParserNet.sln
 dotnet test RsqlParserNet.sln
 dotnet pack src/RsqlParserNet/RsqlParserNet.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Release --output artifacts/packages
+dotnet pack src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj --configuration Release --output artifacts/packages
 ```
 
 ## Project Notes

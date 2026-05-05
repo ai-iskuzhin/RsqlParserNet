@@ -1,43 +1,52 @@
 # ASP.NET Core Usage
 
-`RsqlParserNet` and `RsqlParserNet.Linq` do not depend on ASP.NET Core, but they can be used directly from controllers, minimal APIs, endpoint filters, or FastEndpoints handlers.
+`RsqlParserNet` and `RsqlParserNet.Linq` do not depend on ASP.NET Core. The optional `RsqlParserNet.AspNetCore` package adds a bindable query filter wrapper for ASP.NET Core request handling.
 
 The recommended API flow is:
 
-1. Accept the RSQL filter as a query string parameter.
+1. Bind the RSQL filter from a query string parameter.
 2. Use a reusable `RsqlLinqProfile<T>` for the endpoint's allowlisted fields.
 3. Return structured parser diagnostics for invalid filter syntax.
 4. Apply the predicate before paging or materializing the query.
 
-## Minimal API
+## Register Binding Options
+
+Configure parser options once when the same custom operator set should be used by bound filters:
 
 ```csharp
-using Microsoft.AspNetCore.Mvc;
+using RsqlParserNet;
+using RsqlParserNet.AspNetCore;
+
+builder.Services.AddRsqlQueryFilter(options =>
+{
+    options.QueryParameterName = "filter";
+    options.ParseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
+});
+```
+
+## Minimal API Binding
+
+```csharp
 using Microsoft.EntityFrameworkCore;
 using RsqlParserNet;
+using RsqlParserNet.AspNetCore;
 using RsqlParserNet.Linq;
 
 app.MapGet("/products", async (
-    [FromQuery(Name = "filter")] string? filter,
+    RsqlQueryFilter filter,
     AppDbContext db,
     CancellationToken cancellationToken) =>
 {
     IQueryable<Product> query = db.Products;
 
-    if (!string.IsNullOrWhiteSpace(filter))
+    if (!filter.IsValid)
     {
-        var parseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
-        var parsed = RsqlParser.TryParse(filter, parseOptions);
+        return Results.ValidationProblem(filter.ToValidationErrors());
+    }
 
-        if (!parsed.Success)
-        {
-            return Results.ValidationProblem(
-                parsed.Diagnostics.ToDictionary(
-                    diagnostic => diagnostic.Code,
-                    diagnostic => new[] { diagnostic.Message }));
-        }
-
-        query = query.ApplyRsql(parsed.Query!, ProductRsqlProfile.Instance);
+    if (filter.HasQuery)
+    {
+        query = query.ApplyRsql(filter.Query!, ProductRsqlProfile.Instance);
     }
 
     var products = await query
@@ -49,57 +58,32 @@ app.MapGet("/products", async (
 });
 ```
 
-## Controller
+`RsqlQueryFilter` reads `filter` by default. Set `RsqlQueryFilterOptions.QueryParameterName` when an API uses another query parameter name.
+
+## Other Endpoint Frameworks
+
+Use `RsqlQueryFilter.Parse` when a framework does not use Minimal API parameter binding:
 
 ```csharp
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using RsqlParserNet;
+using RsqlParserNet.AspNetCore;
 using RsqlParserNet.Linq;
 
-[ApiController]
-[Route("products")]
-public sealed class ProductsController : ControllerBase
+var parseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
+var filter = RsqlQueryFilter.Parse(httpContext.Request.Query["filter"].FirstOrDefault(), parseOptions);
+
+if (!filter.IsValid)
 {
-    private readonly AppDbContext _db;
+    // Convert filter.ToValidationErrors() into the response style used by the framework.
+}
 
-    public ProductsController(AppDbContext db)
-    {
-        _db = db;
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<Product>>> Get(
-        [FromQuery(Name = "filter")] string? filter,
-        CancellationToken cancellationToken)
-    {
-        IQueryable<Product> query = _db.Products;
-
-        if (!string.IsNullOrWhiteSpace(filter))
-        {
-            var parseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
-            var parsed = RsqlParser.TryParse(filter, parseOptions);
-
-            if (!parsed.Success)
-            {
-                foreach (var diagnostic in parsed.Diagnostics)
-                {
-                    ModelState.AddModelError(diagnostic.Code, diagnostic.Message);
-                }
-
-                return ValidationProblem(ModelState);
-            }
-
-            query = query.ApplyRsql(parsed.Query!, ProductRsqlProfile.Instance);
-        }
-
-        return await query
-            .OrderBy(product => product.Id)
-            .Take(100)
-            .ToListAsync(cancellationToken);
-    }
+if (filter.HasQuery)
+{
+    query = query.ApplyRsql(filter.Query!, ProductRsqlProfile.Instance);
 }
 ```
+
+The static `Parse` method keeps the same wrapper usable from controllers, endpoint filters, FastEndpoints handlers, or tests.
 
 ## Profile
 

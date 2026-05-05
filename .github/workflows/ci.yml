@@ -37,6 +37,9 @@ jobs:
       - name: Pack LINQ Adapter
         run: dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Release --no-build --output artifacts/packages
 
+      - name: Pack ASP.NET Core Adapter
+        run: dotnet pack src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj --configuration Release --no-build --output artifacts/packages
+
       - name: Upload Packages
         uses: actions/upload-artifact@v5
         with:
