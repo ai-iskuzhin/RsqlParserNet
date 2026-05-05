@@ -382,6 +382,9 @@ public sealed class RsqlQueryFilterTests
         Assert.Contains(errors, error =>
             error.Source == RsqlQueryErrorSource.Page
             && error.ParameterName == RsqlPageQuery.DefaultPageParameterName);
+
+        var validationErrors = request.ToValidationErrors(errors);
+        Assert.Contains(RsqlQueryFilter.DefaultQueryParameterName, validationErrors.Keys);
     }
 
     [Fact]
@@ -427,6 +430,68 @@ public sealed class RsqlQueryFilterTests
             .ToArray();
 
         Assert.Equal(["Helmet", "Bike"], result);
+    }
+
+    [Fact]
+    public void QueryRequest_TryApplyToReturnsFalseForBindingErrors()
+    {
+        var filter = RsqlQueryFilter.Parse("status==");
+        var sort = RsqlSortQuery.Parse(null);
+        var page = RsqlPageQuery.Parse(null, null);
+        var request = new RsqlQueryRequest(filter, sort, page);
+        var source = SampleProducts();
+
+        var success = request.TryApplyTo(
+            source,
+            new ProductRsqlProfile(),
+            out var query,
+            out var errors);
+
+        Assert.False(success);
+        Assert.Same(source, query);
+        var error = Assert.Single(errors);
+        Assert.Equal(RsqlQueryErrorSource.Filter, error.Source);
+        Assert.StartsWith("RSQL", error.Code, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void QueryRequest_TryApplyToReturnsFalseForUnmappedSelector()
+    {
+        var filter = RsqlQueryFilter.Parse("unknown==active");
+        var sort = RsqlSortQuery.Parse(null);
+        var page = RsqlPageQuery.Parse(null, null);
+        var request = new RsqlQueryRequest(filter, sort, page);
+
+        var success = request.TryApplyTo(
+            SampleProducts(),
+            new ProductRsqlProfile(),
+            out _,
+            out var errors);
+
+        Assert.False(success);
+        var error = Assert.Single(errors);
+        Assert.Equal(RsqlQueryErrorSource.Filter, error.Source);
+        Assert.Equal(RsqlQueryErrorCodes.AdapterTranslationError, error.Code);
+        Assert.Contains("not allowlisted", error.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void QueryRequest_TryApplyToReturnsTranslatedQueryForValidRequest()
+    {
+        var filter = RsqlQueryFilter.Parse("status==active");
+        var sort = RsqlSortQuery.Parse("-name");
+        var page = RsqlPageQuery.Parse(null, null);
+        var request = new RsqlQueryRequest(filter, sort, page);
+
+        var success = request.TryApplyTo(
+            SampleProducts(),
+            new ProductRsqlProfile(),
+            out var query,
+            out var errors);
+
+        Assert.True(success);
+        Assert.Empty(errors);
+        Assert.Equal(["Helmet", "Bike"], query.Select(product => product.Name).ToArray());
     }
 
     [Fact]

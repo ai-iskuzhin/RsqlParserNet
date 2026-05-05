@@ -57,6 +57,26 @@ public sealed class RsqlFastEndpointExtensionsTests
         Assert.Equal(RsqlPageQuery.DefaultPageParameterName, failure.PropertyName);
     }
 
+    [Fact]
+    public void AddRsqlValidationFailures_AddsStructuredErrors()
+    {
+        var endpoint = new TestEndpoint(CreateContext(string.Empty));
+        var errors = new[]
+        {
+            new RsqlQueryError(
+                RsqlQueryFilter.DefaultQueryParameterName,
+                "Selector 'unknown' is not allowlisted.",
+                RsqlQueryErrorSource.Filter,
+                RsqlQueryErrorCodes.AdapterTranslationError)
+        };
+
+        endpoint.AddRsqlValidationFailures(errors);
+
+        var failure = Assert.Single(endpoint.ValidationFailures);
+        Assert.Equal(RsqlQueryFilter.DefaultQueryParameterName, failure.PropertyName);
+        Assert.Equal(RsqlQueryErrorCodes.AdapterTranslationError, failure.ErrorCode);
+    }
+
     private static DefaultHttpContext CreateContext(string queryString, ServiceCollection? services = null)
     {
         var context = new DefaultHttpContext

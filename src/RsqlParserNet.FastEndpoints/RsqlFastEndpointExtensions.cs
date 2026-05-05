@@ -67,7 +67,20 @@ public static class RsqlFastEndpointExtensions
         ArgumentNullException.ThrowIfNull(endpoint);
         ArgumentNullException.ThrowIfNull(request);
 
-        foreach (var failure in request.ToFastEndpointValidationFailures())
+        endpoint.AddRsqlValidationFailures(request.GetErrors());
+    }
+
+    /// <summary>
+    /// Adds RSQL validation failures to the endpoint.
+    /// </summary>
+    /// <param name="endpoint">The current FastEndpoints endpoint.</param>
+    /// <param name="errors">The structured RSQL query errors.</param>
+    public static void AddRsqlValidationFailures(this IEndpoint endpoint, IReadOnlyList<RsqlQueryError> errors)
+    {
+        ArgumentNullException.ThrowIfNull(endpoint);
+        ArgumentNullException.ThrowIfNull(errors);
+
+        foreach (var failure in errors.ToFastEndpointValidationFailures())
         {
             endpoint.ValidationFailures.Add(failure);
         }
@@ -82,7 +95,19 @@ public static class RsqlFastEndpointExtensions
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        return request.GetErrors()
+        return request.GetErrors().ToFastEndpointValidationFailures();
+    }
+
+    /// <summary>
+    /// Converts RSQL binding or translation errors into FastEndpoints validation failures.
+    /// </summary>
+    /// <param name="errors">The structured RSQL query errors.</param>
+    /// <returns>The validation failures.</returns>
+    public static IReadOnlyList<ValidationFailure> ToFastEndpointValidationFailures(this IReadOnlyList<RsqlQueryError> errors)
+    {
+        ArgumentNullException.ThrowIfNull(errors);
+
+        return errors
             .Select(error => new ValidationFailure(error.ParameterName, error.Message)
             {
                 ErrorCode = error.Code

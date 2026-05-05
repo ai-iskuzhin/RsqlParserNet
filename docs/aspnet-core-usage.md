@@ -55,7 +55,11 @@ app.MapGet("/products", async (
         return Results.ValidationProblem(request.ToValidationErrors());
     }
 
-    var query = request.ApplyTo(db.Products, ProductRsqlProfile.Instance);
+    if (!request.TryApplyTo(db.Products, ProductRsqlProfile.Instance, out var query, out var errors))
+    {
+        return Results.ValidationProblem(request.ToValidationErrors(errors));
+    }
+
     query = request.Sort.HasRequest
         ? query
         : query.OrderBy(product => product.Id);
@@ -82,6 +86,8 @@ if (!request.IsValid)
 ```
 
 Use `GetErrors()` when the API needs its own error shape. It returns structured `RsqlQueryError` values with parameter name, message, source, optional diagnostic code, and parser source location when available.
+
+`TryApplyTo()` is the safest endpoint path when query semantics depend on a LINQ profile. It catches adapter translation errors such as unknown selectors, unsupported operators, or value conversion failures and returns them through the same structured error model.
 
 The individual binders `RsqlQueryFilter`, `RsqlSortQuery`, and `RsqlPageQuery` remain available when an endpoint only needs part of the query contract.
 

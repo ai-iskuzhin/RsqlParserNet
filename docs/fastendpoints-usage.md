@@ -53,7 +53,12 @@ public sealed class ListProductsEndpoint : EndpointWithoutRequest<RsqlPagedResul
         var rsql = this.BindRsqlQueryRequestAndAddErrors();
         ThrowIfAnyErrors();
 
-        var query = rsql.ApplyTo(_db.Products, ProductRsqlProfile.Instance);
+        if (!rsql.TryApplyTo(_db.Products, ProductRsqlProfile.Instance, out var query, out var errors))
+        {
+            this.AddRsqlValidationFailures(errors);
+            ThrowIfAnyErrors();
+        }
+
         query = rsql.Sort.HasRequest
             ? query
             : query.OrderBy(product => product.Id);
@@ -70,6 +75,8 @@ public sealed class ListProductsEndpoint : EndpointWithoutRequest<RsqlPagedResul
 `BindRsqlQueryRequestAndAddErrors()` reads `filter`, `sort`, `page`, and `pageSize` from the current `HttpContext`, applies configured query option names, and adds failures to the endpoint when parsing or binding fails. Call `ThrowIfAnyErrors()` afterward when the endpoint should return FastEndpoints' normal validation response.
 
 Use `BindRsqlQueryRequest()` when the endpoint wants to inspect the request before adding failures, and `AddRsqlValidationFailures(request)` when validation should be added later.
+
+Use `TryApplyTo()` before materializing the query when unknown selectors, unsupported operators, or value conversion failures should become validation failures instead of unhandled exceptions.
 
 ## Validation
 

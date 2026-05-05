@@ -289,7 +289,11 @@ app.MapGet("/products", async (
         return Results.ValidationProblem(request.ToValidationErrors());
     }
 
-    var query = request.ApplyTo(db.Products, ProductRsqlProfile.Instance);
+    if (!request.TryApplyTo(db.Products, ProductRsqlProfile.Instance, out var query, out var errors))
+    {
+        return Results.ValidationProblem(request.ToValidationErrors(errors));
+    }
+
     query = request.Sort.HasRequest
         ? query
         : query.OrderBy(product => product.Id);

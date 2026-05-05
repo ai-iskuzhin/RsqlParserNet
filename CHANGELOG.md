@@ -32,6 +32,7 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 - Added ASP.NET Core `RsqlQueryRequest` binding for combined filter, sort, and page query state.
 - Added `RsqlQueryRequest.PageRequest` for accessing a validated non-null page request in endpoint code.
 - Added structured `RsqlQueryError` values and validation problem details mapping for query binding errors.
+- Added `RsqlQueryRequest.TryApplyTo` for mapping LINQ/profile translation failures into query errors.
 - Added the `RsqlParserNet.EntityFrameworkCore` adapter project with async paged result helpers.
 - Added the `RsqlParserNet.FastEndpoints` adapter project with query binding and validation failure helpers.
 - Added sort request whitespace normalization and selector-style field validation.

@@ -158,6 +158,52 @@ public sealed class RsqlQueryRequest
     }
 
     /// <summary>
+    /// Attempts to apply valid filter and sort query components to a queryable source.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source queryable.</param>
+    /// <param name="profile">The reusable LINQ adapter profile.</param>
+    /// <param name="query">The filtered and sorted queryable when translation succeeds; otherwise the original source.</param>
+    /// <param name="errors">Structured binding or translation errors.</param>
+    /// <returns><see langword="true"/> when the request was valid and translated successfully; otherwise <see langword="false"/>.</returns>
+    public bool TryApplyTo<T>(
+        IQueryable<T> source,
+        RsqlLinqProfile<T> profile,
+        out IQueryable<T> query,
+        out IReadOnlyList<RsqlQueryError> errors)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(profile);
+
+        query = source;
+        var existingErrors = GetErrors();
+        if (existingErrors.Count > 0)
+        {
+            errors = existingErrors;
+            return false;
+        }
+
+        try
+        {
+            query = ApplyTo(source, profile);
+            errors = [];
+            return true;
+        }
+        catch (RsqlLinqException exception)
+        {
+            errors =
+            [
+                new RsqlQueryError(
+                    Filter.ParameterName,
+                    exception.Message,
+                    RsqlQueryErrorSource.Filter,
+                    RsqlQueryErrorCodes.AdapterTranslationError)
+            ];
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Gets structured query binding errors for custom API error handlers.
     /// </summary>
     /// <returns>The binding errors in filter, sort, and page order.</returns>
@@ -189,8 +235,20 @@ public sealed class RsqlQueryRequest
     /// <returns>A dictionary keyed by validation field.</returns>
     public Dictionary<string, string[]> ToValidationErrors()
     {
+        return ToValidationErrors(GetErrors());
+    }
+
+    /// <summary>
+    /// Converts binding or translation errors into the dictionary shape expected by ASP.NET Core validation problem results.
+    /// </summary>
+    /// <param name="queryErrors">The query errors to convert.</param>
+    /// <returns>A dictionary keyed by validation field.</returns>
+    public Dictionary<string, string[]> ToValidationErrors(IReadOnlyList<RsqlQueryError> queryErrors)
+    {
+        ArgumentNullException.ThrowIfNull(queryErrors);
+
         var errors = new Dictionary<string, List<string>>(StringComparer.Ordinal);
-        foreach (var error in GetErrors())
+        foreach (var error in queryErrors)
         {
             if (!errors.TryGetValue(error.ParameterName, out var messages))
             {
@@ -217,13 +275,29 @@ public sealed class RsqlQueryRequest
         int statusCode = StatusCodes.Status400BadRequest,
         string title = "One or more RSQL query parameters are invalid.")
     {
-        var errors = GetErrors();
-        var problemDetails = new HttpValidationProblemDetails(ToValidationErrors())
+        return ToValidationProblemDetails(GetErrors(), statusCode, title);
+    }
+
+    /// <summary>
+    /// Converts binding or translation errors into ASP.NET Core validation problem details.
+    /// </summary>
+    /// <param name="queryErrors">The query errors to convert.</param>
+    /// <param name="statusCode">The HTTP status code to assign to the problem details.</param>
+    /// <param name="title">The problem details title.</param>
+    /// <returns>The validation problem details.</returns>
+    public HttpValidationProblemDetails ToValidationProblemDetails(
+        IReadOnlyList<RsqlQueryError> queryErrors,
+        int statusCode = StatusCodes.Status400BadRequest,
+        string title = "One or more RSQL query parameters are invalid.")
+    {
+        ArgumentNullException.ThrowIfNull(queryErrors);
+
+        var problemDetails = new HttpValidationProblemDetails(ToValidationErrors(queryErrors))
         {
             Status = statusCode,
             Title = title
         };
-        problemDetails.Extensions["rsqlErrors"] = errors;
+        problemDetails.Extensions["rsqlErrors"] = queryErrors;
 
         return problemDetails;
     }
