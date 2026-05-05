@@ -20,7 +20,7 @@ Stable versions should use plain SemVer:
 
 ## Before Release
 
-1. Update package version metadata in `src/RsqlParserNet/RsqlParserNet.csproj`.
+1. Update package version metadata in each package project being released.
 2. Update `CHANGELOG.md`.
 3. Update `README.md` if the public API or supported syntax changed.
 4. Run:
@@ -30,7 +30,13 @@ dotnet test RsqlParserNet.sln
 dotnet pack src/RsqlParserNet/RsqlParserNet.csproj --configuration Release --output artifacts/packages
 ```
 
-5. Inspect the generated package:
+If releasing the LINQ adapter, also run:
+
+```bash
+dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Release --output artifacts/packages
+```
+
+5. Inspect the generated packages:
 
 ```bash
 unzip -l artifacts/packages/RsqlParserNet.<version>.nupkg
@@ -73,6 +79,8 @@ The workflow attaches:
 
 - `RsqlParserNet.<version>.nupkg`
 - `RsqlParserNet.<version>.snupkg`
+
+Additional package artifacts should be attached when adapter packages are released.
 
 The initial release notes are populated from `CHANGELOG.md`. Edit the generated GitHub release notes after creation if the changelog contains unreleased or historical sections that should not appear in full.
 

@@ -4,6 +4,16 @@ All notable changes to `RsqlParserNet` will be documented in this file.
 
 The project uses Semantic Versioning. Versions below `1.0.0` are preview releases and may include public API changes while the core parser contract is finalized.
 
+## Unreleased
+
+### Added
+
+- Added the `RsqlParserNet.Linq` adapter project for allowlisted expression tree generation.
+- Added LINQ adapter overloads for parsed `RsqlQuery` instances and raw RSQL expression text.
+- Added LINQ adapter support for equality, inequality, range comparisons, `=in=`, `=out=`, AND, and OR.
+- Added value conversion coverage for strings, booleans, numbers, enums, nullable values, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`.
+- Added LINQ adapter tests for selector allowlisting, logical expressions, built-in operators, null handling, and conversion failures.
+
 ## 0.1.0-preview.3
 
 Release workflow preview refresh.

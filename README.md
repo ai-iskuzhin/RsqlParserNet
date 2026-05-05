@@ -4,20 +4,18 @@ A dependency-light .NET parser for RSQL/FIQL-style REST API query expressions.
 
 `RsqlParserNet` parses query text into a typed AST with source spans and structured diagnostics. The core package does not depend on ASP.NET Core, LINQ, Entity Framework Core, or ORM APIs.
 
-Current status: `0.1.0-preview.3`. The parser core is usable for early testing, but public API changes are still possible before `1.0.0`.
+Current status: `0.1.0-preview.3`. The parser core is published for early testing, but public API changes are still possible before `1.0.0`.
 
 ## Installation
 
-The package is not published yet. For local development, reference the project directly:
+```bash
+dotnet add package RsqlParserNet --prerelease
+```
+
+For local development, reference the project directly:
 
 ```xml
 <ProjectReference Include="src/RsqlParserNet/RsqlParserNet.csproj" />
-```
-
-After the first package release:
-
-```bash
-dotnet add package RsqlParserNet
 ```
 
 ## Quick Start
@@ -120,6 +118,34 @@ Current diagnostic codes:
 
 `RsqlParser.Parse` throws `ArgumentException` for empty input and `RsqlParseException` for invalid syntax. `RsqlParseException.Diagnostics` contains the same structured diagnostics returned by `TryParse`.
 
+## LINQ Adapter
+
+The repository includes an early `RsqlParserNet.Linq` adapter project. It translates parsed AST nodes into expression tree predicates using explicit selector mappings:
+
+```csharp
+using RsqlParserNet;
+using RsqlParserNet.Linq;
+
+var query = RsqlParser.Parse("status=in=(active,draft);count>=10");
+
+var filtered = products.ApplyRsql(query, options =>
+{
+    options.Allow("status", x => x.Status);
+    options.Allow("count", x => x.Count);
+});
+```
+
+The adapter currently supports:
+
+| Operator | LINQ behavior |
+| --- | --- |
+| `==` / `!=` | Equality and inequality |
+| `>` / `>=` / `<` / `<=` | Comparable mapped types such as numbers and dates |
+| `=in=` / `=out=` | Membership checks over the supplied value list |
+| `;` / `,` | `AndAlso` and `OrElse` expression composition |
+
+Values are converted using the mapped member type, including common scalar types, enums, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`.
+
 ## Adapter Direction
 
 Expression trees are a good fit for LINQ and Entity Framework Core integration, but they belong in separate adapter packages rather than the parser core.
@@ -143,6 +169,7 @@ The core parser should not expose arbitrary reflected entity/property access. Fu
 dotnet build RsqlParserNet.sln
 dotnet test RsqlParserNet.sln
 dotnet pack src/RsqlParserNet/RsqlParserNet.csproj --configuration Release --output artifacts/packages
+dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Release --output artifacts/packages
 ```
 
 ## Project Notes
