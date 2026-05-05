@@ -43,6 +43,9 @@ jobs:
       - name: Pack EF Core Adapter
         run: dotnet pack src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkCore.csproj --configuration Release --no-build --output artifacts/packages
 
+      - name: Pack FastEndpoints Adapter
+        run: dotnet pack src/RsqlParserNet.FastEndpoints/RsqlParserNet.FastEndpoints.csproj --configuration Release --no-build --output artifacts/packages
+
       - name: Upload Packages
         uses: actions/upload-artifact@v5
         with:

@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\RsqlParserNet.AspNetCore\RsqlParserNet.AspNetCore.csproj" />
+    <PackageReference Include="FastEndpoints" Version="7.0.1" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <PackageId>RsqlParserNet.FastEndpoints</PackageId>
+    <Version>0.1.0-preview.1</Version>
+    <PackageVersion>0.1.0-preview.1</PackageVersion>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <FileVersion>0.1.0.0</FileVersion>
+    <InformationalVersion>0.1.0-preview.1</InformationalVersion>
+    <Title>RsqlParserNet.FastEndpoints</Title>
+    <Description>FastEndpoints validation and request helpers for RsqlParserNet query binding.</Description>
+    <PackageTags>rsql;fiql;fastendpoints;aspnetcore;query;filtering;binding;validation</PackageTags>
+    <PackageProjectUrl>https://github.com/ai-iskuzhin/RsqlParserNet</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Authors>ai-iskuzhin</Authors>
+    <Company>ai-iskuzhin</Company>
+    <Product>RsqlParserNet</Product>
+    <Copyright>Copyright (c) ai-iskuzhin</Copyright>
+    <RepositoryUrl>https://github.com/ai-iskuzhin/RsqlParserNet</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <PackageReleaseNotes>Initial FastEndpoints preview with helpers for binding RSQL filter, sort, and page query state and adding FastEndpoints validation failures.</PackageReleaseNotes>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\CHANGELOG.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>

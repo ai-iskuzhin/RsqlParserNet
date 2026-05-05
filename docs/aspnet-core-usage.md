@@ -99,26 +99,7 @@ The static `Parse` method keeps the same wrapper usable from controllers, endpoi
 
 ## FastEndpoints
 
-A future `RsqlParserNet.FastEndpoints` package can add FastEndpoints-specific helpers if there is enough repeated setup to justify the dependency. Until then, handlers can use the framework-neutral `RsqlQueryFilter.Parse` API:
-
-```csharp
-var parseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
-var filter = RsqlQueryFilter.Parse(HttpContext.Request.Query["filter"].FirstOrDefault(), parseOptions);
-
-if (!filter.IsValid)
-{
-    // Add filter.ToValidationErrors() to the endpoint's validation/error response.
-}
-
-if (filter.HasQuery)
-{
-    query = query.ApplyRsql(filter.Query!, ProductRsqlProfile.Instance);
-}
-```
-
-Keep a FastEndpoints package separate from `RsqlParserNet.AspNetCore` if it adds framework-specific request DTO binding, validation failures, endpoint filters, or response helpers.
-
-Early integration feedback suggests the current Minimal API binding works well, while FastEndpoints-heavy APIs may benefit from a dedicated adapter later if RSQL is used beyond example or internal routes.
+Use `RsqlParserNet.FastEndpoints` when an API should add invalid RSQL input to FastEndpoints' validation failure flow. See [fastendpoints-usage.md](fastendpoints-usage.md).
 
 ## Profile
 

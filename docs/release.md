@@ -31,6 +31,7 @@ dotnet pack src/RsqlParserNet/RsqlParserNet.csproj --configuration Release --out
 dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkCore.csproj --configuration Release --output artifacts/packages
+dotnet pack src/RsqlParserNet.FastEndpoints/RsqlParserNet.FastEndpoints.csproj --configuration Release --output artifacts/packages
 ```
 
 If releasing only one package, the other package-specific pack steps can be skipped.
@@ -42,6 +43,7 @@ RsqlParserNet
 RsqlParserNet.Linq
 RsqlParserNet.AspNetCore
 RsqlParserNet.EntityFrameworkCore
+RsqlParserNet.FastEndpoints
 ```
 
 5. Inspect the generated packages:
@@ -51,6 +53,7 @@ unzip -l artifacts/packages/RsqlParserNet.<version>.nupkg
 unzip -l artifacts/packages/RsqlParserNet.Linq.<version>.nupkg
 unzip -l artifacts/packages/RsqlParserNet.AspNetCore.<version>.nupkg
 unzip -l artifacts/packages/RsqlParserNet.EntityFrameworkCore.<version>.nupkg
+unzip -l artifacts/packages/RsqlParserNet.FastEndpoints.<version>.nupkg
 ```
 
 ## Package Versions
@@ -64,6 +67,7 @@ RsqlParserNet
 RsqlParserNet.Linq
 RsqlParserNet.AspNetCore
 RsqlParserNet.EntityFrameworkCore
+RsqlParserNet.FastEndpoints
 ```
 
 ## Tagging
@@ -109,6 +113,8 @@ The workflow attaches:
 - `RsqlParserNet.AspNetCore.<version>.snupkg`
 - `RsqlParserNet.EntityFrameworkCore.<version>.nupkg`
 - `RsqlParserNet.EntityFrameworkCore.<version>.snupkg`
+- `RsqlParserNet.FastEndpoints.<version>.nupkg`
+- `RsqlParserNet.FastEndpoints.<version>.snupkg`
 
 When packages have different versions, the GitHub release will attach the versions currently defined in each package project unless a workflow explicitly overrides them.
 
@@ -156,7 +162,15 @@ version: 0.1.0-preview.1
 package: RsqlParserNet.EntityFrameworkCore
 ```
 
-Use `main` for the first adapter preview packages unless a newer tag has been created from a commit that contains the adapter projects. Do not use `v0.1.0-preview.3` for `RsqlParserNet.Linq`, `RsqlParserNet.AspNetCore`, or `RsqlParserNet.EntityFrameworkCore`; that tag only contains the core parser project.
+For the FastEndpoints adapter:
+
+```text
+git_ref: main
+version: 0.1.0-preview.1
+package: RsqlParserNet.FastEndpoints
+```
+
+Use `main` for the first adapter preview packages unless a newer tag has been created from a commit that contains the adapter projects. Do not use `v0.1.0-preview.3` for `RsqlParserNet.Linq`, `RsqlParserNet.AspNetCore`, `RsqlParserNet.EntityFrameworkCore`, or `RsqlParserNet.FastEndpoints`; that tag only contains the core parser project.
 
 After the adapter packages are included in a tagged release, the `git_ref` should usually be the release tag. This keeps the package published to NuGet identical to the package attached to the GitHub release.
 

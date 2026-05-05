@@ -66,6 +66,39 @@ public sealed class RsqlQueryRequest
     public bool IsValid => Filter.IsValid && Sort.IsValid && Page.IsValid;
 
     /// <summary>
+    /// Parses filter, sort, and page query string values into a combined query request.
+    /// </summary>
+    /// <param name="filterExpression">The raw RSQL filter expression text.</param>
+    /// <param name="sortExpression">The raw sort expression text.</param>
+    /// <param name="page">The raw one-based page number text.</param>
+    /// <param name="pageSize">The raw page size text.</param>
+    /// <param name="filterOptions">Optional filter binding options.</param>
+    /// <param name="sortOptions">Optional sort binding options.</param>
+    /// <param name="pageOptions">Optional page binding options.</param>
+    /// <returns>The parsed query request.</returns>
+    public static RsqlQueryRequest Parse(
+        string? filterExpression,
+        string? sortExpression,
+        string? page,
+        string? pageSize,
+        RsqlQueryFilterOptions? filterOptions = null,
+        RsqlSortQueryOptions? sortOptions = null,
+        RsqlPageQueryOptions? pageOptions = null)
+    {
+        var effectiveFilterOptions = filterOptions ?? new RsqlQueryFilterOptions();
+        var effectiveSortOptions = sortOptions ?? new RsqlSortQueryOptions();
+        var effectivePageOptions = pageOptions ?? new RsqlPageQueryOptions();
+
+        return new RsqlQueryRequest(
+            RsqlQueryFilter.Parse(
+                filterExpression,
+                effectiveFilterOptions.ParseOptions,
+                effectiveFilterOptions.QueryParameterName),
+            RsqlSortQuery.Parse(sortExpression, effectiveSortOptions.SortParameterName),
+            RsqlPageQuery.Parse(page, pageSize, effectivePageOptions));
+    }
+
+    /// <summary>
     /// Binds filter, sort, and page query string state from the current ASP.NET Core request.
     /// </summary>
     /// <param name="context">The current HTTP context.</param>
@@ -88,10 +121,14 @@ public sealed class RsqlQueryRequest
         var page = ReadQueryValue(context, pageOptions.PageParameterName);
         var pageSize = ReadQueryValue(context, pageOptions.PageSizeParameterName);
 
-        return ValueTask.FromResult(new RsqlQueryRequest(
-            RsqlQueryFilter.Parse(filterExpression, filterOptions.ParseOptions, filterOptions.QueryParameterName),
-            RsqlSortQuery.Parse(sortExpression, sortOptions.SortParameterName),
-            RsqlPageQuery.Parse(page, pageSize, pageOptions)));
+        return ValueTask.FromResult(Parse(
+            filterExpression,
+            sortExpression,
+            page,
+            pageSize,
+            filterOptions,
+            sortOptions,
+            pageOptions));
     }
 
     /// <summary>

@@ -14,12 +14,13 @@
 | `RsqlParserNet.Linq` | [![RsqlParserNet.Linq NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.Linq?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Linq) | [![RsqlParserNet.Linq Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.Linq?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Linq) |
 | `RsqlParserNet.AspNetCore` | [![RsqlParserNet.AspNetCore NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.AspNetCore?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.AspNetCore) | [![RsqlParserNet.AspNetCore Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.AspNetCore?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.AspNetCore) |
 | `RsqlParserNet.EntityFrameworkCore` | [![RsqlParserNet.EntityFrameworkCore NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.EntityFrameworkCore?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.EntityFrameworkCore) | [![RsqlParserNet.EntityFrameworkCore Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.EntityFrameworkCore?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.EntityFrameworkCore) |
+| `RsqlParserNet.FastEndpoints` | [![RsqlParserNet.FastEndpoints NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.FastEndpoints?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.FastEndpoints) | [![RsqlParserNet.FastEndpoints Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.FastEndpoints?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.FastEndpoints) |
 
 A dependency-light .NET parser for RSQL/FIQL-style REST API query expressions.
 
 `RsqlParserNet` parses query text into a typed AST with source spans and structured diagnostics. The core package does not depend on ASP.NET Core, LINQ, Entity Framework Core, or ORM APIs.
 
-Current status: the parser core is `0.1.0-preview.3`; LINQ, ASP.NET Core, and Entity Framework Core adapters are prepared as `0.1.0-preview.1`. The parser core is published for early testing, but public API changes are still possible before `1.0.0`.
+Current status: the parser core is `0.1.0-preview.3`; LINQ, ASP.NET Core, Entity Framework Core, and FastEndpoints adapters are prepared as `0.1.0-preview.1`. The parser core is published for early testing, but public API changes are still possible before `1.0.0`.
 
 ## Installation
 
@@ -47,6 +48,12 @@ Entity Framework Core helpers:
 dotnet add package RsqlParserNet.EntityFrameworkCore --prerelease
 ```
 
+FastEndpoints helpers:
+
+```bash
+dotnet add package RsqlParserNet.FastEndpoints --prerelease
+```
+
 For local development, reference the project directly:
 
 ```xml
@@ -54,6 +61,7 @@ For local development, reference the project directly:
 <ProjectReference Include="src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj" />
 <ProjectReference Include="src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj" />
 <ProjectReference Include="src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkCore.csproj" />
+<ProjectReference Include="src/RsqlParserNet.FastEndpoints/RsqlParserNet.FastEndpoints.csproj" />
 ```
 
 ## Quick Start
@@ -309,9 +317,11 @@ query.ApplyRsql(filter, options =>
 
 The core parser should not expose arbitrary reflected entity/property access. Future adapters should translate the AST into expression trees only through configured field mappings.
 
-Framework adapters should stay separate when they need framework-specific dependencies. `RsqlParserNet.AspNetCore` owns ASP.NET Core binding helpers, and a future `RsqlParserNet.FastEndpoints` package can wrap FastEndpoints request/validation conventions if plain `RsqlQueryFilter.Parse` becomes repetitive.
+Framework adapters should stay separate when they need framework-specific dependencies. `RsqlParserNet.AspNetCore` owns ASP.NET Core binding helpers.
 
 `RsqlParserNet.EntityFrameworkCore` owns EF Core async execution helpers, including paged result helpers that return `items` and `pagination` metadata. Sorting uses the same allowlisted profile mappings as filtering with `sort=field`, `sort=-field`, and multi-field sort text such as `sort=-createdAt,name`.
+
+`RsqlParserNet.FastEndpoints` owns FastEndpoints-specific validation glue. It reuses the ASP.NET Core query models and adds `ValidationFailure` entries to the endpoint, so FastEndpoints APIs can keep their normal validation response flow.
 
 ## Development
 
@@ -323,6 +333,7 @@ dotnet pack src/RsqlParserNet/RsqlParserNet.csproj --configuration Release --out
 dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkCore.csproj --configuration Release --output artifacts/packages
+dotnet pack src/RsqlParserNet.FastEndpoints/RsqlParserNet.FastEndpoints.csproj --configuration Release --output artifacts/packages
 ```
 
 Coverage is collected locally with Coverlet. A public percentage badge will be added after coverage publishing is wired into CI.
@@ -335,5 +346,7 @@ Coverage is collected locally with Coverlet. A public percentage badge will be a
 - LINQ adapter roadmap: [docs/linq-roadmap.md](docs/linq-roadmap.md)
 - ASP.NET Core usage: [docs/aspnet-core-usage.md](docs/aspnet-core-usage.md)
 - EF Core helpers: [docs/entity-framework-core.md](docs/entity-framework-core.md)
+- FastEndpoints usage: [docs/fastendpoints-usage.md](docs/fastendpoints-usage.md)
+- 1.0.0 readiness: [docs/v1-readiness.md](docs/v1-readiness.md)
 - Core v1 checklist: [docs/core-v1-checklist.md](docs/core-v1-checklist.md)
 - Release process: [docs/release.md](docs/release.md)
