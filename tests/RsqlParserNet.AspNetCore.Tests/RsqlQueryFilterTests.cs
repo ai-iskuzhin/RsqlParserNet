@@ -236,6 +236,20 @@ public sealed class RsqlQueryFilterTests
     }
 
     [Fact]
+    public void SortQuery_ParseReturnsMultipleSorts()
+    {
+        var sortQuery = RsqlSortQuery.Parse("status,-name");
+
+        Assert.True(sortQuery.IsValid);
+        Assert.True(sortQuery.HasRequest);
+        Assert.Equal(2, sortQuery.Requests.Count);
+        Assert.NotNull(sortQuery.Request);
+        Assert.Equal("status", sortQuery.Request.Field);
+        Assert.Equal("name", sortQuery.Requests[1].Field);
+        Assert.Equal(RsqlSortDirection.Descending, sortQuery.Requests[1].Direction);
+    }
+
+    [Fact]
     public void SortQuery_ParseReturnsErrorsForMissingField()
     {
         var sortQuery = RsqlSortQuery.Parse("-");
@@ -301,7 +315,7 @@ public sealed class RsqlQueryFilterTests
         services.AddRsqlQueryRequest(
             configureFilter: options => options.ParseOptions = RsqlParseOptions.Default,
             configurePage: options => options.MaxPageSize = 25);
-        var context = CreateContext("?filter=status%3D%3Dactive&sort=-name&page=2&pageSize=100", services);
+        var context = CreateContext("?filter=status%3D%3Dactive&sort=-name,status&page=2&pageSize=100", services);
         var parameter = GetParameter(nameof(QueryRequestEndpoint));
 
         var request = await RsqlQueryRequest.BindAsync(context, parameter);
@@ -312,6 +326,7 @@ public sealed class RsqlQueryFilterTests
         Assert.NotNull(request.Page.Request);
         Assert.Equal("name", request.Sort.Request.Field);
         Assert.Equal(RsqlSortDirection.Descending, request.Sort.Request.Direction);
+        Assert.Equal(2, request.Sort.Requests.Count);
         Assert.Equal(2, request.Page.Request.Page);
         Assert.Equal(25, request.Page.Request.PageSize);
     }
@@ -336,7 +351,7 @@ public sealed class RsqlQueryFilterTests
     public void QueryRequest_ApplyToAppliesFilterAndSort()
     {
         var filter = RsqlQueryFilter.Parse("status==active");
-        var sort = RsqlSortQuery.Parse("-name");
+        var sort = RsqlSortQuery.Parse("status,-name");
         var page = RsqlPageQuery.Parse(null, null);
         var request = new RsqlQueryRequest(filter, sort, page);
 

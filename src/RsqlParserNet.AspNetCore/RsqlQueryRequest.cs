@@ -99,7 +99,7 @@ public sealed class RsqlQueryRequest
             : source;
 
         return Sort.HasRequest
-            ? query.ApplySort(Sort.Request!, profile)
+            ? query.ApplySort(Sort.Requests, profile)
             : query;
     }
 

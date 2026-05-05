@@ -45,6 +45,7 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - ASP.NET Core request handling samples without adding ASP.NET dependencies to the LINQ package.
 - EF Core async paged result helpers in a separate adapter package.
 - ASP.NET Core sort query binding with `sort=field` and `sort=-field`.
+- Multi-field sorting with comma-separated sort text such as `sort=-createdAt,name`.
 
 ## Before Stable
 
@@ -52,7 +53,6 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - Gather API feedback on profiles, custom operators, sort parsing, pagination response shape, and framework integration before API freeze.
 - Clarify preview package version alignment across core and adapter packages.
 - Add provider-specific EF Core translation notes and tests for at least one production provider.
-- Decide whether multi-field sorting belongs in `1.0.0` or a later minor release.
 - Decide whether case-insensitive string helper operators belong in `1.0.0` or a later minor release.
 
 ## Later

@@ -60,6 +60,25 @@ public sealed record RsqlSortRequest
             isDescending ? RsqlSortDirection.Descending : RsqlSortDirection.Ascending);
     }
 
+    /// <summary>
+    /// Parses comma-separated sort text such as <c>name,-createdAt</c>.
+    /// </summary>
+    /// <param name="text">The raw sort text.</param>
+    /// <returns>The parsed sort requests in the requested order.</returns>
+    public static IReadOnlyList<RsqlSortRequest> ParseMany(string text)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(text);
+
+        var parts = text.Split(',');
+        var requests = new List<RsqlSortRequest>(parts.Length);
+        foreach (var part in parts)
+        {
+            requests.Add(Parse(part));
+        }
+
+        return requests;
+    }
+
     private static bool IsValidField(string field)
     {
         var segmentStart = 0;

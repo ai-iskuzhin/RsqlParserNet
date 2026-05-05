@@ -82,6 +82,30 @@ public static class RsqlEntityFrameworkQueryableExtensions
     }
 
     /// <summary>
+    /// Applies sorting, executes the paged query asynchronously, and returns pagination metadata.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source queryable.</param>
+    /// <param name="sorts">The sort requests in priority order.</param>
+    /// <param name="profile">The reusable LINQ adapter profile.</param>
+    /// <param name="page">The page request.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The paged result.</returns>
+    public static Task<RsqlPagedResult<T>> ToRsqlPageAsync<T>(
+        this IQueryable<T> source,
+        IEnumerable<RsqlSortRequest> sorts,
+        RsqlLinqProfile<T> profile,
+        RsqlPageRequest page,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(sorts);
+        ArgumentNullException.ThrowIfNull(profile);
+
+        return source.ApplySort(sorts, profile).ToRsqlPageAsync(page, cancellationToken);
+    }
+
+    /// <summary>
     /// Applies a parsed RSQL query and sorting, executes the paged query asynchronously, and returns pagination metadata.
     /// </summary>
     /// <typeparam name="T">The element type.</typeparam>
@@ -108,6 +132,36 @@ public static class RsqlEntityFrameworkQueryableExtensions
         return source
             .ApplyRsql(query, profile)
             .ApplySort(sort, profile)
+            .ToRsqlPageAsync(page, cancellationToken);
+    }
+
+    /// <summary>
+    /// Applies a parsed RSQL query and sorting, executes the paged query asynchronously, and returns pagination metadata.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source queryable.</param>
+    /// <param name="query">The parsed RSQL query.</param>
+    /// <param name="sorts">The sort requests in priority order.</param>
+    /// <param name="profile">The reusable LINQ adapter profile.</param>
+    /// <param name="page">The page request.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The paged result.</returns>
+    public static Task<RsqlPagedResult<T>> ToRsqlPageAsync<T>(
+        this IQueryable<T> source,
+        RsqlQuery query,
+        IEnumerable<RsqlSortRequest> sorts,
+        RsqlLinqProfile<T> profile,
+        RsqlPageRequest page,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(query);
+        ArgumentNullException.ThrowIfNull(sorts);
+        ArgumentNullException.ThrowIfNull(profile);
+
+        return source
+            .ApplyRsql(query, profile)
+            .ApplySort(sorts, profile)
             .ToRsqlPageAsync(page, cancellationToken);
     }
 
@@ -166,6 +220,38 @@ public static class RsqlEntityFrameworkQueryableExtensions
         return source
             .ApplyRsql(expression, profile, parseOptions)
             .ApplySort(sort, profile)
+            .ToRsqlPageAsync(page, cancellationToken);
+    }
+
+    /// <summary>
+    /// Parses an RSQL expression, applies sorting, executes the paged query asynchronously, and returns pagination metadata.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source queryable.</param>
+    /// <param name="expression">The RSQL expression text.</param>
+    /// <param name="sorts">The sort requests in priority order.</param>
+    /// <param name="profile">The reusable LINQ adapter profile.</param>
+    /// <param name="page">The page request.</param>
+    /// <param name="parseOptions">Optional parser options.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The paged result.</returns>
+    public static Task<RsqlPagedResult<T>> ToRsqlPageAsync<T>(
+        this IQueryable<T> source,
+        string expression,
+        IEnumerable<RsqlSortRequest> sorts,
+        RsqlLinqProfile<T> profile,
+        RsqlPageRequest page,
+        RsqlParseOptions? parseOptions = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(expression);
+        ArgumentNullException.ThrowIfNull(sorts);
+        ArgumentNullException.ThrowIfNull(profile);
+
+        return source
+            .ApplyRsql(expression, profile, parseOptions)
+            .ApplySort(sorts, profile)
             .ToRsqlPageAsync(page, cancellationToken);
     }
 }

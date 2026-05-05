@@ -56,6 +56,23 @@ public sealed class RsqlEntityFrameworkQueryableExtensionsTests
     }
 
     [Fact]
+    public async Task ToRsqlPageAsync_AppliesMultipleSortsBeforePaging()
+    {
+        using var database = SqliteProductDatabase.Create();
+        database.Context.Products.Add(new SqliteProduct { Name = "Boot", Status = "active" });
+        database.Context.SaveChanges();
+
+        var result = await database.Context.Products
+            .ToRsqlPageAsync(
+                RsqlSortRequest.ParseMany("status,-name"),
+                new SqliteProductRsqlProfile(),
+                new RsqlPageRequest(page: 1, pageSize: 10));
+
+        Assert.Equal(["Boot", "Bike", "Board", "Helmet"], result.Items.Select(product => product.Name).ToArray());
+        Assert.Equal(4, result.Pagination.TotalItems);
+    }
+
+    [Fact]
     public async Task ToRsqlPageAsync_AppliesParsedRsqlQueryAndSortBeforePaging()
     {
         using var database = SqliteProductDatabase.Create();

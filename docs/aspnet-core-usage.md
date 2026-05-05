@@ -162,6 +162,7 @@ GET /products?filter=tags=any=(outdoor,bike)
 GET /products?filter=tags=all=(bike,outdoor)
 GET /products?filter=status==active&page=2&pageSize=25
 GET /products?filter=status==active&sort=-createdAt&page=2&pageSize=25
+GET /products?filter=status==active&sort=-createdAt,name&page=2&pageSize=25
 ```
 
 ## Notes

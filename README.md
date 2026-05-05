@@ -308,7 +308,7 @@ The core parser should not expose arbitrary reflected entity/property access. Fu
 
 Framework adapters should stay separate when they need framework-specific dependencies. `RsqlParserNet.AspNetCore` owns ASP.NET Core binding helpers, and a future `RsqlParserNet.FastEndpoints` package can wrap FastEndpoints request/validation conventions if plain `RsqlQueryFilter.Parse` becomes repetitive.
 
-`RsqlParserNet.EntityFrameworkCore` owns EF Core async execution helpers, including paged result helpers that return `items` and `pagination` metadata. Sorting uses the same allowlisted profile mappings as filtering with `sort=field` and `sort=-field`.
+`RsqlParserNet.EntityFrameworkCore` owns EF Core async execution helpers, including paged result helpers that return `items` and `pagination` metadata. Sorting uses the same allowlisted profile mappings as filtering with `sort=field`, `sort=-field`, and multi-field sort text such as `sort=-createdAt,name`.
 
 ## Development
 

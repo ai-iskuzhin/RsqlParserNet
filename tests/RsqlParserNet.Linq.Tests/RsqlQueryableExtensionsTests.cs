@@ -152,12 +152,54 @@ public sealed class RsqlQueryableExtensionsTests
     }
 
     [Fact]
+    public void ApplySort_SortsByMultipleAllowlistedFields()
+    {
+        var products = new[]
+        {
+            new Product("Bike", "active", 10, true, Category.Gear, new DateOnly(2026, 1, 10), null, ["bike"]),
+            new Product("Helmet", "active", 30, true, Category.Gear, new DateOnly(2026, 3, 10), null, ["helmet"]),
+            new Product("Board", "draft", 20, false, Category.Board, new DateOnly(2026, 2, 10), "archived", ["board"])
+        }.AsQueryable();
+        var sorts = RsqlSortRequest.ParseMany("category,-name");
+
+        var result = products
+            .ApplySort(sorts, options =>
+            {
+                options.Allow("category", product => product.Category);
+                options.Allow("name", product => product.Name);
+            })
+            .Select(product => product.Name)
+            .ToArray();
+
+        Assert.Equal(["Helmet", "Bike", "Board"], result);
+    }
+
+    [Fact]
     public void SortRequest_ParseTrimsWhitespace()
     {
         var sort = RsqlSortRequest.Parse(" -count ");
 
         Assert.Equal("count", sort.Field);
         Assert.Equal(RsqlSortDirection.Descending, sort.Direction);
+    }
+
+    [Fact]
+    public void SortRequest_ParseManyParsesCommaSeparatedSorts()
+    {
+        var sorts = RsqlSortRequest.ParseMany("name, -count");
+
+        Assert.Collection(
+            sorts,
+            sort =>
+            {
+                Assert.Equal("name", sort.Field);
+                Assert.Equal(RsqlSortDirection.Ascending, sort.Direction);
+            },
+            sort =>
+            {
+                Assert.Equal("count", sort.Field);
+                Assert.Equal(RsqlSortDirection.Descending, sort.Direction);
+            });
     }
 
     [Theory]
@@ -170,6 +212,15 @@ public sealed class RsqlQueryableExtensionsTests
     public void SortRequest_ParseRejectsInvalidFieldSyntax(string text)
     {
         Assert.Throws<ArgumentException>(() => RsqlSortRequest.Parse(text));
+    }
+
+    [Theory]
+    [InlineData("name,")]
+    [InlineData("name,,count")]
+    [InlineData("name,9count")]
+    public void SortRequest_ParseManyRejectsInvalidFieldSyntax(string text)
+    {
+        Assert.Throws<ArgumentException>(() => RsqlSortRequest.ParseMany(text));
     }
 
     [Fact]

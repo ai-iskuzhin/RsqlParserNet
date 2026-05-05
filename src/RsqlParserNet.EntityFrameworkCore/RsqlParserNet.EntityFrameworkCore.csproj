@@ -33,7 +33,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageReleaseNotes>Initial Entity Framework Core preview with async paged result helpers for allowlisted RSQL LINQ queries, sorting, and direct expression text overloads.</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial Entity Framework Core preview with async paged result helpers for allowlisted RSQL LINQ queries, single and multi-field sorting, and direct expression text overloads.</PackageReleaseNotes>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

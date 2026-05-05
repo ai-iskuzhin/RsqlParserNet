@@ -81,6 +81,7 @@ The supported sort syntax is:
 ```text
 sort=name
 sort=-createdAt
+sort=-createdAt,name
 ```
 
 Sort fields are case-sensitive and must be allowlisted in the profile.

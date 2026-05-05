@@ -28,13 +28,34 @@ public sealed class RsqlSortQuery
         string? expression,
         RsqlSortRequest? request,
         IReadOnlyDictionary<string, string[]> errors)
+        : this(
+            parameterName,
+            expression,
+            request is null ? [] : [request],
+            errors)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RsqlSortQuery"/> class.
+    /// </summary>
+    /// <param name="parameterName">The query string parameter name that supplied the sort.</param>
+    /// <param name="expression">The raw sort expression text.</param>
+    /// <param name="requests">The parsed sort requests when binding succeeded.</param>
+    /// <param name="errors">The validation errors produced while binding.</param>
+    public RsqlSortQuery(
+        string parameterName,
+        string? expression,
+        IReadOnlyList<RsqlSortRequest> requests,
+        IReadOnlyDictionary<string, string[]> errors)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(parameterName);
+        ArgumentNullException.ThrowIfNull(requests);
         ArgumentNullException.ThrowIfNull(errors);
 
         ParameterName = parameterName;
         Expression = expression;
-        Request = request;
+        Requests = requests.ToArray();
         Errors = errors;
     }
 
@@ -51,7 +72,12 @@ public sealed class RsqlSortQuery
     /// <summary>
     /// Gets the parsed sort request when binding succeeded.
     /// </summary>
-    public RsqlSortRequest? Request { get; }
+    public RsqlSortRequest? Request => Requests.Count > 0 ? Requests[0] : null;
+
+    /// <summary>
+    /// Gets the parsed sort requests when binding succeeded.
+    /// </summary>
+    public IReadOnlyList<RsqlSortRequest> Requests { get; }
 
     /// <summary>
     /// Gets the validation errors produced while binding.
@@ -71,7 +97,7 @@ public sealed class RsqlSortQuery
     /// <summary>
     /// Gets a value indicating whether binding produced a sort request.
     /// </summary>
-    public bool HasRequest => Request is not null;
+    public bool HasRequest => Requests.Count > 0;
 
     /// <summary>
     /// Parses raw sort text into an <see cref="RsqlSortQuery"/>.
@@ -87,7 +113,7 @@ public sealed class RsqlSortQuery
 
         if (string.IsNullOrWhiteSpace(expression))
         {
-            return new RsqlSortQuery(parameterName, expression, null, new Dictionary<string, string[]>(StringComparer.Ordinal));
+            return new RsqlSortQuery(parameterName, expression, [], new Dictionary<string, string[]>(StringComparer.Ordinal));
         }
 
         try
@@ -95,7 +121,7 @@ public sealed class RsqlSortQuery
             return new RsqlSortQuery(
                 parameterName,
                 expression,
-                RsqlSortRequest.Parse(expression),
+                RsqlSortRequest.ParseMany(expression),
                 new Dictionary<string, string[]>(StringComparer.Ordinal));
         }
         catch (ArgumentException exception)
@@ -103,7 +129,7 @@ public sealed class RsqlSortQuery
             return new RsqlSortQuery(
                 parameterName,
                 expression,
-                null,
+                request: null,
                 new Dictionary<string, string[]>(StringComparer.Ordinal)
                 {
                     [parameterName] = [exception.Message]

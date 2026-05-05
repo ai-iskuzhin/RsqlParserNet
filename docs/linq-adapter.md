@@ -201,7 +201,7 @@ Use `RsqlPagedResult<T>.Create(items, page, totalItems)` when another layer alre
 
 ## Sorting
 
-Use `RsqlSortRequest` for API-level sort text such as `sort=name` and `sort=-createdAt`. Sorting is allowlisted through the same profile mappings as filtering:
+Use `RsqlSortRequest` for API-level sort text such as `sort=name`, `sort=-createdAt`, and `sort=-createdAt,name`. Sorting is allowlisted through the same profile mappings as filtering:
 
 ```csharp
 var sort = RsqlSortRequest.Parse("-name");
@@ -209,7 +209,13 @@ var sort = RsqlSortRequest.Parse("-name");
 var sorted = products.ApplySort(sort, profile);
 ```
 
-The leading `-` means descending. Without it, sorting is ascending.
+The leading `-` means descending. Without it, sorting is ascending. Comma-separated sort fields are applied in priority order:
+
+```csharp
+var sorts = RsqlSortRequest.ParseMany("-updatedAt,title");
+
+var sorted = products.ApplySort(sorts, profile);
+```
 
 ## Wildcards
 
