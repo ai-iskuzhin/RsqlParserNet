@@ -218,6 +218,17 @@ var filtered = products.ApplyRsql("name==B*", options =>
 
 String comparison behavior follows the underlying LINQ provider. For example, EF Core database collation can affect case sensitivity.
 
+## EF Core
+
+`RsqlParserNet.Linq` does not depend on EF Core, but its expression trees are tested against EF Core SQLite translation for:
+
+- scalar built-in operators
+- `=in=`
+- string wildcards
+- `=contains=`
+- `=any=`
+- `=all=`
+
 ## Value Conversion
 
 Values are converted using the mapped member type. Current conversion support includes:
