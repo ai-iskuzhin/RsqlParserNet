@@ -51,5 +51,5 @@ jobs:
           gh release create "$TAG_NAME" \
             artifacts/packages/* \
             --title "RsqlParserNet ${TAG_NAME#v}" \
-            --notes-file CHANGELOG.md \
+            --generate-notes \
             --verify-tag

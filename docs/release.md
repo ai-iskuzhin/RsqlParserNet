@@ -112,7 +112,7 @@ The workflow attaches:
 
 When packages have different versions, the GitHub release will attach the versions currently defined in each package project unless a workflow explicitly overrides them.
 
-The initial release notes are populated from `CHANGELOG.md`. Edit the generated GitHub release notes after creation if the changelog contains unreleased or historical sections that should not appear in full.
+GitHub release notes are generated from commits and pull requests for the tag. Keep `CHANGELOG.md` as the human-maintained project history and package artifact, but do not paste the full changelog into every GitHub release.
 
 ## NuGet Release
 
