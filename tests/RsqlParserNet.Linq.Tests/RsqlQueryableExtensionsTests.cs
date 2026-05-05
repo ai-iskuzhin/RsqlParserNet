@@ -343,7 +343,7 @@ public sealed class RsqlQueryableExtensionsTests
     {
         var parseOptions = RsqlParseOptions.Default with
         {
-            CustomOperators = [new RsqlCustomOperator("=contains=")]
+            CustomOperators = [new RsqlCustomOperator(RsqlLinqOperators.Contains)]
         };
 
         var result = SampleProducts()
@@ -367,7 +367,7 @@ public sealed class RsqlQueryableExtensionsTests
     {
         var parseOptions = RsqlParseOptions.Default with
         {
-            CustomOperators = [new RsqlCustomOperator("=any=", RequiresMultipleValues: true)]
+            CustomOperators = [new RsqlCustomOperator(RsqlLinqOperators.Any, RequiresMultipleValues: true)]
         };
 
         var result = SampleProducts()
@@ -390,7 +390,7 @@ public sealed class RsqlQueryableExtensionsTests
     {
         var parseOptions = RsqlParseOptions.Default with
         {
-            CustomOperators = [new RsqlCustomOperator("=all=", RequiresMultipleValues: true)]
+            CustomOperators = [new RsqlCustomOperator(RsqlLinqOperators.All, RequiresMultipleValues: true)]
         };
 
         var result = SampleProducts()
@@ -430,6 +430,21 @@ public sealed class RsqlQueryableExtensionsTests
 
         var productName = Assert.Single(result);
         Assert.Equal("Bike", productName);
+    }
+
+    [Fact]
+    public void WithLinqOperators_AddsConventionalCustomOperatorsOnce()
+    {
+        var options = RsqlParseOptions.Default
+            .WithLinqOperators()
+            .WithLinqOperators();
+
+        var operators = options.CustomOperators.ToArray();
+
+        Assert.Equal(3, operators.Length);
+        Assert.Contains(operators, item => item.Text == RsqlLinqOperators.Contains && !item.RequiresMultipleValues);
+        Assert.Contains(operators, item => item.Text == RsqlLinqOperators.Any && item.RequiresMultipleValues);
+        Assert.Contains(operators, item => item.Text == RsqlLinqOperators.All && item.RequiresMultipleValues);
     }
 
     [Fact]
@@ -502,7 +517,7 @@ public sealed class RsqlQueryableExtensionsTests
     {
         var options = RsqlParseOptions.Default with
         {
-            CustomOperators = [new RsqlCustomOperator("=contains=")]
+            CustomOperators = [new RsqlCustomOperator(RsqlLinqOperators.Contains)]
         };
         var query = RsqlParser.Parse("status=contains=active", options);
 
@@ -534,7 +549,7 @@ public sealed class RsqlQueryableExtensionsTests
     {
         var options = RsqlParseOptions.Default with
         {
-            CustomOperators = [new RsqlCustomOperator("=any=", RequiresMultipleValues: true)]
+            CustomOperators = [new RsqlCustomOperator(RsqlLinqOperators.Any, RequiresMultipleValues: true)]
         };
 
         Assert.Throws<RsqlLinqException>(() => SampleProducts()
@@ -577,20 +592,7 @@ public sealed class RsqlQueryableExtensionsTests
 
         public override RsqlParseOptions ConfigureParseOptions(RsqlParseOptions options)
         {
-            var customOperators = options.CustomOperators.ToList();
-            AddCustomOperator(customOperators, new RsqlCustomOperator("=contains="));
-            AddCustomOperator(customOperators, new RsqlCustomOperator("=any=", RequiresMultipleValues: true));
-            AddCustomOperator(customOperators, new RsqlCustomOperator("=all=", RequiresMultipleValues: true));
-
-            return options with { CustomOperators = customOperators };
-        }
-
-        private static void AddCustomOperator(List<RsqlCustomOperator> customOperators, RsqlCustomOperator customOperator)
-        {
-            if (customOperators.All(x => x.Text != customOperator.Text))
-            {
-                customOperators.Add(customOperator);
-            }
+            return options.WithLinqOperators();
         }
     }
 

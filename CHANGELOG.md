@@ -16,6 +16,7 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 - Added LINQ adapter support for equality, inequality, range comparisons, `=in=`, `=out=`, AND, and OR.
 - Added explicit custom operator expression factories for the LINQ adapter, including a string contains helper.
 - Added collection custom operator helpers for `=any=` and `=all=` in the LINQ adapter.
+- Added LINQ adapter operator constants and a parser option helper for conventional custom operators.
 - Added EF Core SQLite translation tests for LINQ adapter expressions.
 - Added configurable string wildcard support for LINQ equality and inequality comparisons.
 - Added value conversion coverage for strings, booleans, numbers, enums, nullable values, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`.

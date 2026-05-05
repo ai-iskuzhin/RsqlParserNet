@@ -162,12 +162,7 @@ public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
 {
     public override RsqlParseOptions ConfigureParseOptions(RsqlParseOptions options)
     {
-        return options.CustomOperators.Any(x => x.Text == "=contains=")
-            ? options
-            : options with
-            {
-                CustomOperators = [.. options.CustomOperators, new RsqlCustomOperator("=contains=")]
-            };
+        return options.WithLinqOperators();
     }
 
     public override void Configure(RsqlLinqOptions<Product> options)
@@ -175,7 +170,10 @@ public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
         options.Allow("name", x => x.Name);
         options.Allow("status", x => x.Status);
         options.Allow("count", x => x.Count);
+        options.Allow("tags", x => x.Tags);
         options.AllowStringContainsOperator();
+        options.AllowCollectionAnyOperator();
+        options.AllowCollectionAllOperator();
     }
 }
 
@@ -199,7 +197,7 @@ Custom operators can be translated explicitly after they are configured in parse
 ```csharp
 var parseOptions = RsqlParseOptions.Default with
 {
-    CustomOperators = [new RsqlCustomOperator("=contains=")]
+    CustomOperators = [new RsqlCustomOperator(RsqlLinqOperators.Contains)]
 };
 
 var filtered = products.ApplyRsql("name=contains=ik", options =>

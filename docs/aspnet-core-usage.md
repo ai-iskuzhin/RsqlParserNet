@@ -115,12 +115,7 @@ public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
 
     public override RsqlParseOptions ConfigureParseOptions(RsqlParseOptions options)
     {
-        var customOperators = options.CustomOperators.ToList();
-        AddCustomOperator(customOperators, new RsqlCustomOperator("=contains="));
-        AddCustomOperator(customOperators, new RsqlCustomOperator("=any=", RequiresMultipleValues: true));
-        AddCustomOperator(customOperators, new RsqlCustomOperator("=all=", RequiresMultipleValues: true));
-
-        return options with { CustomOperators = customOperators };
+        return options.WithLinqOperators();
     }
 
     public override void Configure(RsqlLinqOptions<Product> options)
@@ -132,16 +127,6 @@ public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
         options.AllowStringContainsOperator();
         options.AllowCollectionAnyOperator();
         options.AllowCollectionAllOperator();
-    }
-
-    private static void AddCustomOperator(
-        List<RsqlCustomOperator> customOperators,
-        RsqlCustomOperator customOperator)
-    {
-        if (customOperators.All(item => item.Text != customOperator.Text))
-        {
-            customOperators.Add(customOperator);
-        }
     }
 }
 ```

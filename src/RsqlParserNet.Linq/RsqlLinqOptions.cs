@@ -95,7 +95,7 @@ public sealed class RsqlLinqOptions<T>
     /// The operator text must also be configured in <see cref="RsqlParseOptions.CustomOperators"/>.
     /// </remarks>
     /// <param name="operatorText">The custom FIQL-style operator text.</param>
-    public void AllowStringContainsOperator(string operatorText = "=contains=")
+    public void AllowStringContainsOperator(string operatorText = RsqlLinqOperators.Contains)
     {
         CustomOperator<string>(operatorText, context => context.CallStringMethod(nameof(string.Contains)));
     }
@@ -107,7 +107,7 @@ public sealed class RsqlLinqOptions<T>
     /// The operator text must also be configured in <see cref="RsqlParseOptions.CustomOperators"/>.
     /// </remarks>
     /// <param name="operatorText">The custom FIQL-style operator text.</param>
-    public void AllowCollectionAnyOperator(string operatorText = "=any=")
+    public void AllowCollectionAnyOperator(string operatorText = RsqlLinqOperators.Any)
     {
         CustomOperator(
             operatorText,
@@ -122,7 +122,7 @@ public sealed class RsqlLinqOptions<T>
     /// The operator text must also be configured in <see cref="RsqlParseOptions.CustomOperators"/>.
     /// </remarks>
     /// <param name="operatorText">The custom FIQL-style operator text.</param>
-    public void AllowCollectionAllOperator(string operatorText = "=all=")
+    public void AllowCollectionAllOperator(string operatorText = RsqlLinqOperators.All)
     {
         CustomOperator(
             operatorText,
