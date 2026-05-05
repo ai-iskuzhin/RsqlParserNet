@@ -60,13 +60,15 @@ app.MapGet("/products", async (
         ? query
         : query.OrderBy(product => product.Id);
 
-    var result = await query.ToRsqlPageAsync(request.Page.Request!, cancellationToken);
+    var result = await query.ToRsqlPageAsync(request.PageRequest, cancellationToken);
 
     return Results.Ok(result);
 });
 ```
 
 `RsqlQueryRequest` uses `filter`, `sort`, `page`, and `pageSize` by default. Configure the individual option objects when an API uses different query parameter names.
+
+`ToValidationErrors()` returns ASP.NET Core validation problem fields keyed by query parameter name. Filter diagnostics keep the parser diagnostic code in each message.
 
 The individual binders `RsqlQueryFilter`, `RsqlSortQuery`, and `RsqlPageQuery` remain available when an endpoint only needs part of the query contract.
 

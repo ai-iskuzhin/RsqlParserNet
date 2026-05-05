@@ -119,15 +119,17 @@ public sealed class RsqlQueryFilter
     /// <summary>
     /// Converts diagnostics into the dictionary shape expected by ASP.NET Core validation problem results.
     /// </summary>
-    /// <returns>A dictionary keyed by diagnostic code.</returns>
+    /// <returns>A dictionary keyed by query string parameter name.</returns>
     public Dictionary<string, string[]> ToValidationErrors()
     {
-        return Diagnostics
-            .GroupBy(diagnostic => diagnostic.Code)
-            .ToDictionary(
-                group => group.Key,
-                group => group.Select(diagnostic => diagnostic.Message).ToArray(),
-                StringComparer.Ordinal);
+        return Diagnostics.Count == 0
+            ? new Dictionary<string, string[]>(StringComparer.Ordinal)
+            : new Dictionary<string, string[]>(StringComparer.Ordinal)
+            {
+                [ParameterName] = Diagnostics
+                    .Select(diagnostic => $"{diagnostic.Code}: {diagnostic.Message}")
+                    .ToArray()
+            };
     }
 
     private static string ResolveParameterName(ParameterInfo parameter, RsqlQueryFilterOptions options)

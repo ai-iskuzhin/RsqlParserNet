@@ -30,11 +30,16 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 - Added ASP.NET Core `RsqlPageQuery` binding for `page` and `pageSize` query parameters.
 - Added ASP.NET Core `RsqlSortQuery` binding for `sort=field` and `sort=-field`.
 - Added ASP.NET Core `RsqlQueryRequest` binding for combined filter, sort, and page query state.
+- Added `RsqlQueryRequest.PageRequest` for accessing a validated non-null page request in endpoint code.
 - Added the `RsqlParserNet.EntityFrameworkCore` adapter project with async paged result helpers.
 - Added sort request whitespace normalization and selector-style field validation.
 - Added multi-field sorting with `sort=-field,otherField` across LINQ, ASP.NET Core binding, and EF Core helpers.
 - Added configurable string comparison mode for case-insensitive string helper and wildcard matching.
 - Added PostgreSQL SQL-generation tests for common LINQ adapter expressions.
+
+### Changed
+
+- Changed ASP.NET Core filter validation errors to use the query parameter name as the validation key while keeping diagnostic codes in messages.
 
 ## 0.1.0-preview.3
 

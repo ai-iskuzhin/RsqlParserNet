@@ -44,6 +44,23 @@ public sealed class RsqlQueryRequest
     public RsqlPageQuery Page { get; }
 
     /// <summary>
+    /// Gets the parsed page request after the query request has been validated.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when the page query is invalid.</exception>
+    public RsqlPageRequest PageRequest
+    {
+        get
+        {
+            if (!Page.IsValid || Page.Request is null)
+            {
+                throw new InvalidOperationException("Cannot access the page request from an invalid RSQL query request.");
+            }
+
+            return Page.Request;
+        }
+    }
+
+    /// <summary>
     /// Gets a value indicating whether all bound query components are valid.
     /// </summary>
     public bool IsValid => Filter.IsValid && Sort.IsValid && Page.IsValid;

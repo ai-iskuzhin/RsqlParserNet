@@ -35,13 +35,25 @@ public sealed class RsqlQueryFilterTests
     public void Parse_ReturnsDiagnosticsForInvalidExpression()
     {
         var filter = RsqlQueryFilter.Parse("status==");
+        var errors = filter.ToValidationErrors();
 
         Assert.True(filter.IsSpecified);
         Assert.False(filter.IsValid);
         Assert.False(filter.HasQuery);
         Assert.Null(filter.Query);
         Assert.NotEmpty(filter.Diagnostics);
-        Assert.NotEmpty(filter.ToValidationErrors());
+        Assert.Contains(RsqlQueryFilter.DefaultQueryParameterName, errors.Keys);
+        Assert.StartsWith("RSQL", errors[RsqlQueryFilter.DefaultQueryParameterName][0], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Parse_UsesParameterNameForValidationErrors()
+    {
+        var filter = RsqlQueryFilter.Parse("status==", parameterName: "q");
+        var errors = filter.ToValidationErrors();
+
+        Assert.False(filter.IsValid);
+        Assert.Contains("q", errors.Keys);
     }
 
     [Fact]
@@ -327,8 +339,8 @@ public sealed class RsqlQueryFilterTests
         Assert.Equal("name", request.Sort.Request.Field);
         Assert.Equal(RsqlSortDirection.Descending, request.Sort.Request.Direction);
         Assert.Equal(2, request.Sort.Requests.Count);
-        Assert.Equal(2, request.Page.Request.Page);
-        Assert.Equal(25, request.Page.Request.PageSize);
+        Assert.Equal(2, request.PageRequest.Page);
+        Assert.Equal(25, request.PageRequest.PageSize);
     }
 
     [Fact]
@@ -342,9 +354,22 @@ public sealed class RsqlQueryFilterTests
 
         Assert.False(request.IsValid);
         Assert.NotEmpty(errors);
+        Assert.Contains(RsqlQueryFilter.DefaultQueryParameterName, errors.Keys);
         Assert.Contains(RsqlSortQuery.DefaultSortParameterName, errors.Keys);
         Assert.Contains(RsqlPageQuery.DefaultPageParameterName, errors.Keys);
         Assert.Contains(RsqlPageQuery.DefaultPageSizeParameterName, errors.Keys);
+    }
+
+    [Fact]
+    public async Task QueryRequest_PageRequestThrowsWhenPageQueryIsInvalid()
+    {
+        var context = CreateContext("?page=0");
+        var parameter = GetParameter(nameof(QueryRequestEndpoint));
+
+        var request = await RsqlQueryRequest.BindAsync(context, parameter);
+
+        Assert.False(request.IsValid);
+        Assert.Throws<InvalidOperationException>(() => request.PageRequest);
     }
 
     [Fact]

@@ -286,7 +286,7 @@ app.MapGet("/products", async (
         ? query
         : query.OrderBy(product => product.Id);
 
-    var result = await query.ToRsqlPageAsync(request.Page.Request!);
+    var result = await query.ToRsqlPageAsync(request.PageRequest);
 
     return Results.Ok(result);
 });
