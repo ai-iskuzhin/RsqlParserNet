@@ -42,6 +42,7 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - Conventional LINQ operator constants and `WithLinqOperators()` parser option helper.
 - Conversion for strings, booleans, numeric primitives, enums, nullable values, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`.
 - EF Core SQLite translation tests for built-in scalar operators, wildcards, string custom operators, and collection operators.
+- PostgreSQL SQL-generation tests for common LINQ adapter expressions without requiring a live database.
 - CI, release, and manual NuGet publish workflow support for the LINQ adapter package.
 - ASP.NET Core request handling samples without adding ASP.NET dependencies to the LINQ package.
 - EF Core async paged result helpers in a separate adapter package.
@@ -53,7 +54,7 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - Publish `RsqlParserNet.Linq`, `RsqlParserNet.AspNetCore`, and `RsqlParserNet.EntityFrameworkCore` as preview packages.
 - Gather API feedback on profiles, custom operators, sort parsing, pagination response shape, and framework integration before API freeze.
 - Clarify preview package version alignment across core and adapter packages.
-- Add provider-specific EF Core translation notes and tests for at least one production provider.
+- Add real database integration coverage for at least one production provider.
 
 ## Later
 

@@ -88,4 +88,6 @@ Sort fields are case-sensitive and must be allowlisted in the profile.
 
 ## Provider Coverage
 
-The LINQ adapter has EF Core SQLite translation coverage. Before using RSQL on production-sensitive routes, add regression coverage for the provider used by the application, such as PostgreSQL or SQL Server.
+The LINQ adapter has EF Core SQLite execution coverage and PostgreSQL SQL-generation coverage through Npgsql `ToQueryString()` tests. The PostgreSQL tests verify translation without requiring a local database server.
+
+Before using RSQL on production-sensitive routes, add real database integration coverage for the provider used by the application, such as PostgreSQL or SQL Server. SQL-generation tests catch translation failures; real database tests also catch provider collation, indexing, schema, and runtime behavior.

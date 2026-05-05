@@ -272,6 +272,8 @@ Case-insensitive mode normalizes both sides before calling string methods. This 
 - `=any=`
 - `=all=`
 
+The test suite also includes PostgreSQL SQL-generation coverage with Npgsql `ToQueryString()` for scalar filters, `=in=`, wildcards, string helpers, case-insensitive string mode, and multi-field sorting. These tests do not require a running PostgreSQL server.
+
 Use `RsqlParserNet.EntityFrameworkCore` for EF Core-specific async execution helpers such as `ToRsqlPageAsync`.
 
 ## Value Conversion
