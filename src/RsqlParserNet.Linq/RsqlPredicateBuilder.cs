@@ -101,10 +101,33 @@ public static class RsqlPredicateBuilder
             RsqlComparisonOperator.LessThanOrEqual => BuildSingleValueComparison(comparison, left, Expression.LessThanOrEqual),
             RsqlComparisonOperator.In => BuildContainsComparison(comparison, left, negate: false),
             RsqlComparisonOperator.NotIn => BuildContainsComparison(comparison, left, negate: true),
-            RsqlComparisonOperator.Custom => throw new RsqlLinqException(
-                $"Custom operator '{comparison.OperatorText}' is not supported by the LINQ adapter."),
+            RsqlComparisonOperator.Custom => BuildCustomComparison(comparison, left, options),
             _ => throw new RsqlLinqException($"Operator '{comparison.OperatorText}' is not supported by the LINQ adapter.")
         };
+    }
+
+    private static Expression BuildCustomComparison<T>(
+        RsqlComparisonNode comparison,
+        Expression left,
+        RsqlLinqOptions<T> options)
+    {
+        if (!options.CustomOperators.TryGetValue(comparison.OperatorText, out var factory))
+        {
+            throw new RsqlLinqException(
+                $"Custom operator '{comparison.OperatorText}' is not allowlisted by the LINQ adapter.");
+        }
+
+        var values = comparison.Values.Select(value => ConvertValueExpression(value, left.Type)).ToArray();
+        var context = new RsqlCustomOperatorExpressionContext(left, values, comparison);
+        var expression = factory(context);
+
+        if (expression.Type != typeof(bool))
+        {
+            throw new RsqlLinqException(
+                $"Custom operator '{comparison.OperatorText}' must return a Boolean expression.");
+        }
+
+        return expression;
     }
 
     private static Expression BuildEqualityComparison<T>(

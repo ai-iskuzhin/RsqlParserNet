@@ -157,6 +157,21 @@ The adapter currently supports:
 
 Values are converted using the mapped member type, including common scalar types, enums, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`.
 
+Custom operators can be translated explicitly after they are configured in parser options:
+
+```csharp
+var parseOptions = RsqlParseOptions.Default with
+{
+    CustomOperators = [new RsqlCustomOperator("=contains=")]
+};
+
+var filtered = products.ApplyRsql("name=contains=ik", options =>
+{
+    options.Allow("name", x => x.Name);
+    options.AllowStringContainsOperator();
+}, parseOptions);
+```
+
 String equality supports common `*` wildcards by default:
 
 ```text

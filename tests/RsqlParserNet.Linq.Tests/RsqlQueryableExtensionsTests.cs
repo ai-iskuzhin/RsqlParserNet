@@ -282,6 +282,56 @@ public sealed class RsqlQueryableExtensionsTests
     }
 
     [Fact]
+    public void ApplyRsql_FiltersByAllowedCustomStringContainsOperator()
+    {
+        var parseOptions = RsqlParseOptions.Default with
+        {
+            CustomOperators = [new RsqlCustomOperator("=contains=")]
+        };
+
+        var result = SampleProducts()
+            .ApplyRsql(
+                "name=contains=ik",
+                options =>
+                {
+                    options.Allow("name", x => x.Name);
+                    options.AllowStringContainsOperator();
+                },
+                parseOptions)
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Bike", productName);
+    }
+
+    [Fact]
+    public void BuildPredicate_FiltersByAllowedCustomOperatorFactory()
+    {
+        var parseOptions = RsqlParseOptions.Default with
+        {
+            CustomOperators = [new RsqlCustomOperator("=starts=")]
+        };
+
+        var predicate = RsqlPredicateBuilder.BuildPredicate<Product>(
+            "name=starts=Bo",
+            options =>
+            {
+                options.Allow("name", x => x.Name);
+                options.CustomOperator("=starts=", context => context.CallStringMethod(nameof(string.StartsWith)));
+            },
+            parseOptions);
+
+        var result = SampleProducts()
+            .Where(predicate)
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Board", productName);
+    }
+
+    [Fact]
     public void ApplyRsql_RejectsUnmappedSelector()
     {
         var products = Array.Empty<Product>().AsQueryable();
@@ -331,6 +381,24 @@ public sealed class RsqlQueryableExtensionsTests
 
         Assert.Throws<RsqlLinqException>(() => SampleProducts()
             .ApplyRsql(query, linqOptions => linqOptions.Allow("status", x => x.Status))
+            .ToArray());
+    }
+
+    [Fact]
+    public void ApplyRsql_RejectsCustomOperatorFactoryThatReturnsNonBooleanExpression()
+    {
+        var options = RsqlParseOptions.Default with
+        {
+            CustomOperators = [new RsqlCustomOperator("=raw=")]
+        };
+        var query = RsqlParser.Parse("status=raw=active", options);
+
+        Assert.Throws<RsqlLinqException>(() => SampleProducts()
+            .ApplyRsql(query, linqOptions =>
+            {
+                linqOptions.Allow("status", x => x.Status);
+                linqOptions.CustomOperator("=raw=", context => context.Member);
+            })
             .ToArray());
     }
 

@@ -41,7 +41,51 @@ var filtered = products.Where(predicate);
 | `;` | `Expression.AndAlso` |
 | `,` | `Expression.OrElse` |
 
-Custom operators are parsed by the core package, but the LINQ adapter rejects them until each custom operator can be mapped intentionally.
+Custom operators are parsed by the core package, and the LINQ adapter translates them only when each operator is mapped intentionally.
+
+## Custom Operators
+
+Custom operators require two configuration steps:
+
+1. Configure the core parser so the operator text is recognized.
+2. Configure the LINQ adapter so the parsed operator can become an expression.
+
+```csharp
+var parseOptions = RsqlParseOptions.Default with
+{
+    CustomOperators = [new RsqlCustomOperator("=contains=")]
+};
+
+var filtered = products.ApplyRsql(
+    "name=contains=ik",
+    options =>
+    {
+        options.Allow("name", x => x.Name);
+        options.AllowStringContainsOperator();
+    },
+    parseOptions);
+```
+
+For custom expression logic, use `CustomOperator`:
+
+```csharp
+var parseOptions = RsqlParseOptions.Default with
+{
+    CustomOperators = [new RsqlCustomOperator("=starts=")]
+};
+
+var predicate = RsqlPredicateBuilder.BuildPredicate<Product>(
+    "name=starts=Bo",
+    options =>
+    {
+        options.Allow("name", x => x.Name);
+        options.CustomOperator("=starts=", context =>
+            context.CallStringMethod(nameof(string.StartsWith)));
+    },
+    parseOptions);
+```
+
+Custom operator factories receive the allowlisted member expression, the comparison AST node, and values converted to the mapped member type. The returned expression must be Boolean.
 
 ## Wildcards
 
