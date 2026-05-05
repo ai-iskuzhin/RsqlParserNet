@@ -1,0 +1,106 @@
+name: Publish GitHub Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      git_ref:
+        description: 'Git ref to publish from, for example main or v0.1.0-preview.4'
+        required: true
+        type: string
+      version:
+        description: 'Package version to publish, for example 0.1.0-preview.1'
+        required: true
+        type: string
+      package:
+        description: 'Package to publish'
+        required: true
+        type: choice
+        default: RsqlParserNet
+        options:
+          - RsqlParserNet
+          - RsqlParserNet.Linq
+          - RsqlParserNet.AspNetCore
+          - RsqlParserNet.EntityFrameworkCore
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    name: Publish GitHub Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.git_ref }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore RsqlParserNet.sln
+
+      - name: Build
+        run: dotnet build RsqlParserNet.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test RsqlParserNet.sln --configuration Release --no-build --verbosity normal
+
+      - name: Resolve Package
+        id: package
+        env:
+          PACKAGE: ${{ inputs.package }}
+        run: |
+          case "$PACKAGE" in
+            RsqlParserNet)
+              echo "project=src/RsqlParserNet/RsqlParserNet.csproj" >> "$GITHUB_OUTPUT"
+              echo "id=RsqlParserNet" >> "$GITHUB_OUTPUT"
+              ;;
+            RsqlParserNet.Linq)
+              echo "project=src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj" >> "$GITHUB_OUTPUT"
+              echo "id=RsqlParserNet.Linq" >> "$GITHUB_OUTPUT"
+              ;;
+            RsqlParserNet.AspNetCore)
+              echo "project=src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj" >> "$GITHUB_OUTPUT"
+              echo "id=RsqlParserNet.AspNetCore" >> "$GITHUB_OUTPUT"
+              ;;
+            RsqlParserNet.EntityFrameworkCore)
+              echo "project=src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkCore.csproj" >> "$GITHUB_OUTPUT"
+              echo "id=RsqlParserNet.EntityFrameworkCore" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Unsupported package '$PACKAGE'" >&2
+              exit 1
+              ;;
+          esac
+
+      - name: Pack Requested Version
+        run: >
+          dotnet pack ${{ steps.package.outputs.project }}
+          --configuration Release
+          --no-build
+          --output artifacts/packages
+          -p:PackageVersion=${{ inputs.version }}
+          -p:Version=${{ inputs.version }}
+          -p:InformationalVersion=${{ inputs.version }}
+
+      - name: Add GitHub Packages Source
+        run: >
+          dotnet nuget add source
+          --username "${{ github.actor }}"
+          --password "${{ secrets.GITHUB_TOKEN }}"
+          --store-password-in-clear-text
+          --name github
+          "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
+      - name: Publish Package
+        run: >
+          dotnet nuget push artifacts/packages/${{ steps.package.outputs.id }}.${{ inputs.version }}.nupkg
+          --source github
+          --api-key "${{ secrets.GITHUB_TOKEN }}"
+          --skip-duplicate

@@ -3,6 +3,7 @@
 [![CI](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/ci.yml)
 [![Release](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/release.yml/badge.svg)](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/release.yml)
 [![Publish NuGet](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/publish-nuget.yml/badge.svg)](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/publish-nuget.yml)
+[![Publish GitHub Packages](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/publish-github-packages.yml/badge.svg)](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/publish-github-packages.yml)
 [![License](https://img.shields.io/github/license/ai-iskuzhin/RsqlParserNet?style=flat-square)](LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&style=flat-square)](https://dotnet.microsoft.com/)
 [![Coverage](https://img.shields.io/badge/coverage-not%20published-lightgrey?style=flat-square)](#development)

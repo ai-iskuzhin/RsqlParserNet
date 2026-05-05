@@ -161,3 +161,36 @@ Use `main` for the first adapter preview packages unless a newer tag has been cr
 After the adapter packages are included in a tagged release, the `git_ref` should usually be the release tag. This keeps the package published to NuGet identical to the package attached to the GitHub release.
 
 The workflow restores, builds, tests, packs the requested package and version from the requested git ref, and pushes the `.nupkg` and `.snupkg` to NuGet.
+
+## GitHub Packages Preview Feed
+
+The repository also includes a manual `Publish GitHub Packages` workflow for publishing preview packages to GitHub Packages without a NuGet.org API key.
+
+Use it when packages should be tested from the repository's GitHub Packages feed before publishing to NuGet.org:
+
+```text
+git_ref: main
+version: 0.1.0-preview.1
+package: RsqlParserNet.Linq
+```
+
+GitHub Packages publishing uses the workflow `GITHUB_TOKEN` with `packages: write` permission. It publishes only the `.nupkg`; NuGet.org remains the preferred public registry for normal package discovery and symbol packages.
+
+Consumers need to add the GitHub Packages source explicitly:
+
+```bash
+dotnet nuget add source \
+  --username <github-user> \
+  --password <github-token> \
+  --store-password-in-clear-text \
+  --name rsqlparsernet-github \
+  https://nuget.pkg.github.com/ai-iskuzhin/index.json
+```
+
+Then install from that source:
+
+```bash
+dotnet add package RsqlParserNet.Linq \
+  --version 0.1.0-preview.1 \
+  --source rsqlparsernet-github
+```
