@@ -226,6 +226,7 @@ name==Bo*d  -> StartsWith("Bo") && EndsWith("d")
 ```
 
 See [docs/linq-adapter.md](docs/linq-adapter.md) for wildcard behavior, value conversion, and adapter limitations.
+See [docs/aspnet-core-usage.md](docs/aspnet-core-usage.md) for ASP.NET Core request handling examples.
 
 ## Adapter Direction
 
@@ -259,5 +260,6 @@ dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Rel
 - Syntax details: [docs/syntax.md](docs/syntax.md)
 - LINQ adapter details: [docs/linq-adapter.md](docs/linq-adapter.md)
 - LINQ adapter roadmap: [docs/linq-roadmap.md](docs/linq-roadmap.md)
+- ASP.NET Core usage: [docs/aspnet-core-usage.md](docs/aspnet-core-usage.md)
 - Core v1 checklist: [docs/core-v1-checklist.md](docs/core-v1-checklist.md)
 - Release process: [docs/release.md](docs/release.md)

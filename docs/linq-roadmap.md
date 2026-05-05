@@ -30,11 +30,11 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - Conversion for strings, booleans, numeric primitives, enums, nullable values, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`.
 - EF Core SQLite translation tests for built-in scalar operators, wildcards, string custom operators, and collection operators.
 - CI, release, and manual NuGet publish workflow support for the LINQ adapter package.
+- ASP.NET Core request handling samples without adding ASP.NET dependencies to the LINQ package.
 
 ## Before Stable
 
 - Decide whether `=any=` and `=all=` should remain helper conventions or move into a documented companion syntax profile.
-- Add samples for ASP.NET Core request handling without adding ASP.NET dependencies to the LINQ package.
 - Publish `RsqlParserNet.Linq` as `0.1.0-preview.1` and gather feedback before API freeze.
 
 ## Later
