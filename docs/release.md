@@ -79,3 +79,20 @@ The initial release notes are populated from `CHANGELOG.md`. Edit the generated 
 ## NuGet Release
 
 NuGet publishing is intentionally manual for now. Publish only after the tag build and GitHub release succeed.
+
+The repository expects a GitHub Actions secret named:
+
+```text
+NUGET_API_KEY
+```
+
+To publish, run the `Publish NuGet` workflow manually from GitHub Actions and enter the git ref and package version:
+
+```text
+git_ref: v0.1.0-preview.1
+version: 0.1.0-preview.1
+```
+
+The `git_ref` should usually be the release tag. This keeps the package published to NuGet identical to the package attached to the GitHub release.
+
+The workflow restores, builds, tests, packs the requested version from the requested git ref, and pushes the `.nupkg` and `.snupkg` to NuGet.

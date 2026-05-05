@@ -46,6 +46,7 @@ Initial parser-focused preview.
 - Split detailed syntax documentation into `docs/syntax.md` and simplified the package README.
 - Release process and core v1 checklist documentation.
 - Tag-based GitHub Release workflow for package artifacts.
+- Manual NuGet publish workflow using `NUGET_API_KEY`.
 - Structured diagnostics with stable diagnostic code constants.
 - Source spans and line/column locations for diagnostics.
 - Parser options with `RsqlParseOptions.AllowWordLogicalOperators`.
