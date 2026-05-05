@@ -17,22 +17,23 @@ Configure parser options once when the same custom operator set should be used b
 using RsqlParserNet;
 using RsqlParserNet.AspNetCore;
 
-builder.Services.AddRsqlQueryFilter(options =>
-{
-    options.QueryParameterName = "filter";
-    options.ParseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
-});
-builder.Services.AddRsqlPageQuery(options =>
-{
-    options.PageParameterName = "page";
-    options.PageSizeParameterName = "pageSize";
-    options.DefaultPageSize = 50;
-    options.MaxPageSize = 100;
-});
-builder.Services.AddRsqlSortQuery(options =>
-{
-    options.SortParameterName = "sort";
-});
+builder.Services.AddRsqlQueryRequest(
+    configureFilter: options =>
+    {
+        options.QueryParameterName = "filter";
+        options.ParseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
+    },
+    configureSort: options =>
+    {
+        options.SortParameterName = "sort";
+    },
+    configurePage: options =>
+    {
+        options.PageParameterName = "page";
+        options.PageSizeParameterName = "pageSize";
+        options.DefaultPageSize = 50;
+        options.MaxPageSize = 100;
+    });
 ```
 
 ## Minimal API Binding
@@ -45,45 +46,29 @@ using RsqlParserNet.EntityFrameworkCore;
 using RsqlParserNet.Linq;
 
 app.MapGet("/products", async (
-    RsqlQueryFilter filter,
-    RsqlSortQuery sort,
-    RsqlPageQuery page,
+    RsqlQueryRequest request,
     AppDbContext db,
     CancellationToken cancellationToken) =>
 {
-    if (!filter.IsValid)
+    if (!request.IsValid)
     {
-        return Results.ValidationProblem(filter.ToValidationErrors());
+        return Results.ValidationProblem(request.ToValidationErrors());
     }
 
-    if (!sort.IsValid)
-    {
-        return Results.ValidationProblem(sort.ToValidationErrors());
-    }
-
-    if (!page.IsValid)
-    {
-        return Results.ValidationProblem(page.ToValidationErrors());
-    }
-
-    var query = db.Products.AsQueryable();
-
-    if (filter.HasQuery)
-    {
-        query = query.ApplyRsql(filter.Query!, ProductRsqlProfile.Instance);
-    }
-
-    query = sort.HasRequest
-        ? query.ApplySort(sort.Request!, ProductRsqlProfile.Instance)
+    var query = request.ApplyTo(db.Products, ProductRsqlProfile.Instance);
+    query = request.Sort.HasRequest
+        ? query
         : query.OrderBy(product => product.Id);
 
-    var result = await query.ToRsqlPageAsync(page.Request!, cancellationToken);
+    var result = await query.ToRsqlPageAsync(request.Page.Request!, cancellationToken);
 
     return Results.Ok(result);
 });
 ```
 
-`RsqlQueryFilter` reads `filter` by default. Set `RsqlQueryFilterOptions.QueryParameterName` when an API uses another query parameter name.
+`RsqlQueryRequest` uses `filter`, `sort`, `page`, and `pageSize` by default. Configure the individual option objects when an API uses different query parameter names.
+
+The individual binders `RsqlQueryFilter`, `RsqlSortQuery`, and `RsqlPageQuery` remain available when an endpoint only needs part of the query contract.
 
 ## Other Endpoint Frameworks
 

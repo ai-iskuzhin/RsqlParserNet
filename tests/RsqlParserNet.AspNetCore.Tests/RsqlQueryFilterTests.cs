@@ -284,6 +284,81 @@ public sealed class RsqlQueryFilterTests
         Assert.Equal(RsqlSortDirection.Descending, boundSort.Request.Direction);
     }
 
+    [Fact]
+    public async Task QueryRequest_BindAsyncBindsFilterSortAndPage()
+    {
+        var services = new ServiceCollection();
+        services.AddRsqlQueryRequest(
+            configureFilter: options => options.ParseOptions = RsqlParseOptions.Default,
+            configurePage: options => options.MaxPageSize = 25);
+        var context = CreateContext("?filter=status%3D%3Dactive&sort=-name&page=2&pageSize=100", services);
+        var parameter = GetParameter(nameof(QueryRequestEndpoint));
+
+        var request = await RsqlQueryRequest.BindAsync(context, parameter);
+
+        Assert.True(request.IsValid);
+        Assert.True(request.Filter.HasQuery);
+        Assert.NotNull(request.Sort.Request);
+        Assert.NotNull(request.Page.Request);
+        Assert.Equal("name", request.Sort.Request.Field);
+        Assert.Equal(RsqlSortDirection.Descending, request.Sort.Request.Direction);
+        Assert.Equal(2, request.Page.Request.Page);
+        Assert.Equal(25, request.Page.Request.PageSize);
+    }
+
+    [Fact]
+    public async Task QueryRequest_MergesValidationErrors()
+    {
+        var context = CreateContext("?filter=status%3D%3D&sort=-&page=0&pageSize=bad");
+        var parameter = GetParameter(nameof(QueryRequestEndpoint));
+
+        var request = await RsqlQueryRequest.BindAsync(context, parameter);
+        var errors = request.ToValidationErrors();
+
+        Assert.False(request.IsValid);
+        Assert.NotEmpty(errors);
+        Assert.Contains(RsqlSortQuery.DefaultSortParameterName, errors.Keys);
+        Assert.Contains(RsqlPageQuery.DefaultPageParameterName, errors.Keys);
+        Assert.Contains(RsqlPageQuery.DefaultPageSizeParameterName, errors.Keys);
+    }
+
+    [Fact]
+    public void QueryRequest_ApplyToAppliesFilterAndSort()
+    {
+        var filter = RsqlQueryFilter.Parse("status==active");
+        var sort = RsqlSortQuery.Parse("-name");
+        var page = RsqlPageQuery.Parse(null, null);
+        var request = new RsqlQueryRequest(filter, sort, page);
+
+        var result = request
+            .ApplyTo(SampleProducts(), new ProductRsqlProfile())
+            .Select(product => product.Name)
+            .ToArray();
+
+        Assert.Equal(["Helmet", "Bike"], result);
+    }
+
+    [Fact]
+    public async Task MinimalApi_BindsQueryRequestParameter()
+    {
+        RsqlQueryRequest? boundRequest = null;
+        var requestDelegate = RequestDelegateFactory
+            .Create((RsqlQueryRequest query) =>
+            {
+                boundRequest = query;
+            })
+            .RequestDelegate;
+        var context = CreateContext("?filter=status%3D%3Dactive&sort=name&page=1&pageSize=10");
+
+        await requestDelegate(context);
+
+        Assert.NotNull(boundRequest);
+        Assert.True(boundRequest.IsValid);
+        Assert.True(boundRequest.Filter.HasQuery);
+        Assert.NotNull(boundRequest.Sort.Request);
+        Assert.NotNull(boundRequest.Page.Request);
+    }
+
     private static DefaultHttpContext CreateContext(string queryString, ServiceCollection? services = null)
     {
         var context = new DefaultHttpContext
@@ -312,4 +387,29 @@ public sealed class RsqlQueryFilterTests
     private static void SortEndpoint(RsqlSortQuery sort)
     {
     }
+
+    private static void QueryRequestEndpoint(RsqlQueryRequest query)
+    {
+    }
+
+    private static IQueryable<Product> SampleProducts()
+    {
+        return new[]
+        {
+            new Product("Bike", "active"),
+            new Product("Board", "draft"),
+            new Product("Helmet", "active")
+        }.AsQueryable();
+    }
+
+    private sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
+    {
+        public override void Configure(RsqlLinqOptions<Product> options)
+        {
+            options.Allow("name", product => product.Name);
+            options.Allow("status", product => product.Status);
+        }
+    }
+
+    private sealed record Product(string Name, string Status);
 }

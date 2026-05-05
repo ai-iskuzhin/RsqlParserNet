@@ -78,4 +78,27 @@ public static class RsqlQueryFilterServiceCollectionExtensions
 
         return services;
     }
+
+    /// <summary>
+    /// Registers RSQL filter, sort, and page query binding options.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="configureFilter">Optional filter query binding option configuration.</param>
+    /// <param name="configureSort">Optional sort query binding option configuration.</param>
+    /// <param name="configurePage">Optional page query binding option configuration.</param>
+    /// <returns>The configured service collection.</returns>
+    public static IServiceCollection AddRsqlQueryRequest(
+        this IServiceCollection services,
+        Action<RsqlQueryFilterOptions>? configureFilter = null,
+        Action<RsqlSortQueryOptions>? configureSort = null,
+        Action<RsqlPageQueryOptions>? configurePage = null)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.AddRsqlQueryFilter(configureFilter);
+        services.AddRsqlSortQuery(configureSort);
+        services.AddRsqlPageQuery(configurePage);
+
+        return services;
+    }
 }

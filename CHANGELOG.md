@@ -29,6 +29,7 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 - Added framework-neutral sort request parsing and allowlisted queryable sort helpers.
 - Added ASP.NET Core `RsqlPageQuery` binding for `page` and `pageSize` query parameters.
 - Added ASP.NET Core `RsqlSortQuery` binding for `sort=field` and `sort=-field`.
+- Added ASP.NET Core `RsqlQueryRequest` binding for combined filter, sort, and page query state.
 - Added the `RsqlParserNet.EntityFrameworkCore` adapter project with async paged result helpers.
 
 ## 0.1.0-preview.3

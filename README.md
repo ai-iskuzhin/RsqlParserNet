@@ -245,48 +245,31 @@ See [docs/aspnet-core-usage.md](docs/aspnet-core-usage.md) for ASP.NET Core requ
 
 ## ASP.NET Core Binding
 
-`RsqlParserNet.AspNetCore` adds a bindable `RsqlQueryFilter` wrapper for request query strings. Minimal APIs can accept it directly and reuse the parsed `RsqlQuery`:
+`RsqlParserNet.AspNetCore` adds bindable query wrappers for request query strings. Minimal APIs can accept `RsqlQueryRequest` directly to reuse parsed filter, sort, and page state:
 
 ```csharp
-builder.Services.AddRsqlQueryFilter(options =>
-{
-    options.ParseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
-});
-builder.Services.AddRsqlPageQuery(options => options.MaxPageSize = 100);
+builder.Services.AddRsqlQueryRequest(
+    configureFilter: options =>
+    {
+        options.ParseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
+    },
+    configurePage: options => options.MaxPageSize = 100);
 
 app.MapGet("/products", async (
-    RsqlQueryFilter filter,
-    RsqlSortQuery sort,
-    RsqlPageQuery page,
+    RsqlQueryRequest request,
     AppDbContext db) =>
 {
-    if (!filter.IsValid)
+    if (!request.IsValid)
     {
-        return Results.ValidationProblem(filter.ToValidationErrors());
+        return Results.ValidationProblem(request.ToValidationErrors());
     }
 
-    if (!sort.IsValid)
-    {
-        return Results.ValidationProblem(sort.ToValidationErrors());
-    }
-
-    if (!page.IsValid)
-    {
-        return Results.ValidationProblem(page.ToValidationErrors());
-    }
-
-    var query = db.Products.AsQueryable();
-
-    if (filter.HasQuery)
-    {
-        query = query.ApplyRsql(filter.Query!, ProductRsqlProfile.Instance);
-    }
-
-    query = sort.HasRequest
-        ? query.ApplySort(sort.Request!, ProductRsqlProfile.Instance)
+    var query = request.ApplyTo(db.Products, ProductRsqlProfile.Instance);
+    query = request.Sort.HasRequest
+        ? query
         : query.OrderBy(product => product.Id);
 
-    var result = await query.ToRsqlPageAsync(page.Request!);
+    var result = await query.ToRsqlPageAsync(request.Page.Request!);
 
     return Results.Ok(result);
 });
