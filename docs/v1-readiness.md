@@ -21,6 +21,7 @@ The adapter surface is still preview. Before `1.0.0`, verify:
 - `RsqlParserNet.EntityFrameworkCore` async paging helpers are stable and do not hide too much query composition from applications.
 - `RsqlParserNet.FastEndpoints` validation helpers fit normal FastEndpoints endpoint flow without forcing a specific response shape.
 - `RsqlParserNet.OpenApi` documents only the query parameters an endpoint actually supports.
+- `RsqlParserNet.Swashbuckle` supports endpoint-scoped documentation and does not require documenting all operations globally.
 
 ## Release Hygiene
 

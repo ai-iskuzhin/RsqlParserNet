@@ -23,6 +23,7 @@ on:
           - RsqlParserNet.EntityFrameworkCore
           - RsqlParserNet.FastEndpoints
           - RsqlParserNet.OpenApi
+          - RsqlParserNet.Swashbuckle
 
 permissions:
   contents: read
@@ -82,6 +83,10 @@ jobs:
             RsqlParserNet.OpenApi)
               echo "project=src/RsqlParserNet.OpenApi/RsqlParserNet.OpenApi.csproj" >> "$GITHUB_OUTPUT"
               echo "id=RsqlParserNet.OpenApi" >> "$GITHUB_OUTPUT"
+              ;;
+            RsqlParserNet.Swashbuckle)
+              echo "project=src/RsqlParserNet.Swashbuckle/RsqlParserNet.Swashbuckle.csproj" >> "$GITHUB_OUTPUT"
+              echo "id=RsqlParserNet.Swashbuckle" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "Unsupported package '$PACKAGE'" >&2

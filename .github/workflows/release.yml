@@ -49,6 +49,9 @@ jobs:
       - name: Pack OpenAPI Adapter
         run: dotnet pack src/RsqlParserNet.OpenApi/RsqlParserNet.OpenApi.csproj --configuration Release --no-build --output artifacts/packages
 
+      - name: Pack Swashbuckle Adapter
+        run: dotnet pack src/RsqlParserNet.Swashbuckle/RsqlParserNet.Swashbuckle.csproj --configuration Release --no-build --output artifacts/packages
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}

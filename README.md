@@ -16,12 +16,13 @@
 | `RsqlParserNet.EntityFrameworkCore` | [![RsqlParserNet.EntityFrameworkCore NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.EntityFrameworkCore?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.EntityFrameworkCore) | [![RsqlParserNet.EntityFrameworkCore Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.EntityFrameworkCore?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.EntityFrameworkCore) |
 | `RsqlParserNet.FastEndpoints` | [![RsqlParserNet.FastEndpoints NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.FastEndpoints?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.FastEndpoints) | [![RsqlParserNet.FastEndpoints Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.FastEndpoints?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.FastEndpoints) |
 | `RsqlParserNet.OpenApi` | [![RsqlParserNet.OpenApi NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.OpenApi?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.OpenApi) | [![RsqlParserNet.OpenApi Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.OpenApi?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.OpenApi) |
+| `RsqlParserNet.Swashbuckle` | [![RsqlParserNet.Swashbuckle NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.Swashbuckle?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Swashbuckle) | [![RsqlParserNet.Swashbuckle Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.Swashbuckle?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Swashbuckle) |
 
 A dependency-light .NET parser for RSQL/FIQL-style REST API query expressions.
 
 `RsqlParserNet` parses query text into a typed AST with source spans and structured diagnostics. The core package does not depend on ASP.NET Core, LINQ, Entity Framework Core, or ORM APIs.
 
-Current status: the parser core is `0.1.0-preview.3`; LINQ, ASP.NET Core, Entity Framework Core, FastEndpoints, and OpenAPI adapters are prepared as `0.1.0-preview.1`. The parser core is published for early testing, but public API changes are still possible before `1.0.0`.
+Current status: the parser core is `0.1.0-preview.3`; LINQ, ASP.NET Core, Entity Framework Core, FastEndpoints, OpenAPI, and Swashbuckle adapters are prepared as `0.1.0-preview.1`. The parser core is published for early testing, but public API changes are still possible before `1.0.0`.
 
 ## Installation
 
@@ -61,6 +62,12 @@ OpenAPI helpers:
 dotnet add package RsqlParserNet.OpenApi --prerelease
 ```
 
+Swashbuckle helpers:
+
+```bash
+dotnet add package RsqlParserNet.Swashbuckle --prerelease
+```
+
 For local development, reference the project directly:
 
 ```xml
@@ -70,6 +77,7 @@ For local development, reference the project directly:
 <ProjectReference Include="src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkCore.csproj" />
 <ProjectReference Include="src/RsqlParserNet.FastEndpoints/RsqlParserNet.FastEndpoints.csproj" />
 <ProjectReference Include="src/RsqlParserNet.OpenApi/RsqlParserNet.OpenApi.csproj" />
+<ProjectReference Include="src/RsqlParserNet.Swashbuckle/RsqlParserNet.Swashbuckle.csproj" />
 ```
 
 ## Quick Start
@@ -337,6 +345,8 @@ Framework adapters should stay separate when they need framework-specific depend
 
 `RsqlParserNet.OpenApi` owns endpoint-scoped OpenAPI query parameter documentation helpers for `filter`, `sort`, `page`, and `pageSize`.
 
+`RsqlParserNet.Swashbuckle` owns Swashbuckle operation filters for documenting the same query parameters through SwaggerGen.
+
 ## Development
 
 ```bash
@@ -349,6 +359,7 @@ dotnet pack src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj --confi
 dotnet pack src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkCore.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.FastEndpoints/RsqlParserNet.FastEndpoints.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.OpenApi/RsqlParserNet.OpenApi.csproj --configuration Release --output artifacts/packages
+dotnet pack src/RsqlParserNet.Swashbuckle/RsqlParserNet.Swashbuckle.csproj --configuration Release --output artifacts/packages
 ```
 
 Coverage is collected locally with Coverlet. A public percentage badge will be added after coverage publishing is wired into CI.
@@ -363,6 +374,7 @@ Coverage is collected locally with Coverlet. A public percentage badge will be a
 - EF Core helpers: [docs/entity-framework-core.md](docs/entity-framework-core.md)
 - FastEndpoints usage: [docs/fastendpoints-usage.md](docs/fastendpoints-usage.md)
 - OpenAPI usage: [docs/openapi-usage.md](docs/openapi-usage.md)
+- Swashbuckle usage: [docs/swashbuckle-usage.md](docs/swashbuckle-usage.md)
 - 1.0.0 readiness: [docs/v1-readiness.md](docs/v1-readiness.md)
 - Core v1 checklist: [docs/core-v1-checklist.md](docs/core-v1-checklist.md)
 - Release process: [docs/release.md](docs/release.md)

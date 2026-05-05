@@ -50,10 +50,11 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - Multi-field sorting with comma-separated sort text such as `sort=-createdAt,name`.
 - FastEndpoints validation helpers in a separate adapter package.
 - OpenAPI query parameter documentation helpers in a separate adapter package.
+- Swashbuckle operation filters in a separate adapter package.
 
 ## Before Stable
 
-- Publish `RsqlParserNet.Linq`, `RsqlParserNet.AspNetCore`, `RsqlParserNet.EntityFrameworkCore`, `RsqlParserNet.FastEndpoints`, and `RsqlParserNet.OpenApi` as preview packages.
+- Publish `RsqlParserNet.Linq`, `RsqlParserNet.AspNetCore`, `RsqlParserNet.EntityFrameworkCore`, `RsqlParserNet.FastEndpoints`, `RsqlParserNet.OpenApi`, and `RsqlParserNet.Swashbuckle` as preview packages.
 - Gather API feedback on profiles, custom operators, sort parsing, pagination response shape, and framework integration before API freeze.
 - Clarify preview package version alignment across core and adapter packages.
 
