@@ -247,6 +247,16 @@ public sealed class RsqlQueryFilterTests
     }
 
     [Fact]
+    public void SortQuery_ParseReturnsErrorsForInvalidFieldSyntax()
+    {
+        var sortQuery = RsqlSortQuery.Parse("9name");
+
+        Assert.False(sortQuery.IsValid);
+        Assert.False(sortQuery.HasRequest);
+        Assert.Contains(RsqlSortQuery.DefaultSortParameterName, sortQuery.Errors.Keys);
+    }
+
+    [Fact]
     public async Task SortQuery_BindAsyncUsesConfiguredParameterName()
     {
         var services = new ServiceCollection();

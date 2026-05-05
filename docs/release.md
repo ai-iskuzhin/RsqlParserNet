@@ -35,6 +35,15 @@ dotnet pack src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkC
 
 If releasing only one package, the other package-specific pack steps can be skipped.
 
+When releasing adapter packages for the first time, publish in dependency order:
+
+```text
+RsqlParserNet
+RsqlParserNet.Linq
+RsqlParserNet.AspNetCore
+RsqlParserNet.EntityFrameworkCore
+```
+
 5. Inspect the generated packages:
 
 ```bash

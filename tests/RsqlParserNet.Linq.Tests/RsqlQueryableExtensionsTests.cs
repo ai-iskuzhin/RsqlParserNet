@@ -152,6 +152,27 @@ public sealed class RsqlQueryableExtensionsTests
     }
 
     [Fact]
+    public void SortRequest_ParseTrimsWhitespace()
+    {
+        var sort = RsqlSortRequest.Parse(" -count ");
+
+        Assert.Equal("count", sort.Field);
+        Assert.Equal(RsqlSortDirection.Descending, sort.Direction);
+    }
+
+    [Theory]
+    [InlineData("-")]
+    [InlineData("9name")]
+    [InlineData("name value")]
+    [InlineData("name.")]
+    [InlineData("name..value")]
+    [InlineData("--name")]
+    public void SortRequest_ParseRejectsInvalidFieldSyntax(string text)
+    {
+        Assert.Throws<ArgumentException>(() => RsqlSortRequest.Parse(text));
+    }
+
+    [Fact]
     public void ApplySort_RejectsUnmappedField()
     {
         var sort = new RsqlSortRequest("unknown");

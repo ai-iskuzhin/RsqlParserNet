@@ -34,7 +34,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageReleaseNotes>Initial ASP.NET Core preview with a bindable RSQL query filter model for Minimal APIs and endpoint-style request handling.</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial ASP.NET Core preview with bindable filter, sort, page, and combined query request models for Minimal APIs and endpoint-style request handling.</PackageReleaseNotes>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

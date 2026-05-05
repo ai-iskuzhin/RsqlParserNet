@@ -48,7 +48,9 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 
 ## Before Stable
 
-- Publish `RsqlParserNet.Linq` as `0.1.0-preview.1` and gather feedback before API freeze.
+- Publish `RsqlParserNet.Linq`, `RsqlParserNet.AspNetCore`, and `RsqlParserNet.EntityFrameworkCore` as preview packages.
+- Gather API feedback on profiles, custom operators, sort parsing, and pagination response shape before API freeze.
+- Decide whether multi-field sorting belongs in `1.0.0` or a later minor release.
 
 ## Later
 

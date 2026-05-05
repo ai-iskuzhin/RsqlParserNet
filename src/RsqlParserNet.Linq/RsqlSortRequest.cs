@@ -42,15 +42,68 @@ public sealed record RsqlSortRequest
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(text);
 
-        var isDescending = text[0] == '-';
-        var field = isDescending ? text[1..] : text;
+        var normalizedText = text.Trim();
+        var isDescending = normalizedText[0] == '-';
+        var field = isDescending ? normalizedText[1..] : normalizedText;
         if (string.IsNullOrWhiteSpace(field))
         {
             throw new ArgumentException("Sort field must not be empty.", nameof(text));
         }
 
+        if (!IsValidField(field))
+        {
+            throw new ArgumentException("Sort field must use selector syntax.", nameof(text));
+        }
+
         return new RsqlSortRequest(
             field,
             isDescending ? RsqlSortDirection.Descending : RsqlSortDirection.Ascending);
+    }
+
+    private static bool IsValidField(string field)
+    {
+        var segmentStart = 0;
+        for (var index = 0; index <= field.Length; index++)
+        {
+            if (index == field.Length || field[index] == '.')
+            {
+                if (!IsValidSegment(field.AsSpan(segmentStart, index - segmentStart)))
+                {
+                    return false;
+                }
+
+                segmentStart = index + 1;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsValidSegment(ReadOnlySpan<char> segment)
+    {
+        if (segment.Length == 0 || !IsSelectorStart(segment[0]))
+        {
+            return false;
+        }
+
+        for (var index = 1; index < segment.Length; index++)
+        {
+            if (!IsSelectorPart(segment[index]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool IsSelectorStart(char value)
+    {
+        return char.IsAsciiLetter(value) || value == '_';
+    }
+
+    private static bool IsSelectorPart(char value)
+    {
+        return char.IsAsciiLetterOrDigit(value) || value is '_' or '-';
     }
 }
