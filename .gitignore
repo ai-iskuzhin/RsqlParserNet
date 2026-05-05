@@ -6,6 +6,9 @@
 # dotenv files
 .env
 
+# Local preview/integration notes
+docs/preview-feedback.md
+
 # User-specific files
 *.rsuser
 *.suo
