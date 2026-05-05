@@ -54,4 +54,28 @@ public static class RsqlQueryFilterServiceCollectionExtensions
 
         return services;
     }
+
+    /// <summary>
+    /// Registers RSQL sort query binding options.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="configure">Optional sort query binding option configuration.</param>
+    /// <returns>The configured service collection.</returns>
+    public static IServiceCollection AddRsqlSortQuery(
+        this IServiceCollection services,
+        Action<RsqlSortQueryOptions>? configure = null)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        if (configure is null)
+        {
+            services.AddOptions<RsqlSortQueryOptions>();
+        }
+        else
+        {
+            services.Configure(configure);
+        }
+
+        return services;
+    }
 }

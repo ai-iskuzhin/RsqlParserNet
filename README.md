@@ -254,11 +254,20 @@ builder.Services.AddRsqlQueryFilter(options =>
 });
 builder.Services.AddRsqlPageQuery(options => options.MaxPageSize = 100);
 
-app.MapGet("/products", async (RsqlQueryFilter filter, RsqlPageQuery page, AppDbContext db) =>
+app.MapGet("/products", async (
+    RsqlQueryFilter filter,
+    RsqlSortQuery sort,
+    RsqlPageQuery page,
+    AppDbContext db) =>
 {
     if (!filter.IsValid)
     {
         return Results.ValidationProblem(filter.ToValidationErrors());
+    }
+
+    if (!sort.IsValid)
+    {
+        return Results.ValidationProblem(sort.ToValidationErrors());
     }
 
     if (!page.IsValid)
@@ -266,11 +275,20 @@ app.MapGet("/products", async (RsqlQueryFilter filter, RsqlPageQuery page, AppDb
         return Results.ValidationProblem(page.ToValidationErrors());
     }
 
-    var query = filter.HasQuery
-        ? await db.Products.ToRsqlPageAsync(filter.Query!, ProductRsqlProfile.Instance, page.Request!)
-        : await db.Products.ToRsqlPageAsync(page.Request!);
+    var query = db.Products.AsQueryable();
 
-    return Results.Ok(query);
+    if (filter.HasQuery)
+    {
+        query = query.ApplyRsql(filter.Query!, ProductRsqlProfile.Instance);
+    }
+
+    query = sort.HasRequest
+        ? query.ApplySort(sort.Request!, ProductRsqlProfile.Instance)
+        : query.OrderBy(product => product.Id);
+
+    var result = await query.ToRsqlPageAsync(page.Request!);
+
+    return Results.Ok(result);
 });
 ```
 
@@ -293,7 +311,7 @@ The core parser should not expose arbitrary reflected entity/property access. Fu
 
 Framework adapters should stay separate when they need framework-specific dependencies. `RsqlParserNet.AspNetCore` owns ASP.NET Core binding helpers, and a future `RsqlParserNet.FastEndpoints` package can wrap FastEndpoints request/validation conventions if plain `RsqlQueryFilter.Parse` becomes repetitive.
 
-`RsqlParserNet.EntityFrameworkCore` owns EF Core async execution helpers, including paged result helpers that return `items` and `pagination` metadata.
+`RsqlParserNet.EntityFrameworkCore` owns EF Core async execution helpers, including paged result helpers that return `items` and `pagination` metadata. Sorting uses the same allowlisted profile mappings as filtering with `sort=field` and `sort=-field`.
 
 ## Development
 

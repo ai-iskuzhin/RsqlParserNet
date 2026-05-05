@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using RsqlParserNet.Linq;
 
 namespace RsqlParserNet.AspNetCore.Tests;
 
@@ -210,6 +211,79 @@ public sealed class RsqlQueryFilterTests
         Assert.Equal(10, boundPage.Request.PageSize);
     }
 
+    [Fact]
+    public void SortQuery_ParseReturnsAscendingSort()
+    {
+        var sortQuery = RsqlSortQuery.Parse("name");
+
+        Assert.True(sortQuery.IsValid);
+        Assert.True(sortQuery.HasRequest);
+        Assert.NotNull(sortQuery.Request);
+        Assert.Equal("name", sortQuery.Request.Field);
+        Assert.Equal(RsqlSortDirection.Ascending, sortQuery.Request.Direction);
+    }
+
+    [Fact]
+    public void SortQuery_ParseReturnsDescendingSort()
+    {
+        var sortQuery = RsqlSortQuery.Parse("-createdAt");
+
+        Assert.True(sortQuery.IsValid);
+        Assert.True(sortQuery.HasRequest);
+        Assert.NotNull(sortQuery.Request);
+        Assert.Equal("createdAt", sortQuery.Request.Field);
+        Assert.Equal(RsqlSortDirection.Descending, sortQuery.Request.Direction);
+    }
+
+    [Fact]
+    public void SortQuery_ParseReturnsErrorsForMissingField()
+    {
+        var sortQuery = RsqlSortQuery.Parse("-");
+
+        Assert.False(sortQuery.IsValid);
+        Assert.False(sortQuery.HasRequest);
+        Assert.Contains(RsqlSortQuery.DefaultSortParameterName, sortQuery.Errors.Keys);
+        Assert.NotEmpty(sortQuery.ToValidationErrors());
+    }
+
+    [Fact]
+    public async Task SortQuery_BindAsyncUsesConfiguredParameterName()
+    {
+        var services = new ServiceCollection();
+        services.AddRsqlSortQuery(options => options.SortParameterName = "orderBy");
+        var context = CreateContext("?orderBy=-name", services);
+        var parameter = GetParameter(nameof(SortEndpoint));
+
+        var sortQuery = await RsqlSortQuery.BindAsync(context, parameter);
+
+        Assert.True(sortQuery.IsValid);
+        Assert.NotNull(sortQuery.Request);
+        Assert.Equal("orderBy", sortQuery.ParameterName);
+        Assert.Equal("name", sortQuery.Request.Field);
+        Assert.Equal(RsqlSortDirection.Descending, sortQuery.Request.Direction);
+    }
+
+    [Fact]
+    public async Task MinimalApi_BindsSortQueryParameter()
+    {
+        RsqlSortQuery? boundSort = null;
+        var requestDelegate = RequestDelegateFactory
+            .Create((RsqlSortQuery sort) =>
+            {
+                boundSort = sort;
+            })
+            .RequestDelegate;
+        var context = CreateContext("?sort=-name");
+
+        await requestDelegate(context);
+
+        Assert.NotNull(boundSort);
+        Assert.True(boundSort.IsValid);
+        Assert.NotNull(boundSort.Request);
+        Assert.Equal("name", boundSort.Request.Field);
+        Assert.Equal(RsqlSortDirection.Descending, boundSort.Request.Direction);
+    }
+
     private static DefaultHttpContext CreateContext(string queryString, ServiceCollection? services = null)
     {
         var context = new DefaultHttpContext
@@ -232,6 +306,10 @@ public sealed class RsqlQueryFilterTests
     }
 
     private static void PageEndpoint(RsqlPageQuery page)
+    {
+    }
+
+    private static void SortEndpoint(RsqlSortQuery sort)
     {
     }
 }

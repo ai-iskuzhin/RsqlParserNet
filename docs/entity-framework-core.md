@@ -59,3 +59,28 @@ var result = await db.Products
 ```
 
 For API endpoints, prefer parsing with `RsqlParser.TryParse` or `RsqlQueryFilter` first so syntax diagnostics can be returned as validation errors.
+
+## Sorting
+
+Sorting uses the same explicit profile mappings as filtering:
+
+```csharp
+var sort = RsqlSortRequest.Parse("-createdAt");
+
+var result = await db.Products
+    .ToRsqlPageAsync(
+        parsed,
+        sort,
+        ProductRsqlProfile.Instance,
+        new RsqlPageRequest(page: 1, pageSize: 50),
+        cancellationToken);
+```
+
+The supported sort syntax is:
+
+```text
+sort=name
+sort=-createdAt
+```
+
+Sort fields are case-sensitive and must be allowlisted in the profile.

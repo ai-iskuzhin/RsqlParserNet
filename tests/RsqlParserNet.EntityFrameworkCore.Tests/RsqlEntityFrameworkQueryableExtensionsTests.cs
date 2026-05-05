@@ -41,6 +41,38 @@ public sealed class RsqlEntityFrameworkQueryableExtensionsTests
     }
 
     [Fact]
+    public async Task ToRsqlPageAsync_AppliesSortBeforePaging()
+    {
+        using var database = SqliteProductDatabase.Create();
+
+        var result = await database.Context.Products
+            .ToRsqlPageAsync(
+                RsqlSortRequest.Parse("-name"),
+                new SqliteProductRsqlProfile(),
+                new RsqlPageRequest(page: 1, pageSize: 2));
+
+        Assert.Equal(["Helmet", "Board"], result.Items.Select(product => product.Name).ToArray());
+        Assert.Equal(3, result.Pagination.TotalItems);
+    }
+
+    [Fact]
+    public async Task ToRsqlPageAsync_AppliesParsedRsqlQueryAndSortBeforePaging()
+    {
+        using var database = SqliteProductDatabase.Create();
+        var query = RsqlParser.Parse("name=starts=B", new SqliteProductRsqlProfile().ConfigureParseOptions(RsqlParseOptions.Default));
+
+        var result = await database.Context.Products
+            .ToRsqlPageAsync(
+                query,
+                RsqlSortRequest.Parse("-name"),
+                new SqliteProductRsqlProfile(),
+                new RsqlPageRequest(page: 1, pageSize: 10));
+
+        Assert.Equal(["Board", "Bike"], result.Items.Select(product => product.Name).ToArray());
+        Assert.Equal(2, result.Pagination.TotalItems);
+    }
+
+    [Fact]
     public async Task ToRsqlPageAsync_ParsesAndAppliesExpressionBeforePaging()
     {
         using var database = SqliteProductDatabase.Create();

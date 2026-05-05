@@ -10,10 +10,13 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - Predicate generation through `RsqlPredicateBuilder`.
 - Queryable filtering through `ApplyRsql`.
 - Queryable pagination through `ApplyPage`.
+- Queryable sorting through `ApplySort`.
 - Framework-neutral paged result models:
   - `RsqlPageRequest`
   - `RsqlPagedResult<T>`
   - `RsqlPagination`
+- Framework-neutral sort model:
+  - `RsqlSortRequest`
 - Built-in scalar operators:
   - `==`
   - `!=`
@@ -41,6 +44,7 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - CI, release, and manual NuGet publish workflow support for the LINQ adapter package.
 - ASP.NET Core request handling samples without adding ASP.NET dependencies to the LINQ package.
 - EF Core async paged result helpers in a separate adapter package.
+- ASP.NET Core sort query binding with `sort=field` and `sort=-field`.
 
 ## Before Stable
 

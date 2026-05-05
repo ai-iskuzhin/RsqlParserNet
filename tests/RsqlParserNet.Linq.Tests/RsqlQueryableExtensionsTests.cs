@@ -126,6 +126,42 @@ public sealed class RsqlQueryableExtensionsTests
     }
 
     [Fact]
+    public void ApplySort_SortsAscendingByAllowlistedField()
+    {
+        var sort = RsqlSortRequest.Parse("name");
+
+        var result = SampleProducts()
+            .ApplySort(sort, new ProductRsqlProfile())
+            .Select(x => x.Name)
+            .ToArray();
+
+        Assert.Equal(["Bike", "Board", "Helmet"], result);
+    }
+
+    [Fact]
+    public void ApplySort_SortsDescendingByAllowlistedField()
+    {
+        var sort = RsqlSortRequest.Parse("-count");
+
+        var result = SampleProducts()
+            .ApplySort(sort, new ProductRsqlProfile())
+            .Select(x => x.Name)
+            .ToArray();
+
+        Assert.Equal(["Helmet", "Board", "Bike"], result);
+    }
+
+    [Fact]
+    public void ApplySort_RejectsUnmappedField()
+    {
+        var sort = new RsqlSortRequest("unknown");
+
+        Assert.Throws<RsqlLinqException>(() => SampleProducts()
+            .ApplySort(sort, new ProductRsqlProfile())
+            .ToArray());
+    }
+
+    [Fact]
     public void PageRequest_ClampsPageSize()
     {
         var page = new RsqlPageRequest(page: 3, pageSize: 100);

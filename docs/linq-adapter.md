@@ -199,6 +199,18 @@ var items = products
 
 Use `RsqlPagedResult<T>.Create(items, page, totalItems)` when another layer already owns counting and materialization. Use `RsqlParserNet.EntityFrameworkCore` when EF Core should count, page, and materialize asynchronously.
 
+## Sorting
+
+Use `RsqlSortRequest` for API-level sort text such as `sort=name` and `sort=-createdAt`. Sorting is allowlisted through the same profile mappings as filtering:
+
+```csharp
+var sort = RsqlSortRequest.Parse("-name");
+
+var sorted = products.ApplySort(sort, profile);
+```
+
+The leading `-` means descending. Without it, sorting is ascending.
+
 ## Wildcards
 
 By default, the LINQ adapter treats `*` as a wildcard only for string `==` and `!=` comparisons:

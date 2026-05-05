@@ -29,6 +29,10 @@ builder.Services.AddRsqlPageQuery(options =>
     options.DefaultPageSize = 50;
     options.MaxPageSize = 100;
 });
+builder.Services.AddRsqlSortQuery(options =>
+{
+    options.SortParameterName = "sort";
+});
 ```
 
 ## Minimal API Binding
@@ -42,6 +46,7 @@ using RsqlParserNet.Linq;
 
 app.MapGet("/products", async (
     RsqlQueryFilter filter,
+    RsqlSortQuery sort,
     RsqlPageQuery page,
     AppDbContext db,
     CancellationToken cancellationToken) =>
@@ -51,16 +56,28 @@ app.MapGet("/products", async (
         return Results.ValidationProblem(filter.ToValidationErrors());
     }
 
+    if (!sort.IsValid)
+    {
+        return Results.ValidationProblem(sort.ToValidationErrors());
+    }
+
     if (!page.IsValid)
     {
         return Results.ValidationProblem(page.ToValidationErrors());
     }
 
-    var query = db.Products.OrderBy(product => product.Id);
+    var query = db.Products.AsQueryable();
 
-    var result = filter.HasQuery
-        ? await query.ToRsqlPageAsync(filter.Query!, ProductRsqlProfile.Instance, page.Request!, cancellationToken)
-        : await query.ToRsqlPageAsync(page.Request!, cancellationToken);
+    if (filter.HasQuery)
+    {
+        query = query.ApplyRsql(filter.Query!, ProductRsqlProfile.Instance);
+    }
+
+    query = sort.HasRequest
+        ? query.ApplySort(sort.Request!, ProductRsqlProfile.Instance)
+        : query.OrderBy(product => product.Id);
+
+    var result = await query.ToRsqlPageAsync(page.Request!, cancellationToken);
 
     return Results.Ok(result);
 });
@@ -157,6 +174,7 @@ GET /products?filter=name=starts=Bi
 GET /products?filter=tags=any=(outdoor,bike)
 GET /products?filter=tags=all=(bike,outdoor)
 GET /products?filter=status==active&page=2&pageSize=25
+GET /products?filter=status==active&sort=-createdAt&page=2&pageSize=25
 ```
 
 ## Notes
