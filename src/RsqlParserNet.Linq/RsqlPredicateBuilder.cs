@@ -46,7 +46,8 @@ public static class RsqlPredicateBuilder
     {
         ArgumentNullException.ThrowIfNull(profile);
 
-        return BuildPredicate<T>(expression, options => options.ApplyProfile(profile), parseOptions);
+        var effectiveParseOptions = ConfigureProfileParseOptions(profile, parseOptions);
+        return BuildPredicate<T>(expression, options => options.ApplyProfile(profile), effectiveParseOptions);
     }
 
     /// <summary>
@@ -85,6 +86,15 @@ public static class RsqlPredicateBuilder
         ArgumentNullException.ThrowIfNull(profile);
 
         return BuildPredicate<T>(query, options => options.ApplyProfile(profile));
+    }
+
+    private static RsqlParseOptions ConfigureProfileParseOptions<T>(
+        RsqlLinqProfile<T> profile,
+        RsqlParseOptions? parseOptions)
+    {
+        var baseOptions = parseOptions ?? RsqlParseOptions.Default;
+        return profile.ConfigureParseOptions(baseOptions)
+            ?? throw new RsqlLinqException("Profile returned null parser options.");
     }
 
     private static Expression BuildExpression<T>(RsqlNode node, RsqlLinqOptions<T> options, ParameterExpression parameter)

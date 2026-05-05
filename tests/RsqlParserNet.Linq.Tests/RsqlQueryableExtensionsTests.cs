@@ -365,13 +365,8 @@ public sealed class RsqlQueryableExtensionsTests
     [Fact]
     public void ApplyRsql_UsesProfileForCustomOperator()
     {
-        var parseOptions = RsqlParseOptions.Default with
-        {
-            CustomOperators = [new RsqlCustomOperator("=contains=")]
-        };
-
         var result = SampleProducts()
-            .ApplyRsql("name=contains=ik", new ProductRsqlProfile(), parseOptions)
+            .ApplyRsql("name=contains=ik", new ProductRsqlProfile())
             .Select(x => x.Name)
             .ToArray();
 
@@ -500,6 +495,16 @@ public sealed class RsqlQueryableExtensionsTests
             options.Allow("status", x => x.Status);
             options.Allow("count", x => x.Count);
             options.AllowStringContainsOperator();
+        }
+
+        public override RsqlParseOptions ConfigureParseOptions(RsqlParseOptions options)
+        {
+            return options.CustomOperators.Any(x => x.Text == "=contains=")
+                ? options
+                : options with
+                {
+                    CustomOperators = [.. options.CustomOperators, new RsqlCustomOperator("=contains=")]
+                };
         }
     }
 

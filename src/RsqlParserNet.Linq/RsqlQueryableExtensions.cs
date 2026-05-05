@@ -48,7 +48,8 @@ public static class RsqlQueryableExtensions
     {
         ArgumentNullException.ThrowIfNull(profile);
 
-        return source.ApplyRsql(expression, options => options.ApplyProfile(profile), parseOptions);
+        var predicate = RsqlPredicateBuilder.BuildPredicate(expression, profile, parseOptions);
+        return source.Where(predicate);
     }
 
     /// <summary>

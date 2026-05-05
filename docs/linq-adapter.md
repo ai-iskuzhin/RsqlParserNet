@@ -33,6 +33,16 @@ Use `RsqlLinqProfile<T>` when the same allowlisted field set is reused by multip
 ```csharp
 public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
 {
+    public override RsqlParseOptions ConfigureParseOptions(RsqlParseOptions options)
+    {
+        return options.CustomOperators.Any(x => x.Text == "=contains=")
+            ? options
+            : options with
+            {
+                CustomOperators = [.. options.CustomOperators, new RsqlCustomOperator("=contains=")]
+            };
+    }
+
     public override void Configure(RsqlLinqOptions<Product> options)
     {
         options.Allow("name", x => x.Name);
@@ -48,12 +58,12 @@ Profiles can be passed directly to `ApplyRsql` or `RsqlPredicateBuilder`:
 ```csharp
 var profile = new ProductRsqlProfile();
 
-var filtered = products.ApplyRsql("status==active;count>=10", profile);
+var filtered = products.ApplyRsql("status==active;name=contains=ik", profile);
 
 var predicate = RsqlPredicateBuilder.BuildPredicate("name==B*", profile);
 ```
 
-Profiles are still explicit allowlists. They are the recommended reuse mechanism before adding attribute-based discovery.
+Profiles are still explicit allowlists. They are the recommended reuse mechanism before adding attribute-based discovery. If a profile uses custom operators, override `ConfigureParseOptions` so callers do not need to pass matching parser options separately.
 
 ## Supported Operators
 

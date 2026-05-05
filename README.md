@@ -151,15 +151,26 @@ For repeated endpoint/query contracts, put mappings in a reusable profile:
 ```csharp
 public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
 {
+    public override RsqlParseOptions ConfigureParseOptions(RsqlParseOptions options)
+    {
+        return options.CustomOperators.Any(x => x.Text == "=contains=")
+            ? options
+            : options with
+            {
+                CustomOperators = [.. options.CustomOperators, new RsqlCustomOperator("=contains=")]
+            };
+    }
+
     public override void Configure(RsqlLinqOptions<Product> options)
     {
         options.Allow("name", x => x.Name);
         options.Allow("status", x => x.Status);
         options.Allow("count", x => x.Count);
+        options.AllowStringContainsOperator();
     }
 }
 
-var filtered = products.ApplyRsql("status==active;count>=10", new ProductRsqlProfile());
+var filtered = products.ApplyRsql("status==active;name=contains=ik", new ProductRsqlProfile());
 ```
 
 The adapter currently supports:
