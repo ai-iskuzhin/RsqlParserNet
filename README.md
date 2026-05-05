@@ -56,6 +56,8 @@ FastEndpoints helpers:
 dotnet add package RsqlParserNet.FastEndpoints --prerelease
 ```
 
+`RsqlParserNet.FastEndpoints` currently requires `FastEndpoints` `7.0.1` or newer. Applications on older FastEndpoints versions can still use the ASP.NET Core query models directly through `RsqlQueryRequest.Parse(...)`.
+
 OpenAPI helpers:
 
 ```bash

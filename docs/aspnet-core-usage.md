@@ -118,7 +118,7 @@ The static `Parse` method keeps the same wrapper usable from controllers, endpoi
 
 ## FastEndpoints
 
-Use `RsqlParserNet.FastEndpoints` when an API should add invalid RSQL input to FastEndpoints' validation failure flow. See [fastendpoints-usage.md](fastendpoints-usage.md).
+Use `RsqlParserNet.FastEndpoints` when an API should add invalid RSQL input to FastEndpoints' validation failure flow. The adapter currently targets `FastEndpoints` `7.0.1` or newer. See [fastendpoints-usage.md](fastendpoints-usage.md).
 
 ## Profile
 

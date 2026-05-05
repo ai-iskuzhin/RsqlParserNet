@@ -4,6 +4,12 @@
 
 The package does not replace explicit allowlisted profiles. Filtering and sorting still use `RsqlLinqProfile<T>`.
 
+## Compatibility
+
+`RsqlParserNet.FastEndpoints` currently references `FastEndpoints` `7.0.1` or newer. Applications on FastEndpoints 5.x or 6.x should either upgrade FastEndpoints before installing this adapter or use the framework-neutral `RsqlQueryRequest.Parse(...)` / ASP.NET Core models directly.
+
+FastEndpoints 7 applications that call `UseAuthorization()` must also register authorization services, for example with `builder.Services.AddAuthorization()`.
+
 ## Register Options
 
 Use the same option registration as the ASP.NET Core adapter:
@@ -67,7 +73,7 @@ public sealed class ListProductsEndpoint : EndpointWithoutRequest<RsqlPagedResul
             .Select(product => new ProductResponse(product.Id, product.Name))
             .ToRsqlPageAsync(rsql.PageRequest, cancellationToken);
 
-        await SendOkAsync(result, cancellationToken);
+        await Send.OkAsync(result, cancellationToken);
     }
 }
 ```
