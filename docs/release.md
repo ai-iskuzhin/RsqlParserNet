@@ -156,6 +156,8 @@ version: 0.1.0-preview.1
 package: RsqlParserNet.EntityFrameworkCore
 ```
 
-The `git_ref` should usually be the release tag. This keeps the package published to NuGet identical to the package attached to the GitHub release.
+Use `main` for the first adapter preview packages unless a newer tag has been created from a commit that contains the adapter projects. Do not use `v0.1.0-preview.3` for `RsqlParserNet.Linq`, `RsqlParserNet.AspNetCore`, or `RsqlParserNet.EntityFrameworkCore`; that tag only contains the core parser project.
+
+After the adapter packages are included in a tagged release, the `git_ref` should usually be the release tag. This keeps the package published to NuGet identical to the package attached to the GitHub release.
 
 The workflow restores, builds, tests, packs the requested package and version from the requested git ref, and pushes the `.nupkg` and `.snupkg` to NuGet.
