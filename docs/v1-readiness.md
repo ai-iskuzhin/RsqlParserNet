@@ -17,6 +17,7 @@ The adapter surface is still preview. Before `1.0.0`, verify:
 
 - `RsqlParserNet.Linq` profile, allowlist, sorting, paging, string comparison, custom operator, and collection operator APIs feel stable after real API usage.
 - `RsqlParserNet.AspNetCore` query binding and validation error shapes are stable.
+- Query error pipeline supports custom handlers, ASP.NET Core validation problem details, and FastEndpoints validation failures.
 - `RsqlParserNet.EntityFrameworkCore` async paging helpers are stable and do not hide too much query composition from applications.
 - `RsqlParserNet.FastEndpoints` validation helpers fit normal FastEndpoints endpoint flow without forcing a specific response shape.
 

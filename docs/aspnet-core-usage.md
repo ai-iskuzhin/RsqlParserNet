@@ -68,7 +68,20 @@ app.MapGet("/products", async (
 
 `RsqlQueryRequest` uses `filter`, `sort`, `page`, and `pageSize` by default. Configure the individual option objects when an API uses different query parameter names.
 
+Invalid filter, sort, page, or page size values do not fail binding. The bound request becomes invalid, and the endpoint decides how to return the error.
+
 `ToValidationErrors()` returns ASP.NET Core validation problem fields keyed by query parameter name. Filter diagnostics keep the parser diagnostic code in each message.
+
+Use `ToValidationProblemDetails()` when an API has a central ProblemDetails pipeline:
+
+```csharp
+if (!request.IsValid)
+{
+    return Results.Problem(request.ToValidationProblemDetails());
+}
+```
+
+Use `GetErrors()` when the API needs its own error shape. It returns structured `RsqlQueryError` values with parameter name, message, source, optional diagnostic code, and parser source location when available.
 
 The individual binders `RsqlQueryFilter`, `RsqlSortQuery`, and `RsqlPageQuery` remain available when an endpoint only needs part of the query contract.
 

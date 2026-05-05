@@ -76,3 +76,17 @@ Use `BindRsqlQueryRequest()` when the endpoint wants to inspect the request befo
 Filter diagnostics become `ValidationFailure` entries on the filter query parameter. The parser diagnostic code is preserved as the FastEndpoints error code.
 
 Sort and page failures become `ValidationFailure` entries keyed by their query parameter names.
+
+For a custom response shape, use the shared ASP.NET Core model directly:
+
+```csharp
+var rsql = this.BindRsqlQueryRequest();
+
+if (!rsql.IsValid)
+{
+    var errors = rsql.GetErrors();
+    // Map errors to the API's response contract.
+}
+```
+
+The helper package does not force a response body. It only bridges RSQL binding errors into FastEndpoints validation when asked.

@@ -361,6 +361,47 @@ public sealed class RsqlQueryFilterTests
     }
 
     [Fact]
+    public async Task QueryRequest_GetErrorsReturnsStructuredErrors()
+    {
+        var context = CreateContext("?filter=status%3D%3D&sort=-&page=0&pageSize=bad");
+        var parameter = GetParameter(nameof(QueryRequestEndpoint));
+
+        var request = await RsqlQueryRequest.BindAsync(context, parameter);
+        var errors = request.GetErrors();
+
+        Assert.False(request.IsValid);
+        Assert.Contains(errors, error =>
+            error.Source == RsqlQueryErrorSource.Filter
+            && error.ParameterName == RsqlQueryFilter.DefaultQueryParameterName
+            && error.Code is not null
+            && error.Start is not null);
+        Assert.Contains(errors, error =>
+            error.Source == RsqlQueryErrorSource.Sort
+            && error.ParameterName == RsqlSortQuery.DefaultSortParameterName
+            && error.Code is null);
+        Assert.Contains(errors, error =>
+            error.Source == RsqlQueryErrorSource.Page
+            && error.ParameterName == RsqlPageQuery.DefaultPageParameterName);
+    }
+
+    [Fact]
+    public async Task QueryRequest_ToValidationProblemDetailsIncludesStructuredErrorsExtension()
+    {
+        var context = CreateContext("?filter=status%3D%3D");
+        var parameter = GetParameter(nameof(QueryRequestEndpoint));
+
+        var request = await RsqlQueryRequest.BindAsync(context, parameter);
+        var problemDetails = request.ToValidationProblemDetails();
+
+        Assert.Equal(StatusCodes.Status400BadRequest, problemDetails.Status);
+        Assert.Contains(RsqlQueryFilter.DefaultQueryParameterName, problemDetails.Errors.Keys);
+        var errors = Assert.IsAssignableFrom<IReadOnlyList<RsqlQueryError>>(problemDetails.Extensions["rsqlErrors"]);
+        var error = Assert.Single(errors);
+        Assert.Equal(RsqlQueryErrorSource.Filter, error.Source);
+        Assert.NotNull(error.Code);
+    }
+
+    [Fact]
     public async Task QueryRequest_PageRequestThrowsWhenPageQueryIsInvalid()
     {
         var context = CreateContext("?page=0");

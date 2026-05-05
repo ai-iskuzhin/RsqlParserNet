@@ -82,19 +82,12 @@ public static class RsqlFastEndpointExtensions
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var failures = new List<ValidationFailure>();
-        foreach (var diagnostic in request.Filter.Diagnostics)
-        {
-            failures.Add(new ValidationFailure(request.Filter.ParameterName, diagnostic.Message)
+        return request.GetErrors()
+            .Select(error => new ValidationFailure(error.ParameterName, error.Message)
             {
-                ErrorCode = diagnostic.Code
-            });
-        }
-
-        AddFailures(failures, request.Sort.Errors);
-        AddFailures(failures, request.Page.Errors);
-
-        return failures;
+                ErrorCode = error.Code
+            })
+            .ToArray();
     }
 
     private static string? ReadQueryValue(HttpContext context, string parameterName)
@@ -102,18 +95,5 @@ public static class RsqlFastEndpointExtensions
         return context.Request.Query.TryGetValue(parameterName, out var values)
             ? values.FirstOrDefault()
             : null;
-    }
-
-    private static void AddFailures(
-        List<ValidationFailure> failures,
-        IReadOnlyDictionary<string, string[]> errors)
-    {
-        foreach (var (propertyName, messages) in errors)
-        {
-            foreach (var message in messages)
-            {
-                failures.Add(new ValidationFailure(propertyName, message));
-            }
-        }
     }
 }
