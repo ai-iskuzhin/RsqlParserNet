@@ -278,6 +278,8 @@ query.ApplyRsql(filter, options =>
 
 The core parser should not expose arbitrary reflected entity/property access. Future adapters should translate the AST into expression trees only through configured field mappings.
 
+Framework adapters should stay separate when they need framework-specific dependencies. `RsqlParserNet.AspNetCore` owns ASP.NET Core binding helpers, and a future `RsqlParserNet.FastEndpoints` package can wrap FastEndpoints request/validation conventions if plain `RsqlQueryFilter.Parse` becomes repetitive.
+
 ## Development
 
 ```bash

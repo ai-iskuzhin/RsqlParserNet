@@ -24,6 +24,7 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 - Added LINQ adapter documentation for supported operators, wildcards, and value conversion.
 - Added ASP.NET Core request handling examples without adding ASP.NET dependencies to the packages.
 - Added the `RsqlParserNet.AspNetCore` adapter project with a bindable `RsqlQueryFilter` request model.
+- Documented the FastEndpoints reuse path through `RsqlQueryFilter.Parse`.
 
 ## 0.1.0-preview.3
 

@@ -85,6 +85,27 @@ if (filter.HasQuery)
 
 The static `Parse` method keeps the same wrapper usable from controllers, endpoint filters, FastEndpoints handlers, or tests.
 
+## FastEndpoints
+
+A future `RsqlParserNet.FastEndpoints` package can add FastEndpoints-specific helpers if there is enough repeated setup to justify the dependency. Until then, handlers can use the framework-neutral `RsqlQueryFilter.Parse` API:
+
+```csharp
+var parseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
+var filter = RsqlQueryFilter.Parse(HttpContext.Request.Query["filter"].FirstOrDefault(), parseOptions);
+
+if (!filter.IsValid)
+{
+    // Add filter.ToValidationErrors() to the endpoint's validation/error response.
+}
+
+if (filter.HasQuery)
+{
+    query = query.ApplyRsql(filter.Query!, ProductRsqlProfile.Instance);
+}
+```
+
+Keep a FastEndpoints package separate from `RsqlParserNet.AspNetCore` if it adds framework-specific request DTO binding, validation failures, endpoint filters, or response helpers.
+
 ## Profile
 
 Keep profiles close to the endpoint contract, not necessarily the database entity. Only selectors listed here are available to clients.
