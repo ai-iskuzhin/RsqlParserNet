@@ -87,11 +87,13 @@ git tag -a v0.2.0-preview.1 -m "RsqlParserNet packages 0.2.0-preview.1"
 git push origin v0.2.0-preview.1
 ```
 
-Pushing a `v*` tag runs CI, packs the projects, creates a GitHub release, and attaches the packed NuGet artifacts.
+Pushing a `v*` tag runs CI, packs the projects, creates a GitHub release, attaches the packed NuGet artifacts, and publishes packages to NuGet.org when `NUGET_API_KEY` is configured.
 
 ## Publishing To NuGet
 
-Publishing is manual for now. After CI succeeds on the release tag, download the package artifact and publish:
+Tag releases publish to NuGet.org automatically when the repository secret `NUGET_API_KEY` is configured. The release workflow pushes every generated `.nupkg` and `.snupkg` with `--skip-duplicate`.
+
+Manual publishing remains available as a fallback. After CI succeeds on the release tag, download the package artifact and publish:
 
 ```bash
 dotnet nuget push RsqlParserNet.<version>.nupkg \
@@ -134,7 +136,7 @@ GitHub release notes are generated from commits and pull requests for the tag. K
 
 ## NuGet Release
 
-NuGet publishing is intentionally manual for now. Publish only after the tag build and GitHub release succeed.
+NuGet publishing is automatic on `v*` tags when `NUGET_API_KEY` is configured. Publish only from tags that have passed CI and created the GitHub release artifacts.
 
 The repository expects a GitHub Actions secret named:
 
@@ -142,7 +144,7 @@ The repository expects a GitHub Actions secret named:
 NUGET_API_KEY
 ```
 
-To publish, run the `Publish NuGet` workflow manually from GitHub Actions and enter the git ref and package version:
+If automatic publishing needs to be retried for one package, run the `Publish NuGet` workflow manually from GitHub Actions and enter the git ref and package version:
 
 ```text
 git_ref: v0.2.0-preview.1

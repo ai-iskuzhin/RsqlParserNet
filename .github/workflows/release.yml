@@ -10,8 +10,10 @@ permissions:
 
 jobs:
   github-release:
-    name: Create GitHub Release
+    name: Create GitHub Release And Publish NuGet
     runs-on: ubuntu-latest
+    env:
+      NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
 
     steps:
       - name: Checkout
@@ -62,3 +64,27 @@ jobs:
             --title "RsqlParserNet ${TAG_NAME#v}" \
             --generate-notes \
             --verify-tag
+
+      - name: Publish NuGet Packages
+        if: env.NUGET_API_KEY != ''
+        run: |
+          for package in artifacts/packages/*.nupkg; do
+            dotnet nuget push "$package" \
+              --source https://api.nuget.org/v3/index.json \
+              --api-key "$NUGET_API_KEY" \
+              --skip-duplicate
+          done
+
+      - name: Publish NuGet Symbols
+        if: env.NUGET_API_KEY != ''
+        run: |
+          for package in artifacts/packages/*.snupkg; do
+            dotnet nuget push "$package" \
+              --source https://api.nuget.org/v3/index.json \
+              --api-key "$NUGET_API_KEY" \
+              --skip-duplicate
+          done
+
+      - name: Skip NuGet Publish
+        if: env.NUGET_API_KEY == ''
+        run: echo "NUGET_API_KEY is not configured; GitHub Release artifacts were created but packages were not published to NuGet.org."
