@@ -35,6 +35,7 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 - Added `RsqlQueryRequest.TryApplyTo` for mapping LINQ/profile translation failures into query errors.
 - Added the `RsqlParserNet.EntityFrameworkCore` adapter project with async paged result helpers.
 - Added the `RsqlParserNet.FastEndpoints` adapter project with query binding and validation failure helpers.
+- Added the `RsqlParserNet.OpenApi` adapter project with endpoint-scoped query parameter documentation helpers.
 - Added sort request whitespace normalization and selector-style field validation.
 - Added multi-field sorting with `sort=-field,otherField` across LINQ, ASP.NET Core binding, and EF Core helpers.
 - Added configurable string comparison mode for case-insensitive string helper and wildcard matching.

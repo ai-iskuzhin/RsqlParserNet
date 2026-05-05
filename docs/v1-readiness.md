@@ -20,6 +20,7 @@ The adapter surface is still preview. Before `1.0.0`, verify:
 - Query error pipeline supports custom handlers, ASP.NET Core validation problem details, FastEndpoints validation failures, and LINQ/profile translation failures.
 - `RsqlParserNet.EntityFrameworkCore` async paging helpers are stable and do not hide too much query composition from applications.
 - `RsqlParserNet.FastEndpoints` validation helpers fit normal FastEndpoints endpoint flow without forcing a specific response shape.
+- `RsqlParserNet.OpenApi` documents only the query parameters an endpoint actually supports.
 
 ## Release Hygiene
 
@@ -39,5 +40,4 @@ These are useful but should not block `1.0.0` unless real users ask for them:
 - Attribute-based field discovery.
 - Provider-specific EF Core translation packages.
 - Live database integration tests in this repository.
-- OpenAPI query documentation helpers.
 - Additional endpoint framework adapters.

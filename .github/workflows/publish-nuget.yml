@@ -22,6 +22,7 @@ on:
           - RsqlParserNet.AspNetCore
           - RsqlParserNet.EntityFrameworkCore
           - RsqlParserNet.FastEndpoints
+          - RsqlParserNet.OpenApi
 
 permissions:
   contents: read
@@ -76,6 +77,10 @@ jobs:
             RsqlParserNet.FastEndpoints)
               echo "project=src/RsqlParserNet.FastEndpoints/RsqlParserNet.FastEndpoints.csproj" >> "$GITHUB_OUTPUT"
               echo "id=RsqlParserNet.FastEndpoints" >> "$GITHUB_OUTPUT"
+              ;;
+            RsqlParserNet.OpenApi)
+              echo "project=src/RsqlParserNet.OpenApi/RsqlParserNet.OpenApi.csproj" >> "$GITHUB_OUTPUT"
+              echo "id=RsqlParserNet.OpenApi" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "Unsupported package '$PACKAGE'" >&2

@@ -49,10 +49,11 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - ASP.NET Core sort query binding with `sort=field` and `sort=-field`.
 - Multi-field sorting with comma-separated sort text such as `sort=-createdAt,name`.
 - FastEndpoints validation helpers in a separate adapter package.
+- OpenAPI query parameter documentation helpers in a separate adapter package.
 
 ## Before Stable
 
-- Publish `RsqlParserNet.Linq`, `RsqlParserNet.AspNetCore`, `RsqlParserNet.EntityFrameworkCore`, and `RsqlParserNet.FastEndpoints` as preview packages.
+- Publish `RsqlParserNet.Linq`, `RsqlParserNet.AspNetCore`, `RsqlParserNet.EntityFrameworkCore`, `RsqlParserNet.FastEndpoints`, and `RsqlParserNet.OpenApi` as preview packages.
 - Gather API feedback on profiles, custom operators, sort parsing, pagination response shape, and framework integration before API freeze.
 - Clarify preview package version alignment across core and adapter packages.
 
@@ -60,5 +61,4 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 
 - Optional attribute-based discovery for DTOs, if profiles still feel too repetitive.
 - Provider-specific packages for other LINQ providers if they need specialized translations.
-- Real database integration coverage for production providers after the adapter API shape settles.
-- OpenAPI/query documentation helpers after the query surface stabilizes.
+- Application-level real database integration coverage for production providers.
