@@ -6,6 +6,10 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 
 ## Unreleased
 
+No changes yet.
+
+## 0.2.0-preview.1
+
 ### Added
 
 - Added the `RsqlParserNet.Linq` adapter project for allowlisted expression tree generation.

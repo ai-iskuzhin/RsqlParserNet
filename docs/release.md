@@ -64,7 +64,7 @@ unzip -l artifacts/packages/RsqlParserNet.Swashbuckle.<version>.nupkg
 
 ## Package Versions
 
-Packages can be versioned independently while the project is in preview.
+Packages can be versioned independently while the project is in preview, but aligned versions are preferred when publishing the whole package family from one release tag. The `0.2.0-preview.1` release aligns every package.
 
 Current package identities:
 
@@ -83,8 +83,8 @@ RsqlParserNet.Swashbuckle
 Use tags that match the package version prefixed with `v`:
 
 ```bash
-git tag -a v0.1.0-preview.3 -m "RsqlParserNet 0.1.0-preview.3"
-git push origin v0.1.0-preview.3
+git tag -a v0.2.0-preview.1 -m "RsqlParserNet packages 0.2.0-preview.1"
+git push origin v0.2.0-preview.1
 ```
 
 Pushing a `v*` tag runs CI, packs the projects, creates a GitHub release, and attaches the packed NuGet artifacts.
@@ -145,62 +145,24 @@ NUGET_API_KEY
 To publish, run the `Publish NuGet` workflow manually from GitHub Actions and enter the git ref and package version:
 
 ```text
-git_ref: v0.1.0-preview.3
-version: 0.1.0-preview.3
+git_ref: v0.2.0-preview.1
+version: 0.2.0-preview.1
 package: RsqlParserNet
 ```
 
-For the LINQ adapter:
+Repeat the workflow for each package that should be published from the same release tag:
 
 ```text
-git_ref: main
-version: 0.1.0-preview.1
-package: RsqlParserNet.Linq
+RsqlParserNet
+RsqlParserNet.Linq
+RsqlParserNet.AspNetCore
+RsqlParserNet.EntityFrameworkCore
+RsqlParserNet.FastEndpoints
+RsqlParserNet.OpenApi
+RsqlParserNet.Swashbuckle
 ```
 
-For the ASP.NET Core adapter:
-
-```text
-git_ref: main
-version: 0.1.0-preview.1
-package: RsqlParserNet.AspNetCore
-```
-
-For the EF Core adapter:
-
-```text
-git_ref: main
-version: 0.1.0-preview.1
-package: RsqlParserNet.EntityFrameworkCore
-```
-
-For the FastEndpoints adapter:
-
-```text
-git_ref: main
-version: 0.1.0-preview.1
-package: RsqlParserNet.FastEndpoints
-```
-
-For the OpenAPI adapter:
-
-```text
-git_ref: main
-version: 0.1.0-preview.1
-package: RsqlParserNet.OpenApi
-```
-
-For the Swashbuckle adapter:
-
-```text
-git_ref: main
-version: 0.1.0-preview.1
-package: RsqlParserNet.Swashbuckle
-```
-
-Use `main` for the first adapter preview packages unless a newer tag has been created from a commit that contains the adapter projects. Do not use `v0.1.0-preview.3` for `RsqlParserNet.Linq`, `RsqlParserNet.AspNetCore`, `RsqlParserNet.EntityFrameworkCore`, `RsqlParserNet.FastEndpoints`, `RsqlParserNet.OpenApi`, or `RsqlParserNet.Swashbuckle`; that tag only contains the core parser project.
-
-After the adapter packages are included in a tagged release, the `git_ref` should usually be the release tag. This keeps the package published to NuGet identical to the package attached to the GitHub release.
+The `git_ref` should usually be the release tag. This keeps the package published to NuGet identical to the package attached to the GitHub release.
 
 The workflow restores, builds, tests, packs the requested package and version from the requested git ref, and pushes the `.nupkg` and `.snupkg` to NuGet.
 
@@ -211,8 +173,8 @@ The repository also includes a manual `Publish GitHub Packages` workflow for pub
 Use it when packages should be tested from the repository's GitHub Packages feed before publishing to NuGet.org:
 
 ```text
-git_ref: main
-version: 0.1.0-preview.1
+git_ref: v0.2.0-preview.1
+version: 0.2.0-preview.1
 package: RsqlParserNet.Linq
 ```
 
@@ -233,6 +195,6 @@ Then install from that source:
 
 ```bash
 dotnet add package RsqlParserNet.Linq \
-  --version 0.1.0-preview.1 \
+  --version 0.2.0-preview.1 \
   --source rsqlparsernet-github
 ```

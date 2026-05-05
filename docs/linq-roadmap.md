@@ -51,12 +51,12 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - FastEndpoints validation helpers in a separate adapter package.
 - OpenAPI query parameter documentation helpers in a separate adapter package.
 - Swashbuckle operation filters in a separate adapter package.
+- Preview package versions aligned across core and adapter packages for `0.2.0-preview.1`.
 
 ## Before Stable
 
 - Publish `RsqlParserNet.Linq`, `RsqlParserNet.AspNetCore`, `RsqlParserNet.EntityFrameworkCore`, `RsqlParserNet.FastEndpoints`, `RsqlParserNet.OpenApi`, and `RsqlParserNet.Swashbuckle` as preview packages.
 - Gather API feedback on profiles, custom operators, sort parsing, pagination response shape, and framework integration before API freeze.
-- Clarify preview package version alignment across core and adapter packages.
 
 ## Later
 
