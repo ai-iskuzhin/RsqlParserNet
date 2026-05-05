@@ -84,3 +84,7 @@ sort=-createdAt
 ```
 
 Sort fields are case-sensitive and must be allowlisted in the profile.
+
+## Provider Coverage
+
+The LINQ adapter has EF Core SQLite translation coverage. Before using RSQL on production-sensitive routes, add regression coverage for the provider used by the application, such as PostgreSQL or SQL Server.

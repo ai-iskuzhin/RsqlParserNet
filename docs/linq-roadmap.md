@@ -49,11 +49,15 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 ## Before Stable
 
 - Publish `RsqlParserNet.Linq`, `RsqlParserNet.AspNetCore`, and `RsqlParserNet.EntityFrameworkCore` as preview packages.
-- Gather API feedback on profiles, custom operators, sort parsing, and pagination response shape before API freeze.
+- Gather API feedback on profiles, custom operators, sort parsing, pagination response shape, and framework integration before API freeze.
+- Clarify preview package version alignment across core and adapter packages.
+- Add provider-specific EF Core translation notes and tests for at least one production provider.
 - Decide whether multi-field sorting belongs in `1.0.0` or a later minor release.
+- Decide whether case-insensitive string helper operators belong in `1.0.0` or a later minor release.
 
 ## Later
 
 - Optional attribute-based discovery for DTOs, if profiles still feel too repetitive.
-- More custom operator helpers, such as case-insensitive string matching.
 - Provider-specific packages for other LINQ providers if they need specialized translations.
+- FastEndpoints-specific binding and validation helpers, if framework-neutral parsing becomes repetitive.
+- OpenAPI/query documentation helpers after the query surface stabilizes.

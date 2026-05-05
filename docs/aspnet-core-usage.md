@@ -116,6 +116,8 @@ if (filter.HasQuery)
 
 Keep a FastEndpoints package separate from `RsqlParserNet.AspNetCore` if it adds framework-specific request DTO binding, validation failures, endpoint filters, or response helpers.
 
+Early integration feedback suggests the current Minimal API binding works well, while FastEndpoints-heavy APIs may benefit from a dedicated adapter later if RSQL is used beyond example or internal routes.
+
 ## Profile
 
 Keep profiles close to the endpoint contract, not necessarily the database entity. Only selectors listed here are available to clients.

@@ -332,5 +332,6 @@ Coverage is collected locally with Coverlet. A public percentage badge will be a
 - LINQ adapter roadmap: [docs/linq-roadmap.md](docs/linq-roadmap.md)
 - ASP.NET Core usage: [docs/aspnet-core-usage.md](docs/aspnet-core-usage.md)
 - EF Core helpers: [docs/entity-framework-core.md](docs/entity-framework-core.md)
+- Preview feedback: [docs/preview-feedback.md](docs/preview-feedback.md)
 - Core v1 checklist: [docs/core-v1-checklist.md](docs/core-v1-checklist.md)
 - Release process: [docs/release.md](docs/release.md)
