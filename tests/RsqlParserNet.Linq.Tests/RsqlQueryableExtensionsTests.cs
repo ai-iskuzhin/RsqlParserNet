@@ -111,6 +111,51 @@ public sealed class RsqlQueryableExtensionsTests
     }
 
     [Fact]
+    public void ApplyPage_AppliesSkipAndTake()
+    {
+        var page = new RsqlPageRequest(page: 2, pageSize: 1);
+
+        var result = SampleProducts()
+            .OrderBy(x => x.Name)
+            .ApplyPage(page)
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Board", productName);
+    }
+
+    [Fact]
+    public void PageRequest_ClampsPageSize()
+    {
+        var page = new RsqlPageRequest(page: 3, pageSize: 100);
+
+        var clamped = page.ClampPageSize(25);
+
+        Assert.Equal(3, clamped.Page);
+        Assert.Equal(25, clamped.PageSize);
+        Assert.Equal(50, clamped.Skip);
+        Assert.Equal(25, clamped.Take);
+    }
+
+    [Fact]
+    public void PagedResult_CreateAddsPaginationMetadata()
+    {
+        var items = SampleProducts().Take(2).ToArray();
+        var page = new RsqlPageRequest(page: 2, pageSize: 2);
+
+        var result = RsqlPagedResult<Product>.Create(items, page, totalItems: 5);
+
+        Assert.Equal(items, result.Items);
+        Assert.Equal(2, result.Pagination.Page);
+        Assert.Equal(2, result.Pagination.PageSize);
+        Assert.Equal(5, result.Pagination.TotalItems);
+        Assert.Equal(3, result.Pagination.TotalPages);
+        Assert.True(result.Pagination.HasPreviousPage);
+        Assert.True(result.Pagination.HasNextPage);
+    }
+
+    [Fact]
     public void ApplyRsql_FiltersByAllowlistedStringEquality()
     {
         var products = new[]

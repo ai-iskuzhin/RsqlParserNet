@@ -30,6 +30,7 @@ dotnet test RsqlParserNet.sln
 dotnet pack src/RsqlParserNet/RsqlParserNet.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj --configuration Release --output artifacts/packages
+dotnet pack src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkCore.csproj --configuration Release --output artifacts/packages
 ```
 
 If releasing only one package, the other package-specific pack steps can be skipped.
@@ -40,6 +41,7 @@ If releasing only one package, the other package-specific pack steps can be skip
 unzip -l artifacts/packages/RsqlParserNet.<version>.nupkg
 unzip -l artifacts/packages/RsqlParserNet.Linq.<version>.nupkg
 unzip -l artifacts/packages/RsqlParserNet.AspNetCore.<version>.nupkg
+unzip -l artifacts/packages/RsqlParserNet.EntityFrameworkCore.<version>.nupkg
 ```
 
 ## Package Versions
@@ -52,6 +54,7 @@ Current package identities:
 RsqlParserNet
 RsqlParserNet.Linq
 RsqlParserNet.AspNetCore
+RsqlParserNet.EntityFrameworkCore
 ```
 
 ## Tagging
@@ -95,6 +98,8 @@ The workflow attaches:
 - `RsqlParserNet.Linq.<version>.snupkg`
 - `RsqlParserNet.AspNetCore.<version>.nupkg`
 - `RsqlParserNet.AspNetCore.<version>.snupkg`
+- `RsqlParserNet.EntityFrameworkCore.<version>.nupkg`
+- `RsqlParserNet.EntityFrameworkCore.<version>.snupkg`
 
 When packages have different versions, the GitHub release will attach the versions currently defined in each package project unless a workflow explicitly overrides them.
 
@@ -132,6 +137,14 @@ For the ASP.NET Core adapter:
 git_ref: main
 version: 0.1.0-preview.1
 package: RsqlParserNet.AspNetCore
+```
+
+For the EF Core adapter:
+
+```text
+git_ref: main
+version: 0.1.0-preview.1
+package: RsqlParserNet.EntityFrameworkCore
 ```
 
 The `git_ref` should usually be the release tag. This keeps the package published to NuGet identical to the package attached to the GitHub release.

@@ -26,12 +26,19 @@ ASP.NET Core binding:
 dotnet add package RsqlParserNet.AspNetCore --prerelease
 ```
 
+Entity Framework Core helpers:
+
+```bash
+dotnet add package RsqlParserNet.EntityFrameworkCore --prerelease
+```
+
 For local development, reference the project directly:
 
 ```xml
 <ProjectReference Include="src/RsqlParserNet/RsqlParserNet.csproj" />
 <ProjectReference Include="src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj" />
 <ProjectReference Include="src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj" />
+<ProjectReference Include="src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkCore.csproj" />
 ```
 
 ## Quick Start
@@ -245,19 +252,25 @@ builder.Services.AddRsqlQueryFilter(options =>
 {
     options.ParseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
 });
+builder.Services.AddRsqlPageQuery(options => options.MaxPageSize = 100);
 
-app.MapGet("/products", (RsqlQueryFilter filter, IQueryable<Product> products) =>
+app.MapGet("/products", async (RsqlQueryFilter filter, RsqlPageQuery page, AppDbContext db) =>
 {
     if (!filter.IsValid)
     {
         return Results.ValidationProblem(filter.ToValidationErrors());
     }
 
-    var query = filter.HasQuery
-        ? products.ApplyRsql(filter.Query!, ProductRsqlProfile.Instance)
-        : products;
+    if (!page.IsValid)
+    {
+        return Results.ValidationProblem(page.ToValidationErrors());
+    }
 
-    return Results.Ok(query.Take(100).ToList());
+    var query = filter.HasQuery
+        ? await db.Products.ToRsqlPageAsync(filter.Query!, ProductRsqlProfile.Instance, page.Request!)
+        : await db.Products.ToRsqlPageAsync(page.Request!);
+
+    return Results.Ok(query);
 });
 ```
 
@@ -280,6 +293,8 @@ The core parser should not expose arbitrary reflected entity/property access. Fu
 
 Framework adapters should stay separate when they need framework-specific dependencies. `RsqlParserNet.AspNetCore` owns ASP.NET Core binding helpers, and a future `RsqlParserNet.FastEndpoints` package can wrap FastEndpoints request/validation conventions if plain `RsqlQueryFilter.Parse` becomes repetitive.
 
+`RsqlParserNet.EntityFrameworkCore` owns EF Core async execution helpers, including paged result helpers that return `items` and `pagination` metadata.
+
 ## Development
 
 ```bash
@@ -288,6 +303,7 @@ dotnet test RsqlParserNet.sln
 dotnet pack src/RsqlParserNet/RsqlParserNet.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj --configuration Release --output artifacts/packages
+dotnet pack src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkCore.csproj --configuration Release --output artifacts/packages
 ```
 
 ## Project Notes
@@ -297,5 +313,6 @@ dotnet pack src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj --confi
 - LINQ adapter details: [docs/linq-adapter.md](docs/linq-adapter.md)
 - LINQ adapter roadmap: [docs/linq-roadmap.md](docs/linq-roadmap.md)
 - ASP.NET Core usage: [docs/aspnet-core-usage.md](docs/aspnet-core-usage.md)
+- EF Core helpers: [docs/entity-framework-core.md](docs/entity-framework-core.md)
 - Core v1 checklist: [docs/core-v1-checklist.md](docs/core-v1-checklist.md)
 - Release process: [docs/release.md](docs/release.md)

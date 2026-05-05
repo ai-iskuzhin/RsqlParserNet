@@ -25,6 +25,9 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 - Added ASP.NET Core request handling examples without adding ASP.NET dependencies to the packages.
 - Added the `RsqlParserNet.AspNetCore` adapter project with a bindable `RsqlQueryFilter` request model.
 - Documented the FastEndpoints reuse path through `RsqlQueryFilter.Parse`.
+- Added framework-neutral pagination request/result models and queryable page helpers.
+- Added ASP.NET Core `RsqlPageQuery` binding for `page` and `pageSize` query parameters.
+- Added the `RsqlParserNet.EntityFrameworkCore` adapter project with async paged result helpers.
 
 ## 0.1.0-preview.3
 

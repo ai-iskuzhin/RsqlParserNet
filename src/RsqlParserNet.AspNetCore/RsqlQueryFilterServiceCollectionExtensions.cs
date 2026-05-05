@@ -30,4 +30,28 @@ public static class RsqlQueryFilterServiceCollectionExtensions
 
         return services;
     }
+
+    /// <summary>
+    /// Registers RSQL page query binding options.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="configure">Optional page query binding option configuration.</param>
+    /// <returns>The configured service collection.</returns>
+    public static IServiceCollection AddRsqlPageQuery(
+        this IServiceCollection services,
+        Action<RsqlPageQueryOptions>? configure = null)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        if (configure is null)
+        {
+            services.AddOptions<RsqlPageQueryOptions>();
+        }
+        else
+        {
+            services.Configure(configure);
+        }
+
+        return services;
+    }
 }

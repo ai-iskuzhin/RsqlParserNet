@@ -22,6 +22,13 @@ builder.Services.AddRsqlQueryFilter(options =>
     options.QueryParameterName = "filter";
     options.ParseOptions = ProductRsqlProfile.Instance.ConfigureParseOptions(RsqlParseOptions.Default);
 });
+builder.Services.AddRsqlPageQuery(options =>
+{
+    options.PageParameterName = "page";
+    options.PageSizeParameterName = "pageSize";
+    options.DefaultPageSize = 50;
+    options.MaxPageSize = 100;
+});
 ```
 
 ## Minimal API Binding
@@ -30,31 +37,32 @@ builder.Services.AddRsqlQueryFilter(options =>
 using Microsoft.EntityFrameworkCore;
 using RsqlParserNet;
 using RsqlParserNet.AspNetCore;
+using RsqlParserNet.EntityFrameworkCore;
 using RsqlParserNet.Linq;
 
 app.MapGet("/products", async (
     RsqlQueryFilter filter,
+    RsqlPageQuery page,
     AppDbContext db,
     CancellationToken cancellationToken) =>
 {
-    IQueryable<Product> query = db.Products;
-
     if (!filter.IsValid)
     {
         return Results.ValidationProblem(filter.ToValidationErrors());
     }
 
-    if (filter.HasQuery)
+    if (!page.IsValid)
     {
-        query = query.ApplyRsql(filter.Query!, ProductRsqlProfile.Instance);
+        return Results.ValidationProblem(page.ToValidationErrors());
     }
 
-    var products = await query
-        .OrderBy(product => product.Id)
-        .Take(100)
-        .ToListAsync(cancellationToken);
+    var query = db.Products.OrderBy(product => product.Id);
 
-    return Results.Ok(products);
+    var result = filter.HasQuery
+        ? await query.ToRsqlPageAsync(filter.Query!, ProductRsqlProfile.Instance, page.Request!, cancellationToken)
+        : await query.ToRsqlPageAsync(page.Request!, cancellationToken);
+
+    return Results.Ok(result);
 });
 ```
 
@@ -148,6 +156,7 @@ GET /products?filter=name=contains=ik
 GET /products?filter=name=starts=Bi
 GET /products?filter=tags=any=(outdoor,bike)
 GET /products?filter=tags=all=(bike,outdoor)
+GET /products?filter=status==active&page=2&pageSize=25
 ```
 
 ## Notes

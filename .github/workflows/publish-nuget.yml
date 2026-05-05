@@ -20,6 +20,7 @@ on:
           - RsqlParserNet
           - RsqlParserNet.Linq
           - RsqlParserNet.AspNetCore
+          - RsqlParserNet.EntityFrameworkCore
 
 permissions:
   contents: read
@@ -66,6 +67,10 @@ jobs:
             RsqlParserNet.AspNetCore)
               echo "project=src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj" >> "$GITHUB_OUTPUT"
               echo "id=RsqlParserNet.AspNetCore" >> "$GITHUB_OUTPUT"
+              ;;
+            RsqlParserNet.EntityFrameworkCore)
+              echo "project=src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkCore.csproj" >> "$GITHUB_OUTPUT"
+              echo "id=RsqlParserNet.EntityFrameworkCore" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "Unsupported package '$PACKAGE'" >&2

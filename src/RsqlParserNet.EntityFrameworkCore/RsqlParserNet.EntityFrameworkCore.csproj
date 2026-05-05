@@ -1,22 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\RsqlParserNet\RsqlParserNet.csproj" />
     <ProjectReference Include="..\RsqlParserNet.Linq\RsqlParserNet.Linq.csproj" />
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
   </ItemGroup>
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <PackageId>RsqlParserNet.AspNetCore</PackageId>
+    <PackageId>RsqlParserNet.EntityFrameworkCore</PackageId>
     <Version>0.1.0-preview.1</Version>
     <PackageVersion>0.1.0-preview.1</PackageVersion>
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <FileVersion>0.1.0.0</FileVersion>
     <InformationalVersion>0.1.0-preview.1</InformationalVersion>
-    <Title>RsqlParserNet.AspNetCore</Title>
-    <Description>ASP.NET Core query binding helpers for RsqlParserNet AST queries.</Description>
-    <PackageTags>rsql;fiql;aspnetcore;minimal-api;query;filtering;binding</PackageTags>
+    <Title>RsqlParserNet.EntityFrameworkCore</Title>
+    <Description>Entity Framework Core async execution helpers for RsqlParserNet LINQ queries.</Description>
+    <PackageTags>rsql;fiql;entity-framework-core;efcore;linq;query;filtering;pagination</PackageTags>
     <PackageProjectUrl>https://github.com/ai-iskuzhin/RsqlParserNet</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Authors>ai-iskuzhin</Authors>
@@ -34,7 +33,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageReleaseNotes>Initial ASP.NET Core preview with a bindable RSQL query filter model for Minimal APIs and endpoint-style request handling.</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial Entity Framework Core preview with async paged result helpers for allowlisted RSQL LINQ queries.</PackageReleaseNotes>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

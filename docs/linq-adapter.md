@@ -184,6 +184,21 @@ which maps to:
 values.Contains(x.Status)
 ```
 
+## Pagination
+
+`RsqlParserNet.Linq` includes framework-neutral pagination models:
+
+```csharp
+var page = new RsqlPageRequest(page: 2, pageSize: 25);
+
+var items = products
+    .OrderBy(product => product.Id)
+    .ApplyPage(page)
+    .ToArray();
+```
+
+Use `RsqlPagedResult<T>.Create(items, page, totalItems)` when another layer already owns counting and materialization. Use `RsqlParserNet.EntityFrameworkCore` when EF Core should count, page, and materialize asynchronously.
+
 ## Wildcards
 
 By default, the LINQ adapter treats `*` as a wildcard only for string `==` and `!=` comparisons:
@@ -222,6 +237,8 @@ String comparison behavior follows the underlying LINQ provider. For example, EF
 - `=ends=`
 - `=any=`
 - `=all=`
+
+Use `RsqlParserNet.EntityFrameworkCore` for EF Core-specific async execution helpers such as `ToRsqlPageAsync`.
 
 ## Value Conversion
 

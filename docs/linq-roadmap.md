@@ -9,6 +9,11 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - Profile-level parser option configuration.
 - Predicate generation through `RsqlPredicateBuilder`.
 - Queryable filtering through `ApplyRsql`.
+- Queryable pagination through `ApplyPage`.
+- Framework-neutral paged result models:
+  - `RsqlPageRequest`
+  - `RsqlPagedResult<T>`
+  - `RsqlPagination`
 - Built-in scalar operators:
   - `==`
   - `!=`
@@ -35,6 +40,7 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - EF Core SQLite translation tests for built-in scalar operators, wildcards, string custom operators, and collection operators.
 - CI, release, and manual NuGet publish workflow support for the LINQ adapter package.
 - ASP.NET Core request handling samples without adding ASP.NET dependencies to the LINQ package.
+- EF Core async paged result helpers in a separate adapter package.
 
 ## Before Stable
 
@@ -44,4 +50,4 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 
 - Optional attribute-based discovery for DTOs, if profiles still feel too repetitive.
 - More custom operator helpers, such as case-insensitive string matching.
-- Provider-specific packages if EF Core or other LINQ providers need specialized translations.
+- Provider-specific packages for other LINQ providers if they need specialized translations.
