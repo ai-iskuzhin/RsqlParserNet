@@ -5,6 +5,43 @@ namespace RsqlParserNet.Linq.Tests;
 public sealed class RsqlQueryableExtensionsTests
 {
     [Fact]
+    public void BuildPredicate_BuildsReusablePredicateFromExpressionText()
+    {
+        var predicate = RsqlPredicateBuilder.BuildPredicate<Product>(
+            "status==active;count>=10",
+            options =>
+            {
+                options.Allow("status", x => x.Status);
+                options.Allow("count", x => x.Count);
+            });
+
+        var result = SampleProducts()
+            .Where(predicate)
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Bike", productName);
+    }
+
+    [Fact]
+    public void BuildPredicate_BuildsReusablePredicateFromParsedQuery()
+    {
+        var query = RsqlParser.Parse("name==B*");
+
+        var predicate = RsqlPredicateBuilder.BuildPredicate<Product>(
+            query,
+            options => options.Allow("name", x => x.Name));
+
+        var result = SampleProducts()
+            .Where(predicate)
+            .Select(x => x.Name)
+            .ToArray();
+
+        Assert.Equal(["Bike", "Board"], result);
+    }
+
+    [Fact]
     public void ApplyRsql_ParsesAndFiltersExpressionText()
     {
         var result = SampleProducts()

@@ -135,6 +135,17 @@ var filtered = products.ApplyRsql(query, options =>
 });
 ```
 
+You can also build the predicate separately when another layer should decide how to compose or apply it:
+
+```csharp
+var predicate = RsqlPredicateBuilder.BuildPredicate<Product>("status==active", options =>
+{
+    options.Allow("status", x => x.Status);
+});
+
+var filtered = products.Where(predicate);
+```
+
 The adapter currently supports:
 
 | Operator | LINQ behavior |

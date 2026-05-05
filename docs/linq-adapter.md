@@ -12,6 +12,20 @@ var filtered = products.ApplyRsql("status==active;name==B*", options =>
 });
 ```
 
+Use `RsqlPredicateBuilder` when another layer should own query composition:
+
+```csharp
+using System.Linq.Expressions;
+
+Expression<Func<Product, bool>> predicate =
+    RsqlPredicateBuilder.BuildPredicate<Product>("status==active", options =>
+    {
+        options.Allow("status", x => x.Status);
+    });
+
+var filtered = products.Where(predicate);
+```
+
 ## Supported Operators
 
 | RSQL | Expression behavior |
