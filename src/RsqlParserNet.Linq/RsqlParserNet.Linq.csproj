@@ -32,7 +32,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageReleaseNotes>Initial allowlisted LINQ adapter preview for RsqlParserNet.</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial LINQ adapter preview with explicit selector allowlisting, reusable profiles, predicate generation, built-in RSQL operators, custom operator handlers, string wildcards, collection helpers, value conversion, and EF Core SQLite translation coverage.</PackageReleaseNotes>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

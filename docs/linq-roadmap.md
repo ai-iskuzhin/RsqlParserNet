@@ -35,7 +35,7 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 
 - Decide whether `=any=` and `=all=` should remain helper conventions or move into a documented companion syntax profile.
 - Add samples for ASP.NET Core request handling without adding ASP.NET dependencies to the LINQ package.
-- Review public API names before publishing `RsqlParserNet.Linq`.
+- Publish `RsqlParserNet.Linq` as `0.1.0-preview.1` and gather feedback before API freeze.
 
 ## Later
 

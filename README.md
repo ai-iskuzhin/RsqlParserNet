@@ -8,14 +8,23 @@ Current status: `0.1.0-preview.3`. The parser core is published for early testin
 
 ## Installation
 
+Core parser:
+
 ```bash
 dotnet add package RsqlParserNet --prerelease
+```
+
+LINQ adapter:
+
+```bash
+dotnet add package RsqlParserNet.Linq --prerelease
 ```
 
 For local development, reference the project directly:
 
 ```xml
 <ProjectReference Include="src/RsqlParserNet/RsqlParserNet.csproj" />
+<ProjectReference Include="src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj" />
 ```
 
 ## Quick Start
