@@ -146,6 +146,22 @@ var predicate = RsqlPredicateBuilder.BuildPredicate<Product>("status==active", o
 var filtered = products.Where(predicate);
 ```
 
+For repeated endpoint/query contracts, put mappings in a reusable profile:
+
+```csharp
+public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
+{
+    public override void Configure(RsqlLinqOptions<Product> options)
+    {
+        options.Allow("name", x => x.Name);
+        options.Allow("status", x => x.Status);
+        options.Allow("count", x => x.Count);
+    }
+}
+
+var filtered = products.ApplyRsql("status==active;count>=10", new ProductRsqlProfile());
+```
+
 The adapter currently supports:
 
 | Operator | LINQ behavior |

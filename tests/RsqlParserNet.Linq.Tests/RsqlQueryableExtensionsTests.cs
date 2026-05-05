@@ -42,6 +42,37 @@ public sealed class RsqlQueryableExtensionsTests
     }
 
     [Fact]
+    public void BuildPredicate_UsesProfileForExpressionText()
+    {
+        var predicate = RsqlPredicateBuilder.BuildPredicate(
+            "status==active;count>=10",
+            new ProductRsqlProfile());
+
+        var result = SampleProducts()
+            .Where(predicate)
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Bike", productName);
+    }
+
+    [Fact]
+    public void BuildPredicate_UsesProfileForParsedQuery()
+    {
+        var query = RsqlParser.Parse("name==B*");
+
+        var predicate = RsqlPredicateBuilder.BuildPredicate(query, new ProductRsqlProfile());
+
+        var result = SampleProducts()
+            .Where(predicate)
+            .Select(x => x.Name)
+            .ToArray();
+
+        Assert.Equal(["Bike", "Board"], result);
+    }
+
+    [Fact]
     public void ApplyRsql_ParsesAndFiltersExpressionText()
     {
         var result = SampleProducts()
@@ -51,6 +82,32 @@ public sealed class RsqlQueryableExtensionsTests
 
         var productName = Assert.Single(result);
         Assert.Equal("Bike", productName);
+    }
+
+    [Fact]
+    public void ApplyRsql_UsesProfileForExpressionText()
+    {
+        var result = SampleProducts()
+            .ApplyRsql("status==active;count>=10", new ProductRsqlProfile())
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Bike", productName);
+    }
+
+    [Fact]
+    public void ApplyRsql_UsesProfileForParsedQuery()
+    {
+        var query = RsqlParser.Parse("status==draft");
+
+        var result = SampleProducts()
+            .ApplyRsql(query, new ProductRsqlProfile())
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Board", productName);
     }
 
     [Fact]
@@ -306,6 +363,23 @@ public sealed class RsqlQueryableExtensionsTests
     }
 
     [Fact]
+    public void ApplyRsql_UsesProfileForCustomOperator()
+    {
+        var parseOptions = RsqlParseOptions.Default with
+        {
+            CustomOperators = [new RsqlCustomOperator("=contains=")]
+        };
+
+        var result = SampleProducts()
+            .ApplyRsql("name=contains=ik", new ProductRsqlProfile(), parseOptions)
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Bike", productName);
+    }
+
+    [Fact]
     public void BuildPredicate_FiltersByAllowedCustomOperatorFactory()
     {
         var parseOptions = RsqlParseOptions.Default with
@@ -416,6 +490,17 @@ public sealed class RsqlQueryableExtensionsTests
     {
         Gear,
         Board
+    }
+
+    private sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
+    {
+        public override void Configure(RsqlLinqOptions<Product> options)
+        {
+            options.Allow("name", x => x.Name);
+            options.Allow("status", x => x.Status);
+            options.Allow("count", x => x.Count);
+            options.AllowStringContainsOperator();
+        }
     }
 
     private sealed record Product(

@@ -26,6 +26,35 @@ Expression<Func<Product, bool>> predicate =
 var filtered = products.Where(predicate);
 ```
 
+## Profiles
+
+Use `RsqlLinqProfile<T>` when the same allowlisted field set is reused by multiple endpoints or services:
+
+```csharp
+public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
+{
+    public override void Configure(RsqlLinqOptions<Product> options)
+    {
+        options.Allow("name", x => x.Name);
+        options.Allow("status", x => x.Status);
+        options.Allow("count", x => x.Count);
+        options.AllowStringContainsOperator();
+    }
+}
+```
+
+Profiles can be passed directly to `ApplyRsql` or `RsqlPredicateBuilder`:
+
+```csharp
+var profile = new ProductRsqlProfile();
+
+var filtered = products.ApplyRsql("status==active;count>=10", profile);
+
+var predicate = RsqlPredicateBuilder.BuildPredicate("name==B*", profile);
+```
+
+Profiles are still explicit allowlists. They are the recommended reuse mechanism before adding attribute-based discovery.
+
 ## Supported Operators
 
 | RSQL | Expression behavior |

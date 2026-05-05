@@ -32,6 +32,24 @@ public static class RsqlPredicateBuilder
     }
 
     /// <summary>
+    /// Parses an RSQL expression and builds a predicate expression using reusable profile configuration.
+    /// </summary>
+    /// <typeparam name="T">The element type being filtered.</typeparam>
+    /// <param name="expression">The RSQL expression text.</param>
+    /// <param name="profile">The reusable LINQ adapter profile.</param>
+    /// <param name="parseOptions">Optional parser options.</param>
+    /// <returns>A predicate expression for the supplied RSQL expression.</returns>
+    public static Expression<Func<T, bool>> BuildPredicate<T>(
+        string expression,
+        RsqlLinqProfile<T> profile,
+        RsqlParseOptions? parseOptions = null)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+
+        return BuildPredicate<T>(expression, options => options.ApplyProfile(profile), parseOptions);
+    }
+
+    /// <summary>
     /// Builds a predicate expression from a parsed RSQL query.
     /// </summary>
     /// <typeparam name="T">The element type being filtered.</typeparam>
@@ -51,6 +69,22 @@ public static class RsqlPredicateBuilder
         var parameter = Expression.Parameter(typeof(T), "x");
         var body = BuildExpression(query.Root, options, parameter);
         return Expression.Lambda<Func<T, bool>>(body, parameter);
+    }
+
+    /// <summary>
+    /// Builds a predicate expression from a parsed RSQL query using reusable profile configuration.
+    /// </summary>
+    /// <typeparam name="T">The element type being filtered.</typeparam>
+    /// <param name="query">The parsed RSQL query.</param>
+    /// <param name="profile">The reusable LINQ adapter profile.</param>
+    /// <returns>A predicate expression for the supplied parsed query.</returns>
+    public static Expression<Func<T, bool>> BuildPredicate<T>(
+        RsqlQuery query,
+        RsqlLinqProfile<T> profile)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+
+        return BuildPredicate<T>(query, options => options.ApplyProfile(profile));
     }
 
     private static Expression BuildExpression<T>(RsqlNode node, RsqlLinqOptions<T> options, ParameterExpression parameter)

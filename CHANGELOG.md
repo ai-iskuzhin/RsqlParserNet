@@ -11,6 +11,7 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 - Added the `RsqlParserNet.Linq` adapter project for allowlisted expression tree generation.
 - Added LINQ adapter overloads for parsed `RsqlQuery` instances and raw RSQL expression text.
 - Added `RsqlPredicateBuilder` for building reusable `Expression<Func<T, bool>>` predicates without applying `Where`.
+- Added `RsqlLinqProfile<T>` for reusable allowlisted LINQ adapter configuration.
 - Added LINQ adapter support for equality, inequality, range comparisons, `=in=`, `=out=`, AND, and OR.
 - Added explicit custom operator expression factories for the LINQ adapter, including a string contains helper.
 - Added configurable string wildcard support for LINQ equality and inequality comparisons.

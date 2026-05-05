@@ -32,6 +32,26 @@ public static class RsqlQueryableExtensions
     }
 
     /// <summary>
+    /// Parses and applies an RSQL expression to an <see cref="IQueryable{T}"/> using reusable profile configuration.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source queryable.</param>
+    /// <param name="expression">The RSQL expression text.</param>
+    /// <param name="profile">The reusable LINQ adapter profile.</param>
+    /// <param name="parseOptions">Optional parser options.</param>
+    /// <returns>The filtered queryable.</returns>
+    public static IQueryable<T> ApplyRsql<T>(
+        this IQueryable<T> source,
+        string expression,
+        RsqlLinqProfile<T> profile,
+        RsqlParseOptions? parseOptions = null)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+
+        return source.ApplyRsql(expression, options => options.ApplyProfile(profile), parseOptions);
+    }
+
+    /// <summary>
     /// Applies a parsed RSQL query to an <see cref="IQueryable{T}"/>.
     /// </summary>
     /// <typeparam name="T">The element type.</typeparam>
@@ -50,5 +70,23 @@ public static class RsqlQueryableExtensions
 
         var predicate = RsqlPredicateBuilder.BuildPredicate(query, configure);
         return source.Where(predicate);
+    }
+
+    /// <summary>
+    /// Applies a parsed RSQL query to an <see cref="IQueryable{T}"/> using reusable profile configuration.
+    /// </summary>
+    /// <typeparam name="T">The element type.</typeparam>
+    /// <param name="source">The source queryable.</param>
+    /// <param name="query">The parsed RSQL query.</param>
+    /// <param name="profile">The reusable LINQ adapter profile.</param>
+    /// <returns>The filtered queryable.</returns>
+    public static IQueryable<T> ApplyRsql<T>(
+        this IQueryable<T> source,
+        RsqlQuery query,
+        RsqlLinqProfile<T> profile)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+
+        return source.ApplyRsql(query, options => options.ApplyProfile(profile));
     }
 }

@@ -47,6 +47,17 @@ public sealed class RsqlLinqOptions<T>
     }
 
     /// <summary>
+    /// Applies reusable profile configuration to these options.
+    /// </summary>
+    /// <param name="profile">The reusable LINQ adapter profile.</param>
+    public void ApplyProfile(RsqlLinqProfile<T> profile)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+
+        profile.Configure(this);
+    }
+
+    /// <summary>
     /// Allows a custom RSQL operator and maps it to a LINQ expression factory.
     /// </summary>
     /// <remarks>
