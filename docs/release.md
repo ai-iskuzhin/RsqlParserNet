@@ -28,18 +28,27 @@ Stable versions should use plain SemVer:
 ```bash
 dotnet test RsqlParserNet.sln
 dotnet pack src/RsqlParserNet/RsqlParserNet.csproj --configuration Release --output artifacts/packages
-```
-
-If releasing the LINQ adapter, also run:
-
-```bash
 dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Release --output artifacts/packages
 ```
+
+If releasing only the core package, the LINQ adapter pack step can be skipped.
 
 5. Inspect the generated packages:
 
 ```bash
 unzip -l artifacts/packages/RsqlParserNet.<version>.nupkg
+unzip -l artifacts/packages/RsqlParserNet.Linq.<version>.nupkg
+```
+
+## Package Versions
+
+Packages can be versioned independently while the project is in preview.
+
+Current package identities:
+
+```text
+RsqlParserNet
+RsqlParserNet.Linq
 ```
 
 ## Tagging
@@ -51,7 +60,7 @@ git tag -a v0.1.0-preview.3 -m "RsqlParserNet 0.1.0-preview.3"
 git push origin v0.1.0-preview.3
 ```
 
-Pushing a `v*` tag runs CI, packs the project, creates a GitHub release, and attaches the packed NuGet artifacts.
+Pushing a `v*` tag runs CI, packs the projects, creates a GitHub release, and attaches the packed NuGet artifacts.
 
 ## Publishing To NuGet
 
@@ -79,8 +88,10 @@ The workflow attaches:
 
 - `RsqlParserNet.<version>.nupkg`
 - `RsqlParserNet.<version>.snupkg`
+- `RsqlParserNet.Linq.<version>.nupkg`
+- `RsqlParserNet.Linq.<version>.snupkg`
 
-Additional package artifacts should be attached when adapter packages are released.
+When packages have different versions, the GitHub release will attach the versions currently defined in each package project unless a workflow explicitly overrides them.
 
 The initial release notes are populated from `CHANGELOG.md`. Edit the generated GitHub release notes after creation if the changelog contains unreleased or historical sections that should not appear in full.
 
@@ -99,8 +110,17 @@ To publish, run the `Publish NuGet` workflow manually from GitHub Actions and en
 ```text
 git_ref: v0.1.0-preview.3
 version: 0.1.0-preview.3
+package: RsqlParserNet
+```
+
+For the LINQ adapter:
+
+```text
+git_ref: main
+version: 0.1.0-preview.1
+package: RsqlParserNet.Linq
 ```
 
 The `git_ref` should usually be the release tag. This keeps the package published to NuGet identical to the package attached to the GitHub release.
 
-The workflow restores, builds, tests, packs the requested version from the requested git ref, and pushes the `.nupkg` and `.snupkg` to NuGet.
+The workflow restores, builds, tests, packs the requested package and version from the requested git ref, and pushes the `.nupkg` and `.snupkg` to NuGet.

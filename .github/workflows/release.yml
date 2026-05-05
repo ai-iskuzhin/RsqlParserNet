@@ -31,8 +31,11 @@ jobs:
       - name: Test
         run: dotnet test RsqlParserNet.sln --configuration Release --no-build --verbosity normal
 
-      - name: Pack
+      - name: Pack Core
         run: dotnet pack src/RsqlParserNet/RsqlParserNet.csproj --configuration Release --no-build --output artifacts/packages
+
+      - name: Pack LINQ Adapter
+        run: dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Release --no-build --output artifacts/packages
 
       - name: Create GitHub Release
         env:
