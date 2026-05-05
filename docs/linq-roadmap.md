@@ -23,7 +23,10 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
   - `,`
 - String wildcard equality for simple patterns.
 - Explicit custom operator factories.
-- String contains helper for `=contains=`.
+- String helpers:
+  - `=contains=`
+  - `=starts=`
+  - `=ends=`
 - Collection helpers:
   - `=any=`
   - `=all=`
@@ -40,5 +43,5 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 ## Later
 
 - Optional attribute-based discovery for DTOs, if profiles still feel too repetitive.
-- More custom operator helpers, such as starts-with, ends-with, and case-insensitive string matching.
+- More custom operator helpers, such as case-insensitive string matching.
 - Provider-specific packages if EF Core or other LINQ providers need specialized translations.

@@ -125,6 +125,8 @@ public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
         options.Allow("createdAt", product => product.CreatedAt);
         options.Allow("tags", product => product.Tags);
         options.AllowStringContainsOperator();
+        options.AllowStringStartsWithOperator();
+        options.AllowStringEndsWithOperator();
         options.AllowCollectionAnyOperator();
         options.AllowCollectionAllOperator();
     }
@@ -138,6 +140,7 @@ GET /products?filter=status==active
 GET /products?filter=status=in=(active,draft);createdAt>=2026-01-01
 GET /products?filter=name==Bike*
 GET /products?filter=name=contains=ik
+GET /products?filter=name=starts=Bi
 GET /products?filter=tags=any=(outdoor,bike)
 GET /products?filter=tags=all=(bike,outdoor)
 ```

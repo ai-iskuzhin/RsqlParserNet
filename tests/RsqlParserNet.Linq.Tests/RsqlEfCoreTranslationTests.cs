@@ -62,6 +62,34 @@ public sealed class RsqlEfCoreTranslationTests
     }
 
     [Fact]
+    public void ApplyRsql_TranslatesStringStartsWithCustomOperatorWithSqlite()
+    {
+        using var database = SqliteProductDatabase.Create();
+
+        var result = database.Context.Products
+            .ApplyRsql("name=starts=Bo", new SqliteProductRsqlProfile())
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Board", productName);
+    }
+
+    [Fact]
+    public void ApplyRsql_TranslatesStringEndsWithCustomOperatorWithSqlite()
+    {
+        using var database = SqliteProductDatabase.Create();
+
+        var result = database.Context.Products
+            .ApplyRsql("name=ends=met", new SqliteProductRsqlProfile())
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Helmet", productName);
+    }
+
+    [Fact]
     public void ApplyRsql_TranslatesCollectionAnyOperatorWithSqlite()
     {
         using var database = SqliteProductDatabase.Create();
@@ -103,6 +131,8 @@ public sealed class RsqlEfCoreTranslationTests
             options.Allow("count", x => x.Count);
             options.Allow("tags", x => x.Tags);
             options.AllowStringContainsOperator();
+            options.AllowStringStartsWithOperator();
+            options.AllowStringEndsWithOperator();
             options.AllowCollectionAnyOperator();
             options.AllowCollectionAllOperator();
         }

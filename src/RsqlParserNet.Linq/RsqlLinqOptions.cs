@@ -101,6 +101,30 @@ public sealed class RsqlLinqOptions<T>
     }
 
     /// <summary>
+    /// Allows a single-value string <c>StartsWith</c> custom operator.
+    /// </summary>
+    /// <remarks>
+    /// The operator text must also be configured in <see cref="RsqlParseOptions.CustomOperators"/>.
+    /// </remarks>
+    /// <param name="operatorText">The custom FIQL-style operator text.</param>
+    public void AllowStringStartsWithOperator(string operatorText = RsqlLinqOperators.StartsWith)
+    {
+        CustomOperator<string>(operatorText, context => context.CallStringMethod(nameof(string.StartsWith)));
+    }
+
+    /// <summary>
+    /// Allows a single-value string <c>EndsWith</c> custom operator.
+    /// </summary>
+    /// <remarks>
+    /// The operator text must also be configured in <see cref="RsqlParseOptions.CustomOperators"/>.
+    /// </remarks>
+    /// <param name="operatorText">The custom FIQL-style operator text.</param>
+    public void AllowStringEndsWithOperator(string operatorText = RsqlLinqOperators.EndsWith)
+    {
+        CustomOperator<string>(operatorText, context => context.CallStringMethod(nameof(string.EndsWith)));
+    }
+
+    /// <summary>
     /// Allows a collection operator that matches when any mapped collection item is present in the supplied values.
     /// </summary>
     /// <remarks>

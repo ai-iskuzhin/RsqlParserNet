@@ -16,6 +16,8 @@ public static class RsqlLinqParseOptionsExtensions
 
         var customOperators = options.CustomOperators.ToList();
         AddCustomOperator(customOperators, new RsqlCustomOperator(RsqlLinqOperators.Contains));
+        AddCustomOperator(customOperators, new RsqlCustomOperator(RsqlLinqOperators.StartsWith));
+        AddCustomOperator(customOperators, new RsqlCustomOperator(RsqlLinqOperators.EndsWith));
         AddCustomOperator(customOperators, new RsqlCustomOperator(RsqlLinqOperators.Any, RequiresMultipleValues: true));
         AddCustomOperator(customOperators, new RsqlCustomOperator(RsqlLinqOperators.All, RequiresMultipleValues: true));
 

@@ -172,6 +172,8 @@ public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
         options.Allow("count", x => x.Count);
         options.Allow("tags", x => x.Tags);
         options.AllowStringContainsOperator();
+        options.AllowStringStartsWithOperator();
+        options.AllowStringEndsWithOperator();
         options.AllowCollectionAnyOperator();
         options.AllowCollectionAllOperator();
     }
@@ -187,6 +189,7 @@ The adapter currently supports:
 | `==` / `!=` | Equality and inequality |
 | `>` / `>=` / `<` / `<=` | Comparable mapped types such as numbers and dates |
 | `=in=` / `=out=` | Membership checks over the supplied value list |
+| `=contains=` / `=starts=` / `=ends=` | Custom string helpers for allowlisted string fields |
 | `=any=` / `=all=` | Custom collection helpers for allowlisted collection fields |
 | `;` / `,` | `AndAlso` and `OrElse` expression composition |
 

@@ -363,6 +363,54 @@ public sealed class RsqlQueryableExtensionsTests
     }
 
     [Fact]
+    public void ApplyRsql_FiltersByAllowedCustomStringStartsWithOperator()
+    {
+        var parseOptions = RsqlParseOptions.Default with
+        {
+            CustomOperators = [new RsqlCustomOperator(RsqlLinqOperators.StartsWith)]
+        };
+
+        var result = SampleProducts()
+            .ApplyRsql(
+                "name=starts=Bo",
+                options =>
+                {
+                    options.Allow("name", x => x.Name);
+                    options.AllowStringStartsWithOperator();
+                },
+                parseOptions)
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Board", productName);
+    }
+
+    [Fact]
+    public void ApplyRsql_FiltersByAllowedCustomStringEndsWithOperator()
+    {
+        var parseOptions = RsqlParseOptions.Default with
+        {
+            CustomOperators = [new RsqlCustomOperator(RsqlLinqOperators.EndsWith)]
+        };
+
+        var result = SampleProducts()
+            .ApplyRsql(
+                "name=ends=met",
+                options =>
+                {
+                    options.Allow("name", x => x.Name);
+                    options.AllowStringEndsWithOperator();
+                },
+                parseOptions)
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Helmet", productName);
+    }
+
+    [Fact]
     public void ApplyRsql_FiltersByCollectionAnyOperator()
     {
         var parseOptions = RsqlParseOptions.Default with
@@ -441,8 +489,10 @@ public sealed class RsqlQueryableExtensionsTests
 
         var operators = options.CustomOperators.ToArray();
 
-        Assert.Equal(3, operators.Length);
+        Assert.Equal(5, operators.Length);
         Assert.Contains(operators, item => item.Text == RsqlLinqOperators.Contains && !item.RequiresMultipleValues);
+        Assert.Contains(operators, item => item.Text == RsqlLinqOperators.StartsWith && !item.RequiresMultipleValues);
+        Assert.Contains(operators, item => item.Text == RsqlLinqOperators.EndsWith && !item.RequiresMultipleValues);
         Assert.Contains(operators, item => item.Text == RsqlLinqOperators.Any && item.RequiresMultipleValues);
         Assert.Contains(operators, item => item.Text == RsqlLinqOperators.All && item.RequiresMultipleValues);
     }
@@ -586,6 +636,8 @@ public sealed class RsqlQueryableExtensionsTests
             options.Allow("count", x => x.Count);
             options.Allow("tags", x => x.Tags);
             options.AllowStringContainsOperator();
+            options.AllowStringStartsWithOperator();
+            options.AllowStringEndsWithOperator();
             options.AllowCollectionAnyOperator();
             options.AllowCollectionAllOperator();
         }

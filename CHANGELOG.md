@@ -14,7 +14,7 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 - Added `RsqlLinqProfile<T>` for reusable allowlisted LINQ adapter configuration.
 - Added profile-level parser option configuration for reusable custom operator contracts.
 - Added LINQ adapter support for equality, inequality, range comparisons, `=in=`, `=out=`, AND, and OR.
-- Added explicit custom operator expression factories for the LINQ adapter, including a string contains helper.
+- Added explicit custom operator expression factories for the LINQ adapter, including string contains, starts-with, and ends-with helpers.
 - Added collection custom operator helpers for `=any=` and `=all=` in the LINQ adapter.
 - Added LINQ adapter operator constants and a parser option helper for conventional custom operators.
 - Added EF Core SQLite translation tests for LINQ adapter expressions.

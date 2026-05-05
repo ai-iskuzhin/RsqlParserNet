@@ -45,6 +45,8 @@ public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
         options.Allow("count", x => x.Count);
         options.Allow("tags", x => x.Tags);
         options.AllowStringContainsOperator();
+        options.AllowStringStartsWithOperator();
+        options.AllowStringEndsWithOperator();
         options.AllowCollectionAnyOperator();
         options.AllowCollectionAllOperator();
     }
@@ -75,6 +77,9 @@ Profiles are still explicit allowlists. They are the recommended reuse mechanism
 | `<=` | Less than or equal |
 | `=in=` | `Enumerable.Contains(values, member)` |
 | `=out=` | Negated `Enumerable.Contains(values, member)` |
+| `=contains=` | Configurable string contains helper |
+| `=starts=` | Configurable string starts-with helper |
+| `=ends=` | Configurable string ends-with helper |
 | `=any=` | Configurable collection match: any mapped collection item is in the supplied values |
 | `=all=` | Configurable collection match: every supplied value is present in the mapped collection |
 | `;` | `Expression.AndAlso` |
@@ -104,6 +109,8 @@ var filtered = products.ApplyRsql(
     },
     parseOptions);
 ```
+
+The same convention is available for `=starts=` and `=ends=` through `AllowStringStartsWithOperator()` and `AllowStringEndsWithOperator()`.
 
 For custom expression logic, use `CustomOperator`:
 
@@ -211,6 +218,8 @@ String comparison behavior follows the underlying LINQ provider. For example, EF
 - `=in=`
 - string wildcards
 - `=contains=`
+- `=starts=`
+- `=ends=`
 - `=any=`
 - `=all=`
 
