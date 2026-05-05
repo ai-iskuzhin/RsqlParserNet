@@ -364,6 +364,12 @@ dotnet pack src/RsqlParserNet.Swashbuckle/RsqlParserNet.Swashbuckle.csproj --con
 
 Coverage is collected locally with Coverlet. A public percentage badge will be added after coverage publishing is wired into CI.
 
+## Release Automation
+
+Pushing a `v*` tag builds, tests, packs, and creates a GitHub Release with every package artifact. Future tags also publish all generated `.nupkg` and `.snupkg` files to NuGet.org when the repository secret `NUGET_API_KEY` is configured.
+
+The manual `Publish NuGet` workflow remains available for retrying one package from a release tag. The already-created `v0.2.0-preview.1` tag should be published through that manual workflow because it was created before automatic NuGet publishing was added.
+
 ## Project Notes
 
 - Versioning: [CHANGELOG.md](CHANGELOG.md)
