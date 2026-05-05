@@ -1,5 +1,19 @@
 # RsqlParserNet
 
+[![CI](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/ci.yml)
+[![Release](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/release.yml/badge.svg)](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/release.yml)
+[![Publish NuGet](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/publish-nuget.yml/badge.svg)](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/publish-nuget.yml)
+[![License](https://img.shields.io/github/license/ai-iskuzhin/RsqlParserNet?style=flat-square)](LICENSE)
+[![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&style=flat-square)](https://dotnet.microsoft.com/)
+[![Coverage](https://img.shields.io/badge/coverage-not%20published-lightgrey?style=flat-square)](#development)
+
+| Package | Latest Release | Downloads |
+| :--- | :---: | :---: |
+| `RsqlParserNet` | [![RsqlParserNet NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet) | [![RsqlParserNet Downloads](https://img.shields.io/nuget/dt/RsqlParserNet?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet) |
+| `RsqlParserNet.Linq` | [![RsqlParserNet.Linq NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.Linq?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Linq) | [![RsqlParserNet.Linq Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.Linq?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Linq) |
+| `RsqlParserNet.AspNetCore` | [![RsqlParserNet.AspNetCore NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.AspNetCore?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.AspNetCore) | [![RsqlParserNet.AspNetCore Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.AspNetCore?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.AspNetCore) |
+| `RsqlParserNet.EntityFrameworkCore` | [![RsqlParserNet.EntityFrameworkCore NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.EntityFrameworkCore?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.EntityFrameworkCore) | [![RsqlParserNet.EntityFrameworkCore Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.EntityFrameworkCore?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.EntityFrameworkCore) |
+
 A dependency-light .NET parser for RSQL/FIQL-style REST API query expressions.
 
 `RsqlParserNet` parses query text into a typed AST with source spans and structured diagnostics. The core package does not depend on ASP.NET Core, LINQ, Entity Framework Core, or ORM APIs.
@@ -301,11 +315,14 @@ Framework adapters should stay separate when they need framework-specific depend
 ```bash
 dotnet build RsqlParserNet.sln
 dotnet test RsqlParserNet.sln
+dotnet test RsqlParserNet.sln --collect:"XPlat Code Coverage"
 dotnet pack src/RsqlParserNet/RsqlParserNet.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.AspNetCore/RsqlParserNet.AspNetCore.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkCore.csproj --configuration Release --output artifacts/packages
 ```
+
+Coverage is collected locally with Coverlet. A public percentage badge will be added after coverage publishing is wired into CI.
 
 ## Project Notes
 
