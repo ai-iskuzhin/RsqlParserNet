@@ -11,8 +11,10 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 - Added the `RsqlParserNet.Linq` adapter project for allowlisted expression tree generation.
 - Added LINQ adapter overloads for parsed `RsqlQuery` instances and raw RSQL expression text.
 - Added LINQ adapter support for equality, inequality, range comparisons, `=in=`, `=out=`, AND, and OR.
+- Added configurable string wildcard support for LINQ equality and inequality comparisons.
 - Added value conversion coverage for strings, booleans, numbers, enums, nullable values, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`.
 - Added LINQ adapter tests for selector allowlisting, logical expressions, built-in operators, null handling, and conversion failures.
+- Added LINQ adapter documentation for supported operators, wildcards, and value conversion.
 
 ## 0.1.0-preview.3
 

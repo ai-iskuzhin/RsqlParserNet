@@ -82,6 +82,56 @@ public sealed class RsqlQueryableExtensionsTests
         Assert.Equal(["Bike", "Helmet"], result);
     }
 
+    [Theory]
+    [InlineData("name==B*", "Bike", "Board")]
+    [InlineData("name==*met", "Helmet")]
+    [InlineData("name==*ik*", "Bike")]
+    [InlineData("name==Bo*d", "Board")]
+    public void ApplyRsql_FiltersStringWildcards(string expression, params string[] expectedNames)
+    {
+        var result = SampleProducts()
+            .ApplyRsql(expression, options => options.Allow("name", x => x.Name))
+            .Select(x => x.Name)
+            .ToArray();
+
+        Assert.Equal(expectedNames, result);
+    }
+
+    [Fact]
+    public void ApplyRsql_NegatesStringWildcardForNotEqualOperator()
+    {
+        var result = SampleProducts()
+            .ApplyRsql("name!=B*", options => options.Allow("name", x => x.Name))
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Helmet", productName);
+    }
+
+    [Fact]
+    public void ApplyRsql_TreatsWildcardAsLiteralWhenWildcardModeIsDisabled()
+    {
+        var result = SampleProducts()
+            .ApplyRsql("name==B*", options =>
+            {
+                options.StringWildcardMode = RsqlStringWildcardMode.Disabled;
+                options.Allow("name", x => x.Name);
+            })
+            .Select(x => x.Name)
+            .ToArray();
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void ApplyRsql_RejectsUnsupportedStringWildcardPattern()
+    {
+        Assert.Throws<RsqlLinqException>(() => SampleProducts()
+            .ApplyRsql("name==*i*k*", options => options.Allow("name", x => x.Name))
+            .ToArray());
+    }
+
     [Fact]
     public void ApplyRsql_FiltersLogicalOr()
     {

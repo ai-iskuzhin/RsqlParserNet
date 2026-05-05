@@ -101,8 +101,8 @@ public static class RsqlQueryableExtensions
 
         return comparison.Operator switch
         {
-            RsqlComparisonOperator.Equal => BuildSingleValueComparison(comparison, left, Expression.Equal),
-            RsqlComparisonOperator.NotEqual => BuildSingleValueComparison(comparison, left, Expression.NotEqual),
+            RsqlComparisonOperator.Equal => BuildEqualityComparison(comparison, left, options, negate: false),
+            RsqlComparisonOperator.NotEqual => BuildEqualityComparison(comparison, left, options, negate: true),
             RsqlComparisonOperator.GreaterThan => BuildSingleValueComparison(comparison, left, Expression.GreaterThan),
             RsqlComparisonOperator.GreaterThanOrEqual => BuildSingleValueComparison(comparison, left, Expression.GreaterThanOrEqual),
             RsqlComparisonOperator.LessThan => BuildSingleValueComparison(comparison, left, Expression.LessThan),
@@ -113,6 +113,31 @@ public static class RsqlQueryableExtensions
                 $"Custom operator '{comparison.OperatorText}' is not supported by the LINQ adapter."),
             _ => throw new RsqlLinqException($"Operator '{comparison.OperatorText}' is not supported by the LINQ adapter.")
         };
+    }
+
+    private static Expression BuildEqualityComparison<T>(
+        RsqlComparisonNode comparison,
+        Expression left,
+        RsqlLinqOptions<T> options,
+        bool negate)
+    {
+        if (comparison.Values.Count != 1)
+        {
+            throw new RsqlLinqException($"Operator '{comparison.OperatorText}' requires exactly one value.");
+        }
+
+        var value = comparison.Values[0];
+        var isWildcardComparison =
+            options.StringWildcardMode == RsqlStringWildcardMode.Enabled &&
+            left.Type == typeof(string) &&
+            value.Kind == RsqlValueKind.String &&
+            value.Text?.Contains('*', StringComparison.Ordinal) == true;
+
+        var expression = isWildcardComparison
+            ? BuildWildcardComparison(comparison, left, value.Text!)
+            : BuildSingleValueComparison(comparison, left, negate ? Expression.NotEqual : Expression.Equal);
+
+        return negate && isWildcardComparison ? Expression.Not(expression) : expression;
     }
 
     private static Expression BuildSingleValueComparison(
@@ -137,6 +162,48 @@ public static class RsqlQueryableExtensions
                 $"Operator '{comparison.OperatorText}' cannot be applied to mapped type '{left.Type.Name}'.",
                 exception);
         }
+    }
+
+    private static Expression BuildWildcardComparison(RsqlComparisonNode comparison, Expression left, string pattern)
+    {
+        var segments = pattern.Split('*');
+        var meaningfulSegments = segments.Where(segment => segment.Length > 0).ToArray();
+
+        if (meaningfulSegments.Length == 0)
+        {
+            return Expression.NotEqual(left, Expression.Constant(null, typeof(string)));
+        }
+
+        if (segments.Length > 3)
+        {
+            throw new RsqlLinqException(
+                $"Wildcard pattern '{comparison.Values[0].RawText}' is too complex for the LINQ adapter.");
+        }
+
+        var startsWithWildcard = pattern.StartsWith('*');
+        var endsWithWildcard = pattern.EndsWith('*');
+        var nullGuard = Expression.NotEqual(left, Expression.Constant(null, typeof(string)));
+        Expression match = (startsWithWildcard, endsWithWildcard, meaningfulSegments.Length) switch
+        {
+            (true, true, 1) => CallStringMethod(left, nameof(string.Contains), meaningfulSegments[0]),
+            (true, false, 1) => CallStringMethod(left, nameof(string.EndsWith), meaningfulSegments[0]),
+            (false, true, 1) => CallStringMethod(left, nameof(string.StartsWith), meaningfulSegments[0]),
+            (false, false, 2) => Expression.AndAlso(
+                CallStringMethod(left, nameof(string.StartsWith), meaningfulSegments[0]),
+                CallStringMethod(left, nameof(string.EndsWith), meaningfulSegments[1])),
+            _ => throw new RsqlLinqException(
+                $"Wildcard pattern '{comparison.Values[0].RawText}' is not supported by the LINQ adapter.")
+        };
+
+        return Expression.AndAlso(nullGuard, match);
+    }
+
+    private static MethodCallExpression CallStringMethod(Expression instance, string methodName, string value)
+    {
+        return Expression.Call(
+            instance,
+            typeof(string).GetMethod(methodName, [typeof(string)])!,
+            Expression.Constant(value, typeof(string)));
     }
 
     private static Expression BuildContainsComparison(RsqlComparisonNode comparison, Expression left, bool negate)

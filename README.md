@@ -146,6 +146,17 @@ The adapter currently supports:
 
 Values are converted using the mapped member type, including common scalar types, enums, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`.
 
+String equality supports common `*` wildcards by default:
+
+```text
+name==B*    -> StartsWith("B")
+name==*met  -> EndsWith("met")
+name==*ik*  -> Contains("ik")
+name==Bo*d  -> StartsWith("Bo") && EndsWith("d")
+```
+
+See [docs/linq-adapter.md](docs/linq-adapter.md) for wildcard behavior, value conversion, and adapter limitations.
+
 ## Adapter Direction
 
 Expression trees are a good fit for LINQ and Entity Framework Core integration, but they belong in separate adapter packages rather than the parser core.
@@ -176,5 +187,6 @@ dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Rel
 
 - Versioning: [CHANGELOG.md](CHANGELOG.md)
 - Syntax details: [docs/syntax.md](docs/syntax.md)
+- LINQ adapter details: [docs/linq-adapter.md](docs/linq-adapter.md)
 - Core v1 checklist: [docs/core-v1-checklist.md](docs/core-v1-checklist.md)
 - Release process: [docs/release.md](docs/release.md)

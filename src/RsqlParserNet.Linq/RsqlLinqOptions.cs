@@ -11,6 +11,14 @@ public sealed class RsqlLinqOptions<T>
     private readonly Dictionary<string, LambdaExpression> _fields = new(StringComparer.Ordinal);
 
     /// <summary>
+    /// Gets or sets how string equality comparisons interpret <c>*</c> characters.
+    /// </summary>
+    /// <remarks>
+    /// The default is <see cref="RsqlStringWildcardMode.Enabled"/> to match common RSQL API expectations.
+    /// </remarks>
+    public RsqlStringWildcardMode StringWildcardMode { get; set; } = RsqlStringWildcardMode.Enabled;
+
+    /// <summary>
     /// Gets the configured field mappings.
     /// </summary>
     internal IReadOnlyDictionary<string, LambdaExpression> Fields => _fields;
