@@ -41,8 +41,8 @@ unzip -l artifacts/packages/RsqlParserNet.<version>.nupkg
 Use tags that match the package version prefixed with `v`:
 
 ```bash
-git tag -a v0.1.0-preview.1 -m "RsqlParserNet 0.1.0-preview.1"
-git push origin v0.1.0-preview.1
+git tag -a v0.1.0-preview.3 -m "RsqlParserNet 0.1.0-preview.3"
+git push origin v0.1.0-preview.3
 ```
 
 Pushing a `v*` tag runs CI, packs the project, creates a GitHub release, and attaches the packed NuGet artifacts.
@@ -89,8 +89,8 @@ NUGET_API_KEY
 To publish, run the `Publish NuGet` workflow manually from GitHub Actions and enter the git ref and package version:
 
 ```text
-git_ref: v0.1.0-preview.1
-version: 0.1.0-preview.1
+git_ref: v0.1.0-preview.3
+version: 0.1.0-preview.3
 ```
 
 The `git_ref` should usually be the release tag. This keeps the package published to NuGet identical to the package attached to the GitHub release.

@@ -4,6 +4,14 @@ All notable changes to `RsqlParserNet` will be documented in this file.
 
 The project uses Semantic Versioning. Versions below `1.0.0` are preview releases and may include public API changes while the core parser contract is finalized.
 
+## 0.1.0-preview.3
+
+Release workflow preview refresh.
+
+### Fixed
+
+- Included the manual NuGet publish workflow in the release tag.
+
 ## 0.1.0-preview.2
 
 Metadata-only preview refresh.
