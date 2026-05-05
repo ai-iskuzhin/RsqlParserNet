@@ -9,6 +9,7 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 ### Changed
 
 - Documented the FastEndpoints 7 compatibility requirement and updated FastEndpoints examples to use the current `Send.OkAsync` response helper.
+- Removed completed roadmap/checklist docs that were duplicated by the usage docs and `docs/v1-readiness.md`.
 
 ## 0.2.0-preview.1
 

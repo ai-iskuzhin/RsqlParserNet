@@ -126,7 +126,7 @@ Put detailed material in docs:
 
 - syntax and grammar: `docs/syntax.md`
 - release process: `docs/release.md`
-- core readiness: `docs/core-v1-checklist.md`
+- 1.0 readiness: `docs/v1-readiness.md`
 
 Update `CHANGELOG.md` for notable public behavior, API, packaging, or documentation changes.
 
