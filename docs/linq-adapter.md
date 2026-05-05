@@ -35,12 +35,12 @@ public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
 {
     public override RsqlParseOptions ConfigureParseOptions(RsqlParseOptions options)
     {
-        return options.CustomOperators.Any(x => x.Text == "=contains=")
-            ? options
-            : options with
-            {
-                CustomOperators = [.. options.CustomOperators, new RsqlCustomOperator("=contains=")]
-            };
+        var customOperators = options.CustomOperators.ToList();
+        AddCustomOperator(customOperators, new RsqlCustomOperator("=contains="));
+        AddCustomOperator(customOperators, new RsqlCustomOperator("=any=", RequiresMultipleValues: true));
+        AddCustomOperator(customOperators, new RsqlCustomOperator("=all=", RequiresMultipleValues: true));
+
+        return options with { CustomOperators = customOperators };
     }
 
     public override void Configure(RsqlLinqOptions<Product> options)
@@ -48,7 +48,20 @@ public sealed class ProductRsqlProfile : RsqlLinqProfile<Product>
         options.Allow("name", x => x.Name);
         options.Allow("status", x => x.Status);
         options.Allow("count", x => x.Count);
+        options.Allow("tags", x => x.Tags);
         options.AllowStringContainsOperator();
+        options.AllowCollectionAnyOperator();
+        options.AllowCollectionAllOperator();
+    }
+
+    private static void AddCustomOperator(
+        List<RsqlCustomOperator> customOperators,
+        RsqlCustomOperator customOperator)
+    {
+        if (customOperators.All(x => x.Text != customOperator.Text))
+        {
+            customOperators.Add(customOperator);
+        }
     }
 }
 ```
@@ -58,7 +71,7 @@ Profiles can be passed directly to `ApplyRsql` or `RsqlPredicateBuilder`:
 ```csharp
 var profile = new ProductRsqlProfile();
 
-var filtered = products.ApplyRsql("status==active;name=contains=ik", profile);
+var filtered = products.ApplyRsql("status==active;tags=any=(outdoor)", profile);
 
 var predicate = RsqlPredicateBuilder.BuildPredicate("name==B*", profile);
 ```
@@ -77,6 +90,8 @@ Profiles are still explicit allowlists. They are the recommended reuse mechanism
 | `<=` | Less than or equal |
 | `=in=` | `Enumerable.Contains(values, member)` |
 | `=out=` | Negated `Enumerable.Contains(values, member)` |
+| `=any=` | Configurable collection match: any mapped collection item is in the supplied values |
+| `=all=` | Configurable collection match: every supplied value is present in the mapped collection |
 | `;` | `Expression.AndAlso` |
 | `,` | `Expression.OrElse` |
 
@@ -125,6 +140,57 @@ var predicate = RsqlPredicateBuilder.BuildPredicate<Product>(
 ```
 
 Custom operator factories receive the allowlisted member expression, the comparison AST node, and values converted to the mapped member type. The returned expression must be Boolean.
+
+## Collection Operators
+
+Use `=any=` and `=all=` when the mapped member is a collection:
+
+```text
+tags=any=(bike,outdoor)
+tags=all=(bike,outdoor)
+```
+
+These are custom operators, so they must be configured in both parser options and LINQ options:
+
+```csharp
+var parseOptions = RsqlParseOptions.Default with
+{
+    CustomOperators =
+    [
+        new RsqlCustomOperator("=any=", RequiresMultipleValues: true),
+        new RsqlCustomOperator("=all=", RequiresMultipleValues: true)
+    ]
+};
+
+var filtered = products.ApplyRsql(
+    "tags=any=(bike,outdoor)",
+    options =>
+    {
+        options.Allow("tags", x => x.Tags);
+        options.AllowCollectionAnyOperator();
+        options.AllowCollectionAllOperator();
+    },
+    parseOptions);
+```
+
+Semantics:
+
+| Pattern | Expression behavior |
+| --- | --- |
+| `tags=any=(bike,outdoor)` | `x.Tags != null && x.Tags.Any(tag => values.Contains(tag))` |
+| `tags=all=(bike,outdoor)` | `x.Tags != null && values.All(value => x.Tags.Contains(value))` |
+
+`=in=` remains the scalar-list operator:
+
+```text
+status=in=(active,draft)
+```
+
+which maps to:
+
+```csharp
+values.Contains(x.Status)
+```
 
 ## Wildcards
 

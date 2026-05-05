@@ -91,4 +91,100 @@ public sealed class RsqlCustomOperatorExpressionContext
         var nullGuard = Expression.NotEqual(Member, Expression.Constant(null, typeof(string)));
         return Expression.AndAlso(nullGuard, call);
     }
+
+    /// <summary>
+    /// Builds a collection expression that matches when any mapped collection item is present in the supplied values.
+    /// </summary>
+    /// <returns>A Boolean expression for collection any matching.</returns>
+    public Expression CallCollectionAny()
+    {
+        var elementType = RequireCollectionElementType();
+        RequireAtLeastOneValue();
+
+        var collection = AsEnumerableExpression(elementType);
+        var item = Expression.Parameter(elementType, "item");
+        var values = Expression.NewArrayInit(elementType, Values);
+        var contains = Expression.Call(
+            typeof(Enumerable),
+            nameof(Enumerable.Contains),
+            [elementType],
+            values,
+            item);
+        var any = Expression.Call(
+            typeof(Enumerable),
+            nameof(Enumerable.Any),
+            [elementType],
+            collection,
+            Expression.Lambda(contains, item));
+
+        return AddCollectionNullGuard(any);
+    }
+
+    /// <summary>
+    /// Builds a collection expression that matches when every supplied value is present in the mapped collection.
+    /// </summary>
+    /// <returns>A Boolean expression for collection all matching.</returns>
+    public Expression CallCollectionAll()
+    {
+        var elementType = RequireCollectionElementType();
+        RequireAtLeastOneValue();
+
+        var collection = AsEnumerableExpression(elementType);
+        var value = Expression.Parameter(elementType, "value");
+        var values = Expression.NewArrayInit(elementType, Values);
+        var contains = Expression.Call(
+            typeof(Enumerable),
+            nameof(Enumerable.Contains),
+            [elementType],
+            collection,
+            value);
+        var all = Expression.Call(
+            typeof(Enumerable),
+            nameof(Enumerable.All),
+            [elementType],
+            values,
+            Expression.Lambda(contains, value));
+
+        return AddCollectionNullGuard(all);
+    }
+
+    private void RequireAtLeastOneValue()
+    {
+        if (Values.Count == 0)
+        {
+            throw new RsqlLinqException($"Custom operator '{Comparison.OperatorText}' requires at least one value.");
+        }
+    }
+
+    private Type RequireCollectionElementType()
+    {
+        var elementType = RsqlLinqTypeHelpers.GetEnumerableElementType(Member.Type, Comparison.OperatorText);
+        if (Values.Any(value => value.Type != elementType))
+        {
+            throw new RsqlLinqException(
+                $"Custom operator '{Comparison.OperatorText}' requires values converted to collection element type '{elementType.Name}'.");
+        }
+
+        return elementType;
+    }
+
+    private Expression AsEnumerableExpression(Type elementType)
+    {
+        var enumerableType = typeof(IEnumerable<>).MakeGenericType(elementType);
+        return enumerableType.IsAssignableFrom(Member.Type)
+            ? Member
+            : Expression.Convert(Member, enumerableType);
+    }
+
+    private Expression AddCollectionNullGuard(Expression expression)
+    {
+        if (Member.Type.IsValueType && Nullable.GetUnderlyingType(Member.Type) is null)
+        {
+            return expression;
+        }
+
+        return Expression.AndAlso(
+            Expression.NotEqual(Member, Expression.Constant(null, Member.Type)),
+            expression);
+    }
 }

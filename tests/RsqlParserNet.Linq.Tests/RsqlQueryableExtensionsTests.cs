@@ -115,8 +115,8 @@ public sealed class RsqlQueryableExtensionsTests
     {
         var products = new[]
         {
-            new Product("Bike", "active", 10, true, Category.Gear, new DateOnly(2026, 1, 10), null),
-            new Product("Board", "draft", 20, false, Category.Board, new DateOnly(2026, 2, 10), "archived")
+            new Product("Bike", "active", 10, true, Category.Gear, new DateOnly(2026, 1, 10), null, ["bike", "outdoor"]),
+            new Product("Board", "draft", 20, false, Category.Board, new DateOnly(2026, 2, 10), "archived", ["board"])
         }.AsQueryable();
         var query = RsqlParser.Parse("status==active");
 
@@ -131,8 +131,8 @@ public sealed class RsqlQueryableExtensionsTests
     {
         var products = new[]
         {
-            new Product("Bike", "active", 10, true, Category.Gear, new DateOnly(2026, 1, 10), null),
-            new Product("Board", "draft", 20, false, Category.Board, new DateOnly(2026, 2, 10), "archived")
+            new Product("Bike", "active", 10, true, Category.Gear, new DateOnly(2026, 1, 10), null, ["bike", "outdoor"]),
+            new Product("Board", "draft", 20, false, Category.Board, new DateOnly(2026, 2, 10), "archived", ["board"])
         }.AsQueryable();
         var query = RsqlParser.Parse("count==20");
 
@@ -147,9 +147,9 @@ public sealed class RsqlQueryableExtensionsTests
     {
         var products = new[]
         {
-            new Product("Bike", "active", 10, true, Category.Gear, new DateOnly(2026, 1, 10), null),
-            new Product("Board", "active", 20, false, Category.Board, new DateOnly(2026, 2, 10), "archived"),
-            new Product("Helmet", "draft", 10, true, Category.Gear, new DateOnly(2026, 3, 10), null)
+            new Product("Bike", "active", 10, true, Category.Gear, new DateOnly(2026, 1, 10), null, ["bike", "outdoor"]),
+            new Product("Board", "active", 20, false, Category.Board, new DateOnly(2026, 2, 10), "archived", ["board"]),
+            new Product("Helmet", "draft", 10, true, Category.Gear, new DateOnly(2026, 3, 10), null, ["helmet", "outdoor"])
         }.AsQueryable();
         var query = RsqlParser.Parse("status==active;count==10");
 
@@ -363,6 +363,64 @@ public sealed class RsqlQueryableExtensionsTests
     }
 
     [Fact]
+    public void ApplyRsql_FiltersByCollectionAnyOperator()
+    {
+        var parseOptions = RsqlParseOptions.Default with
+        {
+            CustomOperators = [new RsqlCustomOperator("=any=", RequiresMultipleValues: true)]
+        };
+
+        var result = SampleProducts()
+            .ApplyRsql(
+                "tags=any=(board,bike)",
+                options =>
+                {
+                    options.Allow("tags", x => x.Tags);
+                    options.AllowCollectionAnyOperator();
+                },
+                parseOptions)
+            .Select(x => x.Name)
+            .ToArray();
+
+        Assert.Equal(["Bike", "Board"], result);
+    }
+
+    [Fact]
+    public void ApplyRsql_FiltersByCollectionAllOperator()
+    {
+        var parseOptions = RsqlParseOptions.Default with
+        {
+            CustomOperators = [new RsqlCustomOperator("=all=", RequiresMultipleValues: true)]
+        };
+
+        var result = SampleProducts()
+            .ApplyRsql(
+                "tags=all=(bike,outdoor)",
+                options =>
+                {
+                    options.Allow("tags", x => x.Tags);
+                    options.AllowCollectionAllOperator();
+                },
+                parseOptions)
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Bike", productName);
+    }
+
+    [Fact]
+    public void ApplyRsql_UsesProfileForCollectionOperator()
+    {
+        var result = SampleProducts()
+            .ApplyRsql("tags=any=(outdoor)", new ProductRsqlProfile())
+            .Select(x => x.Name)
+            .ToArray();
+
+        Assert.Equal(["Bike", "Helmet"], result);
+    }
+
+    [Fact]
     public void ApplyRsql_UsesProfileForCustomOperator()
     {
         var result = SampleProducts()
@@ -471,13 +529,30 @@ public sealed class RsqlQueryableExtensionsTests
             .ToArray());
     }
 
+    [Fact]
+    public void ApplyRsql_RejectsCollectionOperatorForScalarMember()
+    {
+        var options = RsqlParseOptions.Default with
+        {
+            CustomOperators = [new RsqlCustomOperator("=any=", RequiresMultipleValues: true)]
+        };
+
+        Assert.Throws<RsqlLinqException>(() => SampleProducts()
+            .ApplyRsql("name=any=(Bike)", linqOptions =>
+            {
+                linqOptions.Allow("name", x => x.Name);
+                linqOptions.AllowCollectionAnyOperator();
+            }, options)
+            .ToArray());
+    }
+
     private static IQueryable<Product> SampleProducts()
     {
         return new[]
         {
-            new Product("Bike", "active", 10, true, Category.Gear, new DateOnly(2026, 1, 10), null),
-            new Product("Board", "draft", 20, false, Category.Board, new DateOnly(2026, 2, 10), "archived"),
-            new Product("Helmet", "review", 30, true, Category.Gear, new DateOnly(2026, 3, 10), null)
+            new Product("Bike", "active", 10, true, Category.Gear, new DateOnly(2026, 1, 10), null, ["bike", "outdoor"]),
+            new Product("Board", "draft", 20, false, Category.Board, new DateOnly(2026, 2, 10), "archived", ["board"]),
+            new Product("Helmet", "review", 30, true, Category.Gear, new DateOnly(2026, 3, 10), null, ["helmet", "outdoor"])
         }.AsQueryable();
     }
 
@@ -494,17 +569,28 @@ public sealed class RsqlQueryableExtensionsTests
             options.Allow("name", x => x.Name);
             options.Allow("status", x => x.Status);
             options.Allow("count", x => x.Count);
+            options.Allow("tags", x => x.Tags);
             options.AllowStringContainsOperator();
+            options.AllowCollectionAnyOperator();
+            options.AllowCollectionAllOperator();
         }
 
         public override RsqlParseOptions ConfigureParseOptions(RsqlParseOptions options)
         {
-            return options.CustomOperators.Any(x => x.Text == "=contains=")
-                ? options
-                : options with
-                {
-                    CustomOperators = [.. options.CustomOperators, new RsqlCustomOperator("=contains=")]
-                };
+            var customOperators = options.CustomOperators.ToList();
+            AddCustomOperator(customOperators, new RsqlCustomOperator("=contains="));
+            AddCustomOperator(customOperators, new RsqlCustomOperator("=any=", RequiresMultipleValues: true));
+            AddCustomOperator(customOperators, new RsqlCustomOperator("=all=", RequiresMultipleValues: true));
+
+            return options with { CustomOperators = customOperators };
+        }
+
+        private static void AddCustomOperator(List<RsqlCustomOperator> customOperators, RsqlCustomOperator customOperator)
+        {
+            if (customOperators.All(x => x.Text != customOperator.Text))
+            {
+                customOperators.Add(customOperator);
+            }
         }
     }
 
@@ -515,5 +601,6 @@ public sealed class RsqlQueryableExtensionsTests
         bool Active,
         Category Category,
         DateOnly CreatedAt,
-        string? ArchivedReason);
+        string? ArchivedReason,
+        IReadOnlyCollection<string> Tags);
 }

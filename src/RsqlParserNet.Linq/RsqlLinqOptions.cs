@@ -9,7 +9,7 @@ namespace RsqlParserNet.Linq;
 public sealed class RsqlLinqOptions<T>
 {
     private readonly Dictionary<string, LambdaExpression> _fields = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, RsqlCustomOperatorExpressionFactory> _customOperators = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, RsqlCustomOperatorHandler> _customOperators = new(StringComparer.Ordinal);
 
     /// <summary>
     /// Gets or sets how string equality comparisons interpret <c>*</c> characters.
@@ -27,7 +27,7 @@ public sealed class RsqlLinqOptions<T>
     /// <summary>
     /// Gets the configured custom operator expression factories.
     /// </summary>
-    internal IReadOnlyDictionary<string, RsqlCustomOperatorExpressionFactory> CustomOperators => _customOperators;
+    internal IReadOnlyDictionary<string, RsqlCustomOperatorHandler> CustomOperators => _customOperators;
 
     /// <summary>
     /// Allows an RSQL selector and maps it to a .NET member expression.
@@ -71,7 +71,21 @@ public sealed class RsqlLinqOptions<T>
         ArgumentException.ThrowIfNullOrWhiteSpace(operatorText);
         ArgumentNullException.ThrowIfNull(factory);
 
-        _customOperators[operatorText] = factory;
+        CustomOperator(operatorText, memberType => memberType, factory);
+    }
+
+    /// <summary>
+    /// Allows a custom RSQL operator and maps it to a LINQ expression factory with an explicit value type.
+    /// </summary>
+    /// <typeparam name="TValue">The comparison value type used by this custom operator.</typeparam>
+    /// <param name="operatorText">The custom FIQL-style operator text, such as <c>=starts=</c>.</param>
+    /// <param name="factory">The expression factory for this custom operator.</param>
+    public void CustomOperator<TValue>(string operatorText, RsqlCustomOperatorExpressionFactory factory)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operatorText);
+        ArgumentNullException.ThrowIfNull(factory);
+
+        CustomOperator(operatorText, _ => typeof(TValue), factory);
     }
 
     /// <summary>
@@ -83,6 +97,44 @@ public sealed class RsqlLinqOptions<T>
     /// <param name="operatorText">The custom FIQL-style operator text.</param>
     public void AllowStringContainsOperator(string operatorText = "=contains=")
     {
-        CustomOperator(operatorText, context => context.CallStringMethod(nameof(string.Contains)));
+        CustomOperator<string>(operatorText, context => context.CallStringMethod(nameof(string.Contains)));
+    }
+
+    /// <summary>
+    /// Allows a collection operator that matches when any mapped collection item is present in the supplied values.
+    /// </summary>
+    /// <remarks>
+    /// The operator text must also be configured in <see cref="RsqlParseOptions.CustomOperators"/>.
+    /// </remarks>
+    /// <param name="operatorText">The custom FIQL-style operator text.</param>
+    public void AllowCollectionAnyOperator(string operatorText = "=any=")
+    {
+        CustomOperator(
+            operatorText,
+            memberType => RsqlLinqTypeHelpers.GetEnumerableElementType(memberType, operatorText),
+            context => context.CallCollectionAny());
+    }
+
+    /// <summary>
+    /// Allows a collection operator that matches when every supplied value is present in the mapped collection.
+    /// </summary>
+    /// <remarks>
+    /// The operator text must also be configured in <see cref="RsqlParseOptions.CustomOperators"/>.
+    /// </remarks>
+    /// <param name="operatorText">The custom FIQL-style operator text.</param>
+    public void AllowCollectionAllOperator(string operatorText = "=all=")
+    {
+        CustomOperator(
+            operatorText,
+            memberType => RsqlLinqTypeHelpers.GetEnumerableElementType(memberType, operatorText),
+            context => context.CallCollectionAll());
+    }
+
+    private void CustomOperator(
+        string operatorText,
+        Func<Type, Type> valueTypeSelector,
+        RsqlCustomOperatorExpressionFactory factory)
+    {
+        _customOperators[operatorText] = new RsqlCustomOperatorHandler(valueTypeSelector, factory);
     }
 }

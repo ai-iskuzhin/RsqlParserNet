@@ -155,15 +155,16 @@ public static class RsqlPredicateBuilder
         Expression left,
         RsqlLinqOptions<T> options)
     {
-        if (!options.CustomOperators.TryGetValue(comparison.OperatorText, out var factory))
+        if (!options.CustomOperators.TryGetValue(comparison.OperatorText, out var handler))
         {
             throw new RsqlLinqException(
                 $"Custom operator '{comparison.OperatorText}' is not allowlisted by the LINQ adapter.");
         }
 
-        var values = comparison.Values.Select(value => ConvertValueExpression(value, left.Type)).ToArray();
+        var valueType = handler.ValueTypeSelector(left.Type);
+        var values = comparison.Values.Select(value => ConvertValueExpression(value, valueType)).ToArray();
         var context = new RsqlCustomOperatorExpressionContext(left, values, comparison);
-        var expression = factory(context);
+        var expression = handler.Factory(context);
 
         if (expression.Type != typeof(bool))
         {

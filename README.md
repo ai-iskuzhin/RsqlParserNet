@@ -180,6 +180,7 @@ The adapter currently supports:
 | `==` / `!=` | Equality and inequality |
 | `>` / `>=` / `<` / `<=` | Comparable mapped types such as numbers and dates |
 | `=in=` / `=out=` | Membership checks over the supplied value list |
+| `=any=` / `=all=` | Custom collection helpers for allowlisted collection fields |
 | `;` / `,` | `AndAlso` and `OrElse` expression composition |
 
 Values are converted using the mapped member type, including common scalar types, enums, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`.
@@ -197,6 +198,13 @@ var filtered = products.ApplyRsql("name=contains=ik", options =>
     options.Allow("name", x => x.Name);
     options.AllowStringContainsOperator();
 }, parseOptions);
+```
+
+Collection fields can use explicit custom operators:
+
+```text
+tags=any=(bike,outdoor)
+tags=all=(bike,outdoor)
 ```
 
 String equality supports common `*` wildcards by default:
@@ -241,5 +249,6 @@ dotnet pack src/RsqlParserNet.Linq/RsqlParserNet.Linq.csproj --configuration Rel
 - Versioning: [CHANGELOG.md](CHANGELOG.md)
 - Syntax details: [docs/syntax.md](docs/syntax.md)
 - LINQ adapter details: [docs/linq-adapter.md](docs/linq-adapter.md)
+- LINQ adapter roadmap: [docs/linq-roadmap.md](docs/linq-roadmap.md)
 - Core v1 checklist: [docs/core-v1-checklist.md](docs/core-v1-checklist.md)
 - Release process: [docs/release.md](docs/release.md)
