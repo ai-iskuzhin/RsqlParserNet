@@ -45,6 +45,7 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 ### Changed
 
 - Changed ASP.NET Core filter validation errors to use the query parameter name as the validation key while keeping diagnostic codes in messages.
+- Changed packable projects to treat missing public XML documentation as a build error.
 
 ## 0.1.0-preview.3
 
