@@ -11,13 +11,13 @@
     <Title>RsqlParserNet</Title>
     <Description>A .NET parser for RSQL/FIQL-style REST API query expressions.</Description>
     <PackageTags>rsql;fiql;parser;rest;query;filtering;ast;diagnostics</PackageTags>
-    <PackageProjectUrl>https://github.com/ai-iskuzhin/rsql-parser-dotnet</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/ai-iskuzhin/RsqlParserNet</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Authors>ai-iskuzhin</Authors>
     <Company>ai-iskuzhin</Company>
     <Product>RsqlParserNet</Product>
     <Copyright>Copyright (c) ai-iskuzhin</Copyright>
-    <RepositoryUrl>https://github.com/ai-iskuzhin/rsql-parser-dotnet</RepositoryUrl>
+    <RepositoryUrl>https://github.com/ai-iskuzhin/RsqlParserNet</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
