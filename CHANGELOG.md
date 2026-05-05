@@ -33,6 +33,7 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 - Added the `RsqlParserNet.EntityFrameworkCore` adapter project with async paged result helpers.
 - Added sort request whitespace normalization and selector-style field validation.
 - Added multi-field sorting with `sort=-field,otherField` across LINQ, ASP.NET Core binding, and EF Core helpers.
+- Added configurable string comparison mode for case-insensitive string helper and wildcard matching.
 
 ## 0.1.0-preview.3
 

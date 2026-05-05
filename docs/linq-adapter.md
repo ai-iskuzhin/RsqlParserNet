@@ -241,7 +241,22 @@ var filtered = products.ApplyRsql("name==B*", options =>
 });
 ```
 
-String comparison behavior follows the underlying LINQ provider. For example, EF Core database collation can affect case sensitivity.
+## String Comparison
+
+String comparison behavior follows the underlying LINQ provider by default. For example, EF Core database collation can affect case sensitivity.
+
+Use `RsqlStringComparisonMode.CaseInsensitive` when an API should make string helper operators and wildcard equality case-insensitive for the whole endpoint/profile:
+
+```csharp
+var filtered = products.ApplyRsql("name=contains=ski", options =>
+{
+    options.StringComparisonMode = RsqlStringComparisonMode.CaseInsensitive;
+    options.Allow("name", x => x.Name);
+    options.AllowStringContainsOperator();
+});
+```
+
+Case-insensitive mode normalizes both sides before calling string methods. This keeps query syntax stable while letting each API choose its search behavior. Provider-specific packages can offer more specialized translations later if a database needs them.
 
 ## EF Core
 
@@ -253,6 +268,7 @@ String comparison behavior follows the underlying LINQ provider. For example, EF
 - `=contains=`
 - `=starts=`
 - `=ends=`
+- case-insensitive string comparison mode
 - `=any=`
 - `=all=`
 

@@ -62,6 +62,20 @@ public sealed class RsqlEfCoreTranslationTests
     }
 
     [Fact]
+    public void ApplyRsql_TranslatesStringContainsWithCaseInsensitiveModeAndSqlite()
+    {
+        using var database = SqliteProductDatabase.Create();
+
+        var result = database.Context.Products
+            .ApplyRsql("name=contains=IK", new CaseInsensitiveSqliteProductRsqlProfile())
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Bike", productName);
+    }
+
+    [Fact]
     public void ApplyRsql_TranslatesStringStartsWithCustomOperatorWithSqlite()
     {
         using var database = SqliteProductDatabase.Create();
@@ -76,12 +90,40 @@ public sealed class RsqlEfCoreTranslationTests
     }
 
     [Fact]
+    public void ApplyRsql_TranslatesStringStartsWithCaseInsensitiveModeAndSqlite()
+    {
+        using var database = SqliteProductDatabase.Create();
+
+        var result = database.Context.Products
+            .ApplyRsql("name=starts=bo", new CaseInsensitiveSqliteProductRsqlProfile())
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Board", productName);
+    }
+
+    [Fact]
     public void ApplyRsql_TranslatesStringEndsWithCustomOperatorWithSqlite()
     {
         using var database = SqliteProductDatabase.Create();
 
         var result = database.Context.Products
             .ApplyRsql("name=ends=met", new SqliteProductRsqlProfile())
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Helmet", productName);
+    }
+
+    [Fact]
+    public void ApplyRsql_TranslatesStringEndsWithCaseInsensitiveModeAndSqlite()
+    {
+        using var database = SqliteProductDatabase.Create();
+
+        var result = database.Context.Products
+            .ApplyRsql("name=ends=MET", new CaseInsensitiveSqliteProductRsqlProfile())
             .Select(x => x.Name)
             .ToArray();
 
@@ -117,7 +159,7 @@ public sealed class RsqlEfCoreTranslationTests
         Assert.Equal("Bike", productName);
     }
 
-    private sealed class SqliteProductRsqlProfile : RsqlLinqProfile<SqliteProduct>
+    private class SqliteProductRsqlProfile : RsqlLinqProfile<SqliteProduct>
     {
         public override RsqlParseOptions ConfigureParseOptions(RsqlParseOptions options)
         {
@@ -137,6 +179,15 @@ public sealed class RsqlEfCoreTranslationTests
             options.AllowCollectionAllOperator();
         }
 
+    }
+
+    private sealed class CaseInsensitiveSqliteProductRsqlProfile : SqliteProductRsqlProfile
+    {
+        public override void Configure(RsqlLinqOptions<SqliteProduct> options)
+        {
+            options.StringComparisonMode = RsqlStringComparisonMode.CaseInsensitive;
+            base.Configure(options);
+        }
     }
 
     private sealed class SqliteProductDatabase : IDisposable

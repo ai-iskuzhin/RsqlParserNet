@@ -20,6 +20,15 @@ public sealed class RsqlLinqOptions<T>
     public RsqlStringWildcardMode StringWildcardMode { get; set; } = RsqlStringWildcardMode.Enabled;
 
     /// <summary>
+    /// Gets or sets how string helper and wildcard expressions compare values.
+    /// </summary>
+    /// <remarks>
+    /// The default lets the LINQ provider decide comparison behavior. Case-insensitive mode normalizes both sides
+    /// before calling string methods, which is useful for endpoint-wide admin search behavior.
+    /// </remarks>
+    public RsqlStringComparisonMode StringComparisonMode { get; set; } = RsqlStringComparisonMode.ProviderDefault;
+
+    /// <summary>
     /// Gets the configured field mappings.
     /// </summary>
     internal IReadOnlyDictionary<string, LambdaExpression> Fields => _fields;
@@ -97,7 +106,7 @@ public sealed class RsqlLinqOptions<T>
     /// <param name="operatorText">The custom FIQL-style operator text.</param>
     public void AllowStringContainsOperator(string operatorText = RsqlLinqOperators.Contains)
     {
-        CustomOperator<string>(operatorText, context => context.CallStringMethod(nameof(string.Contains)));
+        CustomOperator<string>(operatorText, context => context.CallStringMethod(nameof(string.Contains), StringComparisonMode));
     }
 
     /// <summary>
@@ -109,7 +118,7 @@ public sealed class RsqlLinqOptions<T>
     /// <param name="operatorText">The custom FIQL-style operator text.</param>
     public void AllowStringStartsWithOperator(string operatorText = RsqlLinqOperators.StartsWith)
     {
-        CustomOperator<string>(operatorText, context => context.CallStringMethod(nameof(string.StartsWith)));
+        CustomOperator<string>(operatorText, context => context.CallStringMethod(nameof(string.StartsWith), StringComparisonMode));
     }
 
     /// <summary>
@@ -121,7 +130,7 @@ public sealed class RsqlLinqOptions<T>
     /// <param name="operatorText">The custom FIQL-style operator text.</param>
     public void AllowStringEndsWithOperator(string operatorText = RsqlLinqOperators.EndsWith)
     {
-        CustomOperator<string>(operatorText, context => context.CallStringMethod(nameof(string.EndsWith)));
+        CustomOperator<string>(operatorText, context => context.CallStringMethod(nameof(string.EndsWith), StringComparisonMode));
     }
 
     /// <summary>

@@ -516,6 +516,31 @@ public sealed class RsqlQueryableExtensionsTests
     }
 
     [Fact]
+    public void ApplyRsql_FiltersByAllowedCustomStringContainsOperatorWithCaseInsensitiveMode()
+    {
+        var parseOptions = RsqlParseOptions.Default with
+        {
+            CustomOperators = [new RsqlCustomOperator(RsqlLinqOperators.Contains)]
+        };
+
+        var result = SampleProducts()
+            .ApplyRsql(
+                "name=contains=IK",
+                options =>
+                {
+                    options.StringComparisonMode = RsqlStringComparisonMode.CaseInsensitive;
+                    options.Allow("name", x => x.Name);
+                    options.AllowStringContainsOperator();
+                },
+                parseOptions)
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Bike", productName);
+    }
+
+    [Fact]
     public void ApplyRsql_FiltersByAllowedCustomStringStartsWithOperator()
     {
         var parseOptions = RsqlParseOptions.Default with
@@ -528,6 +553,31 @@ public sealed class RsqlQueryableExtensionsTests
                 "name=starts=Bo",
                 options =>
                 {
+                    options.Allow("name", x => x.Name);
+                    options.AllowStringStartsWithOperator();
+                },
+                parseOptions)
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Board", productName);
+    }
+
+    [Fact]
+    public void ApplyRsql_FiltersByAllowedCustomStringStartsWithOperatorWithCaseInsensitiveMode()
+    {
+        var parseOptions = RsqlParseOptions.Default with
+        {
+            CustomOperators = [new RsqlCustomOperator(RsqlLinqOperators.StartsWith)]
+        };
+
+        var result = SampleProducts()
+            .ApplyRsql(
+                "name=starts=bo",
+                options =>
+                {
+                    options.StringComparisonMode = RsqlStringComparisonMode.CaseInsensitive;
                     options.Allow("name", x => x.Name);
                     options.AllowStringStartsWithOperator();
                 },
@@ -561,6 +611,49 @@ public sealed class RsqlQueryableExtensionsTests
 
         var productName = Assert.Single(result);
         Assert.Equal("Helmet", productName);
+    }
+
+    [Fact]
+    public void ApplyRsql_FiltersByAllowedCustomStringEndsWithOperatorWithCaseInsensitiveMode()
+    {
+        var parseOptions = RsqlParseOptions.Default with
+        {
+            CustomOperators = [new RsqlCustomOperator(RsqlLinqOperators.EndsWith)]
+        };
+
+        var result = SampleProducts()
+            .ApplyRsql(
+                "name=ends=MET",
+                options =>
+                {
+                    options.StringComparisonMode = RsqlStringComparisonMode.CaseInsensitive;
+                    options.Allow("name", x => x.Name);
+                    options.AllowStringEndsWithOperator();
+                },
+                parseOptions)
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Helmet", productName);
+    }
+
+    [Fact]
+    public void ApplyRsql_FiltersWildcardComparisonWithCaseInsensitiveMode()
+    {
+        var result = SampleProducts()
+            .ApplyRsql(
+                "name==bo*",
+                options =>
+                {
+                    options.StringComparisonMode = RsqlStringComparisonMode.CaseInsensitive;
+                    options.Allow("name", x => x.Name);
+                })
+            .Select(x => x.Name)
+            .ToArray();
+
+        var productName = Assert.Single(result);
+        Assert.Equal("Board", productName);
     }
 
     [Fact]

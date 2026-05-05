@@ -38,6 +38,7 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - Collection helpers:
   - `=any=`
   - `=all=`
+- Configurable string comparison mode for endpoint-wide case-insensitive search.
 - Conventional LINQ operator constants and `WithLinqOperators()` parser option helper.
 - Conversion for strings, booleans, numeric primitives, enums, nullable values, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`.
 - EF Core SQLite translation tests for built-in scalar operators, wildcards, string custom operators, and collection operators.
@@ -53,7 +54,6 @@ This checklist tracks the path from useful preview to a stable LINQ adapter.
 - Gather API feedback on profiles, custom operators, sort parsing, pagination response shape, and framework integration before API freeze.
 - Clarify preview package version alignment across core and adapter packages.
 - Add provider-specific EF Core translation notes and tests for at least one production provider.
-- Decide whether case-insensitive string helper operators belong in `1.0.0` or a later minor release.
 
 ## Later
 

@@ -194,7 +194,7 @@ public static class RsqlPredicateBuilder
             value.Text?.Contains('*', StringComparison.Ordinal) == true;
 
         var expression = isWildcardComparison
-            ? BuildWildcardComparison(comparison, left, value.Text!)
+            ? BuildWildcardComparison(comparison, left, value.Text!, options.StringComparisonMode)
             : BuildSingleValueComparison(comparison, left, negate ? Expression.NotEqual : Expression.Equal);
 
         return negate && isWildcardComparison ? Expression.Not(expression) : expression;
@@ -224,7 +224,11 @@ public static class RsqlPredicateBuilder
         }
     }
 
-    private static Expression BuildWildcardComparison(RsqlComparisonNode comparison, Expression left, string pattern)
+    private static Expression BuildWildcardComparison(
+        RsqlComparisonNode comparison,
+        Expression left,
+        string pattern,
+        RsqlStringComparisonMode comparisonMode)
     {
         var segments = pattern.Split('*');
         var meaningfulSegments = segments.Where(segment => segment.Length > 0).ToArray();
@@ -245,12 +249,12 @@ public static class RsqlPredicateBuilder
         var nullGuard = Expression.NotEqual(left, Expression.Constant(null, typeof(string)));
         Expression match = (startsWithWildcard, endsWithWildcard, meaningfulSegments.Length) switch
         {
-            (true, true, 1) => CallStringMethod(left, nameof(string.Contains), meaningfulSegments[0]),
-            (true, false, 1) => CallStringMethod(left, nameof(string.EndsWith), meaningfulSegments[0]),
-            (false, true, 1) => CallStringMethod(left, nameof(string.StartsWith), meaningfulSegments[0]),
+            (true, true, 1) => CallStringMethod(left, nameof(string.Contains), meaningfulSegments[0], comparisonMode),
+            (true, false, 1) => CallStringMethod(left, nameof(string.EndsWith), meaningfulSegments[0], comparisonMode),
+            (false, true, 1) => CallStringMethod(left, nameof(string.StartsWith), meaningfulSegments[0], comparisonMode),
             (false, false, 2) => Expression.AndAlso(
-                CallStringMethod(left, nameof(string.StartsWith), meaningfulSegments[0]),
-                CallStringMethod(left, nameof(string.EndsWith), meaningfulSegments[1])),
+                CallStringMethod(left, nameof(string.StartsWith), meaningfulSegments[0], comparisonMode),
+                CallStringMethod(left, nameof(string.EndsWith), meaningfulSegments[1], comparisonMode)),
             _ => throw new RsqlLinqException(
                 $"Wildcard pattern '{comparison.Values[0].RawText}' is not supported by the LINQ adapter.")
         };
@@ -258,12 +262,31 @@ public static class RsqlPredicateBuilder
         return Expression.AndAlso(nullGuard, match);
     }
 
-    private static MethodCallExpression CallStringMethod(Expression instance, string methodName, string value)
+    private static MethodCallExpression CallStringMethod(
+        Expression instance,
+        string methodName,
+        string value,
+        RsqlStringComparisonMode comparisonMode)
+    {
+        var comparisonValue = Expression.Constant(value, typeof(string));
+        var (member, constant) = comparisonMode switch
+        {
+            RsqlStringComparisonMode.ProviderDefault => (instance, (Expression)comparisonValue),
+            RsqlStringComparisonMode.CaseInsensitive => ((Expression)NormalizeString(instance), NormalizeString(comparisonValue)),
+            _ => throw new RsqlLinqException($"String comparison mode '{comparisonMode}' is not supported.")
+        };
+
+        return Expression.Call(
+            member,
+            typeof(string).GetMethod(methodName, [typeof(string)])!,
+            constant);
+    }
+
+    private static MethodCallExpression NormalizeString(Expression expression)
     {
         return Expression.Call(
-            instance,
-            typeof(string).GetMethod(methodName, [typeof(string)])!,
-            Expression.Constant(value, typeof(string)));
+            expression,
+            typeof(string).GetMethod(nameof(string.ToUpper), Type.EmptyTypes)!);
     }
 
     private static Expression BuildContainsComparison(RsqlComparisonNode comparison, Expression left, bool negate)

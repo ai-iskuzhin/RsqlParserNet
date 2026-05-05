@@ -60,9 +60,13 @@ public sealed class RsqlCustomOperatorExpressionContext
     /// Builds a string instance method call such as <c>Contains</c>, <c>StartsWith</c>, or <c>EndsWith</c>.
     /// </summary>
     /// <param name="methodName">The string method name.</param>
+    /// <param name="comparisonMode">The string comparison behavior.</param>
     /// <param name="addNullGuard">Whether to guard the member expression against null before calling the method.</param>
     /// <returns>A Boolean expression for the string method call.</returns>
-    public Expression CallStringMethod(string methodName, bool addNullGuard = true)
+    public Expression CallStringMethod(
+        string methodName,
+        RsqlStringComparisonMode comparisonMode,
+        bool addNullGuard = true)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(methodName);
 
@@ -82,7 +86,14 @@ public sealed class RsqlCustomOperatorExpressionContext
         var method = typeof(string).GetMethod(methodName, [typeof(string)])
             ?? throw new RsqlLinqException($"String method '{methodName}' could not be found.");
 
-        var call = Expression.Call(Member, method, value);
+        var (member, comparisonValue) = comparisonMode switch
+        {
+            RsqlStringComparisonMode.ProviderDefault => (Member, value),
+            RsqlStringComparisonMode.CaseInsensitive => (NormalizeString(Member), NormalizeString(value)),
+            _ => throw new RsqlLinqException($"String comparison mode '{comparisonMode}' is not supported.")
+        };
+
+        var call = Expression.Call(member, method, comparisonValue);
         if (!addNullGuard)
         {
             return call;
@@ -90,6 +101,24 @@ public sealed class RsqlCustomOperatorExpressionContext
 
         var nullGuard = Expression.NotEqual(Member, Expression.Constant(null, typeof(string)));
         return Expression.AndAlso(nullGuard, call);
+    }
+
+    /// <summary>
+    /// Builds a string instance method call such as <c>Contains</c>, <c>StartsWith</c>, or <c>EndsWith</c>.
+    /// </summary>
+    /// <param name="methodName">The string method name.</param>
+    /// <param name="addNullGuard">Whether to guard the member expression against null before calling the method.</param>
+    /// <returns>A Boolean expression for the string method call.</returns>
+    public Expression CallStringMethod(string methodName, bool addNullGuard = true)
+    {
+        return CallStringMethod(methodName, RsqlStringComparisonMode.ProviderDefault, addNullGuard);
+    }
+
+    private static MethodCallExpression NormalizeString(Expression expression)
+    {
+        var normalize = typeof(string).GetMethod(nameof(string.ToUpper), Type.EmptyTypes)
+            ?? throw new RsqlLinqException("String method 'ToUpper' could not be found.");
+        return Expression.Call(expression, normalize);
     }
 
     /// <summary>

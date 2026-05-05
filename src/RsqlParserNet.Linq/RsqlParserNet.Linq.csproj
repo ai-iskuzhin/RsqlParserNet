@@ -32,7 +32,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageReleaseNotes>Initial LINQ adapter preview with explicit selector allowlisting, reusable profiles, predicate generation, built-in RSQL operators, custom operator handlers, string wildcards, collection helpers, value conversion, framework-neutral paging, single and multi-field sorting, and EF Core SQLite translation coverage.</PackageReleaseNotes>
+    <PackageReleaseNotes>Initial LINQ adapter preview with explicit selector allowlisting, reusable profiles, predicate generation, built-in RSQL operators, custom operator handlers, configurable string wildcards and comparison behavior, collection helpers, value conversion, framework-neutral paging, single and multi-field sorting, and EF Core SQLite translation coverage.</PackageReleaseNotes>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

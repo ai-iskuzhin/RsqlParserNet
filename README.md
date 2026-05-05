@@ -224,6 +224,8 @@ The adapter currently supports:
 
 Values are converted using the mapped member type, including common scalar types, enums, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`.
 
+String helper operators and wildcard equality use the LINQ provider's string comparison behavior by default. APIs can opt into endpoint-wide case-insensitive string matching through `RsqlLinqOptions<T>.StringComparisonMode`.
+
 Custom operators can be translated explicitly after they are configured in parser options:
 
 ```csharp
