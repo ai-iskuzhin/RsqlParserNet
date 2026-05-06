@@ -23,6 +23,7 @@ Stable versions should use plain SemVer:
 1. Update package version metadata in each package project being released.
 2. Update `CHANGELOG.md`.
 3. Update `README.md` if the public API or supported syntax changed.
+   Use absolute GitHub URLs for links in `README.md` because it is embedded into every NuGet package.
 4. Run:
 
 ```bash

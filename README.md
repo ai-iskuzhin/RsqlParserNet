@@ -4,7 +4,7 @@
 [![Release](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/release.yml/badge.svg)](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/release.yml)
 [![Publish NuGet](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/publish-nuget.yml/badge.svg)](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/publish-nuget.yml)
 [![Publish GitHub Packages](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/publish-github-packages.yml/badge.svg)](https://github.com/ai-iskuzhin/RsqlParserNet/actions/workflows/publish-github-packages.yml)
-[![License](https://img.shields.io/github/license/ai-iskuzhin/RsqlParserNet?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/github/license/ai-iskuzhin/RsqlParserNet?style=flat-square)](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-10.0-512BD4?logo=dotnet&style=flat-square)](https://dotnet.microsoft.com/)
 [![Coverage](https://img.shields.io/badge/coverage-not%20published-lightgrey?style=flat-square)](#development)
 
@@ -141,7 +141,7 @@ Logical operators:
 
 AND has higher precedence than OR. Parentheses can override precedence.
 
-See [docs/syntax.md](docs/syntax.md) for the full grammar, selector rules, value behavior, custom operators, and wildcard/date semantics.
+See [docs/syntax.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/syntax.md) for the full grammar, selector rules, value behavior, custom operators, and wildcard/date semantics.
 
 ## Options
 
@@ -291,8 +291,8 @@ name==*ik*  -> Contains("ik")
 name==Bo*d  -> StartsWith("Bo") && EndsWith("d")
 ```
 
-See [docs/linq-adapter.md](docs/linq-adapter.md) for wildcard behavior, value conversion, and adapter limitations.
-See [docs/aspnet-core-usage.md](docs/aspnet-core-usage.md) for ASP.NET Core request handling examples.
+See [docs/linq-adapter.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/linq-adapter.md) for wildcard behavior, value conversion, and adapter limitations.
+See [docs/aspnet-core-usage.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/aspnet-core-usage.md) for ASP.NET Core request handling examples.
 
 ## ASP.NET Core Binding
 
@@ -385,14 +385,14 @@ The manual `Publish NuGet` workflow remains available for retrying one package f
 
 ## Project Notes
 
-- Versioning: [CHANGELOG.md](CHANGELOG.md)
-- Syntax details: [docs/syntax.md](docs/syntax.md)
-- LINQ adapter details: [docs/linq-adapter.md](docs/linq-adapter.md)
-- ASP.NET Core usage: [docs/aspnet-core-usage.md](docs/aspnet-core-usage.md)
-- EF Core helpers: [docs/entity-framework-core.md](docs/entity-framework-core.md)
-- FastEndpoints usage: [docs/fastendpoints-usage.md](docs/fastendpoints-usage.md)
-- OpenAPI usage: [docs/openapi-usage.md](docs/openapi-usage.md)
-- Swashbuckle usage: [docs/swashbuckle-usage.md](docs/swashbuckle-usage.md)
-- NSwag usage: [docs/nswag-usage.md](docs/nswag-usage.md)
-- 1.0.0 readiness: [docs/v1-readiness.md](docs/v1-readiness.md)
-- Release process: [docs/release.md](docs/release.md)
+- Versioning: [CHANGELOG.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/CHANGELOG.md)
+- Syntax details: [docs/syntax.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/syntax.md)
+- LINQ adapter details: [docs/linq-adapter.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/linq-adapter.md)
+- ASP.NET Core usage: [docs/aspnet-core-usage.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/aspnet-core-usage.md)
+- EF Core helpers: [docs/entity-framework-core.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/entity-framework-core.md)
+- FastEndpoints usage: [docs/fastendpoints-usage.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/fastendpoints-usage.md)
+- OpenAPI usage: [docs/openapi-usage.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/openapi-usage.md)
+- Swashbuckle usage: [docs/swashbuckle-usage.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/swashbuckle-usage.md)
+- NSwag usage: [docs/nswag-usage.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/nswag-usage.md)
+- 1.0.0 readiness: [docs/v1-readiness.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/v1-readiness.md)
+- Release process: [docs/release.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/release.md)
