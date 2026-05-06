@@ -23,7 +23,7 @@ A dependency-light .NET parser for RSQL/FIQL-style REST API query expressions.
 
 `RsqlParserNet` parses query text into a typed AST with source spans and structured diagnostics. The core package does not depend on ASP.NET Core, LINQ, Entity Framework Core, or ORM APIs.
 
-Current status: all packages are aligned for `0.3.0-preview.1`. The package family is ready for the next preview release, but public API changes are still possible before `1.0.0`.
+Current status: the latest preview is `0.3.0-preview.1`, with all package versions aligned. Public API changes are still possible before `1.0.0`.
 
 ## Installation
 

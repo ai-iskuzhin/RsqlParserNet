@@ -62,11 +62,18 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG_NAME: ${{ github.ref_name }}
         run: |
-          gh release create "$TAG_NAME" \
-            artifacts/packages/* \
-            --title "RsqlParserNet ${TAG_NAME#v}" \
-            --generate-notes \
+          args=(
+            artifacts/packages/*
+            --title "RsqlParserNet ${TAG_NAME#v}"
+            --generate-notes
             --verify-tag
+          )
+
+          if [[ "$TAG_NAME" == *-* ]]; then
+            args+=(--prerelease)
+          fi
+
+          gh release create "$TAG_NAME" "${args[@]}"
 
       - name: Publish NuGet Packages
         if: env.NUGET_API_KEY != ''

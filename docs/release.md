@@ -93,6 +93,8 @@ git push origin v0.3.0-preview.1
 
 Pushing a `v*` tag runs CI, packs the projects, creates a GitHub release, attaches the packed NuGet artifacts, and publishes packages to NuGet.org when `NUGET_API_KEY` is configured.
 
+Tags with prerelease SemVer suffixes, such as `v0.3.0-preview.1`, are created as GitHub prereleases.
+
 ## Publishing To NuGet
 
 Tag releases publish to NuGet.org automatically when the repository secret `NUGET_API_KEY` is configured. The release workflow pushes every generated `.nupkg` and `.snupkg` with `--skip-duplicate`.
@@ -115,7 +117,7 @@ dotnet nuget push RsqlParserNet.<version>.snupkg \
 
 ## GitHub Release
 
-GitHub releases are created automatically by `.github/workflows/release.yml` when a `v*` tag is pushed.
+GitHub releases are created automatically by `.github/workflows/release.yml` when a `v*` tag is pushed. Preview tags are marked as prereleases.
 
 The workflow attaches:
 
@@ -139,6 +141,14 @@ The workflow attaches:
 When packages have different versions, the GitHub release will attach the versions currently defined in each package project unless a workflow explicitly overrides them.
 
 GitHub release notes are generated from commits and pull requests for the tag. Keep `CHANGELOG.md` as the human-maintained project history and package artifact, but do not paste the full changelog into every GitHub release.
+
+After the workflow completes, verify:
+
+- GitHub release exists.
+- Preview GitHub releases are marked as prerelease.
+- `.nupkg` and `.snupkg` files are attached.
+- Packages appear on NuGet.org.
+- Package README and repository links render correctly on NuGet.org.
 
 ## NuGet Release
 
