@@ -4,6 +4,8 @@
 
 It does not add runtime behavior. Filtering, sorting, paging, validation, and EF Core execution still come from the other packages.
 
+Use `RsqlParserNet.Swashbuckle` for Swashbuckle, and `RsqlParserNet.NSwag` for NSwag or FastEndpoints.Swagger-style OpenAPI generation.
+
 ## Minimal API
 
 Use `WithRsqlQueryParameters()` on endpoints that accept `RsqlQueryRequest`:

@@ -17,12 +17,13 @@
 | `RsqlParserNet.FastEndpoints` | [![RsqlParserNet.FastEndpoints NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.FastEndpoints?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.FastEndpoints) | [![RsqlParserNet.FastEndpoints Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.FastEndpoints?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.FastEndpoints) |
 | `RsqlParserNet.OpenApi` | [![RsqlParserNet.OpenApi NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.OpenApi?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.OpenApi) | [![RsqlParserNet.OpenApi Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.OpenApi?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.OpenApi) |
 | `RsqlParserNet.Swashbuckle` | [![RsqlParserNet.Swashbuckle NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.Swashbuckle?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Swashbuckle) | [![RsqlParserNet.Swashbuckle Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.Swashbuckle?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Swashbuckle) |
+| `RsqlParserNet.NSwag` | [![RsqlParserNet.NSwag NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.NSwag?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.NSwag) | [![RsqlParserNet.NSwag Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.NSwag?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.NSwag) |
 
 A dependency-light .NET parser for RSQL/FIQL-style REST API query expressions.
 
 `RsqlParserNet` parses query text into a typed AST with source spans and structured diagnostics. The core package does not depend on ASP.NET Core, LINQ, Entity Framework Core, or ORM APIs.
 
-Current status: all packages are aligned for `0.2.0-preview.1`. The package family is ready for the next preview release, but public API changes are still possible before `1.0.0`.
+Current status: all packages are aligned for `0.3.0-preview.1`. The package family is ready for the next preview release, but public API changes are still possible before `1.0.0`.
 
 ## Installation
 
@@ -70,6 +71,12 @@ Swashbuckle helpers:
 dotnet add package RsqlParserNet.Swashbuckle --prerelease
 ```
 
+NSwag helpers:
+
+```bash
+dotnet add package RsqlParserNet.NSwag --prerelease
+```
+
 For local development, reference the project directly:
 
 ```xml
@@ -80,6 +87,7 @@ For local development, reference the project directly:
 <ProjectReference Include="src/RsqlParserNet.FastEndpoints/RsqlParserNet.FastEndpoints.csproj" />
 <ProjectReference Include="src/RsqlParserNet.OpenApi/RsqlParserNet.OpenApi.csproj" />
 <ProjectReference Include="src/RsqlParserNet.Swashbuckle/RsqlParserNet.Swashbuckle.csproj" />
+<ProjectReference Include="src/RsqlParserNet.NSwag/RsqlParserNet.NSwag.csproj" />
 ```
 
 ## Quick Start
@@ -349,6 +357,8 @@ Framework adapters should stay separate when they need framework-specific depend
 
 `RsqlParserNet.Swashbuckle` owns Swashbuckle operation filters for documenting the same query parameters through SwaggerGen.
 
+`RsqlParserNet.NSwag` owns NSwag operation processors for documenting the same query parameters through NSwag and FastEndpoints.Swagger-style OpenAPI generation.
+
 ## Development
 
 ```bash
@@ -362,15 +372,16 @@ dotnet pack src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkC
 dotnet pack src/RsqlParserNet.FastEndpoints/RsqlParserNet.FastEndpoints.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.OpenApi/RsqlParserNet.OpenApi.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.Swashbuckle/RsqlParserNet.Swashbuckle.csproj --configuration Release --output artifacts/packages
+dotnet pack src/RsqlParserNet.NSwag/RsqlParserNet.NSwag.csproj --configuration Release --output artifacts/packages
 ```
 
 Coverage is collected locally with Coverlet. A public percentage badge will be added after coverage publishing is wired into CI.
 
 ## Release Automation
 
-Pushing a `v*` tag builds, tests, packs, and creates a GitHub Release with every package artifact. Future tags also publish all generated `.nupkg` and `.snupkg` files to NuGet.org when the repository secret `NUGET_API_KEY` is configured.
+Pushing a `v*` tag builds, tests, packs, and creates a GitHub Release with every package artifact. Tags also publish all generated `.nupkg` and `.snupkg` files to NuGet.org when the repository secret `NUGET_API_KEY` is configured.
 
-The manual `Publish NuGet` workflow remains available for retrying one package from a release tag. The already-created `v0.2.0-preview.1` tag should be published through that manual workflow because it was created before automatic NuGet publishing was added.
+The manual `Publish NuGet` workflow remains available for retrying one package from a release tag.
 
 ## Project Notes
 
@@ -382,5 +393,6 @@ The manual `Publish NuGet` workflow remains available for retrying one package f
 - FastEndpoints usage: [docs/fastendpoints-usage.md](docs/fastendpoints-usage.md)
 - OpenAPI usage: [docs/openapi-usage.md](docs/openapi-usage.md)
 - Swashbuckle usage: [docs/swashbuckle-usage.md](docs/swashbuckle-usage.md)
+- NSwag usage: [docs/nswag-usage.md](docs/nswag-usage.md)
 - 1.0.0 readiness: [docs/v1-readiness.md](docs/v1-readiness.md)
 - Release process: [docs/release.md](docs/release.md)

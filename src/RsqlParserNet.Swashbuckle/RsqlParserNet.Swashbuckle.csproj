@@ -8,11 +8,11 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <PackageId>RsqlParserNet.Swashbuckle</PackageId>
-    <Version>0.2.0-preview.1</Version>
-    <PackageVersion>0.2.0-preview.1</PackageVersion>
-    <AssemblyVersion>0.2.0.0</AssemblyVersion>
-    <FileVersion>0.2.0.0</FileVersion>
-    <InformationalVersion>0.2.0-preview.1</InformationalVersion>
+    <Version>0.3.0-preview.1</Version>
+    <PackageVersion>0.3.0-preview.1</PackageVersion>
+    <AssemblyVersion>0.3.0.0</AssemblyVersion>
+    <FileVersion>0.3.0.0</FileVersion>
+    <InformationalVersion>0.3.0-preview.1</InformationalVersion>
     <Title>RsqlParserNet.Swashbuckle</Title>
     <Description>Swashbuckle operation filter helpers for documenting RsqlParserNet query parameters.</Description>
     <PackageTags>rsql;fiql;swashbuckle;swagger;openapi;aspnetcore;query;filtering;documentation</PackageTags>
@@ -33,7 +33,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageReleaseNotes>Aligned 0.2.0 Swashbuckle preview with endpoint-scoped and global operation filters for documenting RSQL query parameters.</PackageReleaseNotes>
+    <PackageReleaseNotes>Aligned 0.3.0 Swashbuckle preview with endpoint-scoped and global operation filters for documenting RSQL query parameters.</PackageReleaseNotes>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

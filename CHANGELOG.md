@@ -6,6 +6,14 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 
 ## Unreleased
 
+No changes yet.
+
+## 0.3.0-preview.1
+
+### Added
+
+- Added the `RsqlParserNet.NSwag` adapter project with endpoint-scoped and global operation processors for documenting RSQL query parameters.
+
 ### Changed
 
 - Documented the FastEndpoints 7 compatibility requirement and updated FastEndpoints examples to use the current `Send.OkAsync` response helper.

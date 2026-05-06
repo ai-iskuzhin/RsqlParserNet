@@ -7,7 +7,7 @@ Preview versions should use a prerelease suffix:
 ```text
 0.1.0-preview.1
 0.1.0-preview.2
-0.2.0-preview.1
+0.3.0-preview.1
 ```
 
 Stable versions should use plain SemVer:
@@ -34,6 +34,7 @@ dotnet pack src/RsqlParserNet.EntityFrameworkCore/RsqlParserNet.EntityFrameworkC
 dotnet pack src/RsqlParserNet.FastEndpoints/RsqlParserNet.FastEndpoints.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.OpenApi/RsqlParserNet.OpenApi.csproj --configuration Release --output artifacts/packages
 dotnet pack src/RsqlParserNet.Swashbuckle/RsqlParserNet.Swashbuckle.csproj --configuration Release --output artifacts/packages
+dotnet pack src/RsqlParserNet.NSwag/RsqlParserNet.NSwag.csproj --configuration Release --output artifacts/packages
 ```
 
 If releasing only one package, the other package-specific pack steps can be skipped.
@@ -48,6 +49,7 @@ RsqlParserNet.EntityFrameworkCore
 RsqlParserNet.FastEndpoints
 RsqlParserNet.OpenApi
 RsqlParserNet.Swashbuckle
+RsqlParserNet.NSwag
 ```
 
 5. Inspect the generated packages:
@@ -60,11 +62,12 @@ unzip -l artifacts/packages/RsqlParserNet.EntityFrameworkCore.<version>.nupkg
 unzip -l artifacts/packages/RsqlParserNet.FastEndpoints.<version>.nupkg
 unzip -l artifacts/packages/RsqlParserNet.OpenApi.<version>.nupkg
 unzip -l artifacts/packages/RsqlParserNet.Swashbuckle.<version>.nupkg
+unzip -l artifacts/packages/RsqlParserNet.NSwag.<version>.nupkg
 ```
 
 ## Package Versions
 
-Packages can be versioned independently while the project is in preview, but aligned versions are preferred when publishing the whole package family from one release tag. The `0.2.0-preview.1` release aligns every package.
+Packages can be versioned independently while the project is in preview, but aligned versions are preferred when publishing the whole package family from one release tag. The `0.3.0-preview.1` release aligns every package.
 
 Current package identities:
 
@@ -76,6 +79,7 @@ RsqlParserNet.EntityFrameworkCore
 RsqlParserNet.FastEndpoints
 RsqlParserNet.OpenApi
 RsqlParserNet.Swashbuckle
+RsqlParserNet.NSwag
 ```
 
 ## Tagging
@@ -83,8 +87,8 @@ RsqlParserNet.Swashbuckle
 Use tags that match the package version prefixed with `v`:
 
 ```bash
-git tag -a v0.2.0-preview.1 -m "RsqlParserNet packages 0.2.0-preview.1"
-git push origin v0.2.0-preview.1
+git tag -a v0.3.0-preview.1 -m "RsqlParserNet packages 0.3.0-preview.1"
+git push origin v0.3.0-preview.1
 ```
 
 Pushing a `v*` tag runs CI, packs the projects, creates a GitHub release, attaches the packed NuGet artifacts, and publishes packages to NuGet.org when `NUGET_API_KEY` is configured.
@@ -129,6 +133,8 @@ The workflow attaches:
 - `RsqlParserNet.OpenApi.<version>.snupkg`
 - `RsqlParserNet.Swashbuckle.<version>.nupkg`
 - `RsqlParserNet.Swashbuckle.<version>.snupkg`
+- `RsqlParserNet.NSwag.<version>.nupkg`
+- `RsqlParserNet.NSwag.<version>.snupkg`
 
 When packages have different versions, the GitHub release will attach the versions currently defined in each package project unless a workflow explicitly overrides them.
 
@@ -147,8 +153,8 @@ NUGET_API_KEY
 If automatic publishing needs to be retried for one package, run the `Publish NuGet` workflow manually from GitHub Actions and enter the git ref and package version:
 
 ```text
-git_ref: v0.2.0-preview.1
-version: 0.2.0-preview.1
+git_ref: v0.3.0-preview.1
+version: 0.3.0-preview.1
 package: RsqlParserNet
 ```
 
@@ -162,6 +168,7 @@ RsqlParserNet.EntityFrameworkCore
 RsqlParserNet.FastEndpoints
 RsqlParserNet.OpenApi
 RsqlParserNet.Swashbuckle
+RsqlParserNet.NSwag
 ```
 
 The `git_ref` should usually be the release tag. This keeps the package published to NuGet identical to the package attached to the GitHub release.
@@ -175,8 +182,8 @@ The repository also includes a manual `Publish GitHub Packages` workflow for pub
 Use it when packages should be tested from the repository's GitHub Packages feed before publishing to NuGet.org:
 
 ```text
-git_ref: v0.2.0-preview.1
-version: 0.2.0-preview.1
+git_ref: v0.3.0-preview.1
+version: 0.3.0-preview.1
 package: RsqlParserNet.Linq
 ```
 
@@ -197,6 +204,6 @@ Then install from that source:
 
 ```bash
 dotnet add package RsqlParserNet.Linq \
-  --version 0.2.0-preview.1 \
+  --version 0.3.0-preview.1 \
   --source rsqlparsernet-github
 ```

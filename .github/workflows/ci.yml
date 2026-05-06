@@ -52,6 +52,9 @@ jobs:
       - name: Pack Swashbuckle Adapter
         run: dotnet pack src/RsqlParserNet.Swashbuckle/RsqlParserNet.Swashbuckle.csproj --configuration Release --no-build --output artifacts/packages
 
+      - name: Pack NSwag Adapter
+        run: dotnet pack src/RsqlParserNet.NSwag/RsqlParserNet.NSwag.csproj --configuration Release --no-build --output artifacts/packages
+
       - name: Upload Packages
         uses: actions/upload-artifact@v5
         with:

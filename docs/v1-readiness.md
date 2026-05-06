@@ -24,6 +24,7 @@ The adapter surface is still preview. Before `1.0.0`, verify:
 - `RsqlParserNet.FastEndpoints` version support is intentional and documented, especially the current FastEndpoints 7 dependency.
 - `RsqlParserNet.OpenApi` documents only the query parameters an endpoint actually supports.
 - `RsqlParserNet.Swashbuckle` supports endpoint-scoped documentation and does not require documenting all operations globally.
+- `RsqlParserNet.NSwag` supports endpoint-scoped documentation and does not require documenting all operations globally.
 
 ## Release Hygiene
 

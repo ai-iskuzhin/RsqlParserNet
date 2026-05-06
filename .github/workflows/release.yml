@@ -54,6 +54,9 @@ jobs:
       - name: Pack Swashbuckle Adapter
         run: dotnet pack src/RsqlParserNet.Swashbuckle/RsqlParserNet.Swashbuckle.csproj --configuration Release --no-build --output artifacts/packages
 
+      - name: Pack NSwag Adapter
+        run: dotnet pack src/RsqlParserNet.NSwag/RsqlParserNet.NSwag.csproj --configuration Release --no-build --output artifacts/packages
+
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}

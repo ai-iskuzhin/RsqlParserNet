@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       git_ref:
-        description: 'Git ref to publish from, for example main or v0.2.0-preview.1'
+        description: 'Git ref to publish from, for example main or v0.3.0-preview.1'
         required: true
         type: string
       version:
-        description: 'Package version to publish, for example 0.2.0-preview.1'
+        description: 'Package version to publish, for example 0.3.0-preview.1'
         required: true
         type: string
       package:
@@ -24,6 +24,7 @@ on:
           - RsqlParserNet.FastEndpoints
           - RsqlParserNet.OpenApi
           - RsqlParserNet.Swashbuckle
+          - RsqlParserNet.NSwag
 
 permissions:
   contents: read
@@ -87,6 +88,10 @@ jobs:
             RsqlParserNet.Swashbuckle)
               echo "project=src/RsqlParserNet.Swashbuckle/RsqlParserNet.Swashbuckle.csproj" >> "$GITHUB_OUTPUT"
               echo "id=RsqlParserNet.Swashbuckle" >> "$GITHUB_OUTPUT"
+              ;;
+            RsqlParserNet.NSwag)
+              echo "project=src/RsqlParserNet.NSwag/RsqlParserNet.NSwag.csproj" >> "$GITHUB_OUTPUT"
+              echo "id=RsqlParserNet.NSwag" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "Unsupported package '$PACKAGE'" >&2
