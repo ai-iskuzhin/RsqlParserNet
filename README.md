@@ -423,6 +423,34 @@ name==Bo*d  -> StartsWith("Bo") && EndsWith("d")
 See [docs/linq-adapter.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/linq-adapter.md) for wildcard behavior, value conversion, and adapter limitations.
 See [docs/aspnet-core-usage.md](https://github.com/ai-iskuzhin/RsqlParserNet/blob/main/docs/aspnet-core-usage.md) for ASP.NET Core request handling examples.
 
+## Pagination Models
+
+`RsqlParserNet.Linq` includes reusable pagination models that are used by the ASP.NET Core and Entity Framework Core adapters:
+
+| Type | Purpose |
+| --- | --- |
+| `RsqlPageRequest` | Page number and page size request, with page-size clamping helpers. |
+| `RsqlPagination` | Metadata for `page`, `pageSize`, `totalItems`, `totalPages`, `hasPreviousPage`, and `hasNextPage`. |
+| `RsqlPagedResult<T>` | A framework-neutral response shape with `Items` and `Pagination`. |
+
+The default JSON shape is:
+
+```json
+{
+  "items": [],
+  "pagination": {
+    "page": 1,
+    "pageSize": 10,
+    "totalItems": 42,
+    "totalPages": 5,
+    "hasPreviousPage": false,
+    "hasNextPage": true
+  }
+}
+```
+
+Use `ApplyPage(...)` for synchronous query composition and `ToRsqlPageAsync(...)` from `RsqlParserNet.EntityFrameworkCore` when EF Core should count, page, and materialize asynchronously.
+
 ## ASP.NET Core Binding
 
 `RsqlParserNet.AspNetCore` adds bindable query wrappers for request query strings. Minimal APIs can accept `RsqlQueryRequest` directly to reuse parsed filter, sort, and page state:

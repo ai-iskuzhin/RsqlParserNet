@@ -6,7 +6,9 @@ The project uses Semantic Versioning. Starting with `1.0.0`, public API changes 
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- Documented the reusable pagination models and default paged response shape.
 
 ## 1.0.0
 

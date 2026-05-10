@@ -188,6 +188,12 @@ values.Contains(x.Status)
 
 `RsqlParserNet.Linq` includes framework-neutral pagination models:
 
+| Type | Purpose |
+| --- | --- |
+| `RsqlPageRequest` | Page number and page size request, with page-size clamping helpers. |
+| `RsqlPagination` | Metadata for `page`, `pageSize`, `totalItems`, `totalPages`, `hasPreviousPage`, and `hasNextPage`. |
+| `RsqlPagedResult<T>` | A framework-neutral response shape with `Items` and `Pagination`. |
+
 ```csharp
 var page = new RsqlPageRequest(page: 2, pageSize: 25);
 
@@ -197,7 +203,25 @@ var items = products
     .ToArray();
 ```
 
+The default JSON shape is:
+
+```json
+{
+  "items": [],
+  "pagination": {
+    "page": 2,
+    "pageSize": 25,
+    "totalItems": 100,
+    "totalPages": 4,
+    "hasPreviousPage": true,
+    "hasNextPage": true
+  }
+}
+```
+
 Use `RsqlPagedResult<T>.Create(items, page, totalItems)` when another layer already owns counting and materialization. Use `RsqlParserNet.EntityFrameworkCore` when EF Core should count, page, and materialize asynchronously.
+
+The pagination types currently live in `RsqlParserNet.Linq` because filtering, sorting, and paging are query-composition concerns. They do not depend on ASP.NET Core or EF Core.
 
 ## Sorting
 
