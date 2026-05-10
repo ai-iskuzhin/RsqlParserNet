@@ -9,6 +9,7 @@ The project uses Semantic Versioning. Starting with `1.0.0`, public API changes 
 ### Added
 
 - Documented the reusable pagination models and default paged response shape.
+- Documented the ready-to-use API query models for filter, sort, pagination, validation errors, EF Core paging, and OpenAPI documentation.
 
 ## 1.0.0
 

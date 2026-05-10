@@ -25,6 +25,46 @@ A dependency-light .NET parser for RSQL/FIQL-style REST API query expressions.
 
 Current status: `1.0.0` is the first stable release for the aligned package family.
 
+## Ready-To-Use API Query Models
+
+The package family includes ready-to-use primitives for common REST API list endpoints, so applications do not have to rebuild filter, sort, page, validation, and response-shape plumbing from scratch.
+
+| Need | Ready-to-use type or helper |
+| --- | --- |
+| Parse `filter=...` into structured syntax | `RsqlQuery`, `RsqlParser.TryParse(...)`, `RsqlQueryFilter` |
+| Bind `filter`, `sort`, `page`, and `pageSize` in ASP.NET Core | `RsqlQueryRequest` |
+| Return validation-style query errors | `RsqlQueryError`, `ToValidationErrors()`, `ToValidationProblemDetails()` |
+| Apply allowlisted filtering and sorting | `RsqlLinqProfile<T>`, `ApplyRsql(...)`, `ApplySort(...)`, `TryApplyTo(...)` |
+| Represent page input | `RsqlPageRequest` |
+| Represent paged response metadata | `RsqlPagination` |
+| Return a consistent paged response | `RsqlPagedResult<T>` |
+| Count, page, and materialize EF Core queries | `ToRsqlPageAsync(...)` |
+| Document query parameters in OpenAPI | `RsqlParserNet.OpenApi`, `RsqlParserNet.Swashbuckle`, `RsqlParserNet.NSwag` |
+
+The default query contract is:
+
+```text
+GET /products?filter=status==active&sort=-createdAt&page=1&pageSize=25
+```
+
+The default paged response shape is:
+
+```json
+{
+  "items": [],
+  "pagination": {
+    "page": 1,
+    "pageSize": 25,
+    "totalItems": 42,
+    "totalPages": 2,
+    "hasPreviousPage": false,
+    "hasNextPage": true
+  }
+}
+```
+
+Selectors are still explicit and safe by design: applications choose which fields are available through allowlisted mappings.
+
 ## Installation
 
 Choose the smallest package that owns the behavior you need:

@@ -1,6 +1,8 @@
 # ASP.NET Core Usage
 
-`RsqlParserNet` and `RsqlParserNet.Linq` do not depend on ASP.NET Core. The optional `RsqlParserNet.AspNetCore` package adds a bindable query filter wrapper for ASP.NET Core request handling.
+`RsqlParserNet` and `RsqlParserNet.Linq` do not depend on ASP.NET Core. The optional `RsqlParserNet.AspNetCore` package adds ready-to-use query models for common REST API list endpoints.
+
+`RsqlQueryRequest` binds `filter`, `sort`, `page`, and `pageSize` into one reusable request object. It works with `RsqlPagedResult<T>` and `RsqlPagination` so APIs can expose a consistent query contract and paged response shape without rebuilding that plumbing per endpoint.
 
 The recommended API flow is:
 
