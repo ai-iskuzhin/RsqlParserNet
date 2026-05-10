@@ -1,10 +1,10 @@
 # 1.0.0 Readiness
 
-This document tracks what must be true before the first stable `1.0.0` release.
+This document records the final readiness criteria for the first stable `1.0.0` release.
 
 ## Core Parser
 
-The core parser is close to stable. Before `1.0.0`, verify:
+The core parser is stable for `1.0.0`:
 
 - Public AST types are intentionally named and documented.
 - Diagnostic codes are final enough to support API clients.
@@ -14,7 +14,7 @@ The core parser is close to stable. Before `1.0.0`, verify:
 
 ## Adapter Packages
 
-The adapter surface is still preview. Before `1.0.0`, verify:
+The adapter surface is included in the aligned `1.0.0` package family:
 
 - `RsqlParserNet.Linq` profile, allowlist, sorting, paging, string comparison, custom operator, and collection operator APIs feel stable after real API usage.
 - `RsqlParserNet.AspNetCore` query binding and validation error shapes are stable.
@@ -28,15 +28,14 @@ The adapter surface is still preview. Before `1.0.0`, verify:
 
 ## Release Hygiene
 
-Before stable:
+Stable release requirements:
 
-- Publish all intended adapter packages as previews.
 - Align package versions for the stable release.
 - Freeze package IDs and repository metadata.
 - Confirm CI builds, tests, formats, and packs every package.
 - Keep missing public XML documentation as a build failure for packable projects.
-- Review README, package README content, and docs for stale preview language.
-- Gather at least one more integration feedback pass from a real API.
+- Review README, package README content, and docs for stale preview language before tagging.
+- Keep GitHub Release artifacts and NuGet packages generated from the same tag.
 
 ## Can Wait
 

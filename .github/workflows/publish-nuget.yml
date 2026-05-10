@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       git_ref:
-        description: 'Git ref to publish from, for example v0.3.0-preview.1'
+        description: 'Git ref to publish from, for example v1.0.0'
         required: true
         type: string
       version:
-        description: 'Package version to publish, for example 0.3.0-preview.1'
+        description: 'Package version to publish, for example 1.0.0'
         required: true
         type: string
       package:

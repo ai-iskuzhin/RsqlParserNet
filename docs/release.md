@@ -68,7 +68,7 @@ unzip -l artifacts/packages/RsqlParserNet.NSwag.<version>.nupkg
 
 ## Package Versions
 
-Packages can be versioned independently while the project is in preview, but aligned versions are preferred when publishing the whole package family from one release tag. The `0.3.0-preview.1` release aligns every package.
+Packages can be versioned independently while the project is in preview, but aligned versions are preferred when publishing the whole package family from one release tag. Stable releases should keep the package family aligned unless there is an explicit product decision to split versions. The `1.0.0` release aligns every package.
 
 Current package identities:
 
@@ -88,13 +88,13 @@ RsqlParserNet.NSwag
 Use tags that match the package version prefixed with `v`:
 
 ```bash
-git tag -a v0.3.0-preview.1 -m "RsqlParserNet packages 0.3.0-preview.1"
-git push origin v0.3.0-preview.1
+git tag -a v1.0.0 -m "RsqlParserNet packages 1.0.0"
+git push origin v1.0.0
 ```
 
 Pushing a `v*` tag runs CI, packs the projects, creates a GitHub release, attaches the packed NuGet artifacts, and publishes packages to NuGet.org when `NUGET_API_KEY` is configured.
 
-Tags with prerelease SemVer suffixes, such as `v0.3.0-preview.1`, are created as GitHub prereleases.
+Tags with prerelease SemVer suffixes, such as `v0.3.0-preview.1`, are created as GitHub prereleases. Stable tags such as `v1.0.0` are created as normal GitHub releases.
 
 ## Publishing To NuGet
 
@@ -164,8 +164,8 @@ NUGET_API_KEY
 If automatic publishing needs to be retried for one package, run the `Publish NuGet` workflow manually from GitHub Actions and enter the git ref and package version:
 
 ```text
-git_ref: v0.3.0-preview.1
-version: 0.3.0-preview.1
+git_ref: v1.0.0
+version: 1.0.0
 package: RsqlParserNet
 ```
 
@@ -188,13 +188,13 @@ The workflow restores, builds, tests, packs the requested package and version fr
 
 ## GitHub Packages Preview Feed
 
-The repository also includes a manual `Publish GitHub Packages` workflow for publishing preview packages to GitHub Packages without a NuGet.org API key.
+The repository also includes a manual `Publish GitHub Packages` workflow for publishing packages to GitHub Packages without a NuGet.org API key.
 
-Use it when packages should be tested from the repository's GitHub Packages feed before publishing to NuGet.org:
+Use it when packages should be tested from the repository's GitHub Packages feed before publishing to NuGet.org, or when a secondary GitHub feed is explicitly needed:
 
 ```text
-git_ref: v0.3.0-preview.1
-version: 0.3.0-preview.1
+git_ref: v1.0.0
+version: 1.0.0
 package: RsqlParserNet.Linq
 ```
 
@@ -215,6 +215,6 @@ Then install from that source:
 
 ```bash
 dotnet add package RsqlParserNet.Linq \
-  --version 0.3.0-preview.1 \
+  --version 1.0.0 \
   --source rsqlparsernet-github
 ```

@@ -10,20 +10,20 @@
 
 | Package | Latest Release | Downloads |
 | :--- | :---: | :---: |
-| `RsqlParserNet` | [![RsqlParserNet NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet) | [![RsqlParserNet Downloads](https://img.shields.io/nuget/dt/RsqlParserNet?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet) |
-| `RsqlParserNet.Linq` | [![RsqlParserNet.Linq NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.Linq?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Linq) | [![RsqlParserNet.Linq Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.Linq?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Linq) |
-| `RsqlParserNet.AspNetCore` | [![RsqlParserNet.AspNetCore NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.AspNetCore?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.AspNetCore) | [![RsqlParserNet.AspNetCore Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.AspNetCore?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.AspNetCore) |
-| `RsqlParserNet.EntityFrameworkCore` | [![RsqlParserNet.EntityFrameworkCore NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.EntityFrameworkCore?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.EntityFrameworkCore) | [![RsqlParserNet.EntityFrameworkCore Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.EntityFrameworkCore?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.EntityFrameworkCore) |
-| `RsqlParserNet.FastEndpoints` | [![RsqlParserNet.FastEndpoints NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.FastEndpoints?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.FastEndpoints) | [![RsqlParserNet.FastEndpoints Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.FastEndpoints?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.FastEndpoints) |
-| `RsqlParserNet.OpenApi` | [![RsqlParserNet.OpenApi NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.OpenApi?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.OpenApi) | [![RsqlParserNet.OpenApi Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.OpenApi?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.OpenApi) |
-| `RsqlParserNet.Swashbuckle` | [![RsqlParserNet.Swashbuckle NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.Swashbuckle?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Swashbuckle) | [![RsqlParserNet.Swashbuckle Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.Swashbuckle?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Swashbuckle) |
-| `RsqlParserNet.NSwag` | [![RsqlParserNet.NSwag NuGet](https://img.shields.io/nuget/vpre/RsqlParserNet.NSwag?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.NSwag) | [![RsqlParserNet.NSwag Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.NSwag?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.NSwag) |
+| `RsqlParserNet` | [![RsqlParserNet NuGet](https://img.shields.io/nuget/v/RsqlParserNet?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet) | [![RsqlParserNet Downloads](https://img.shields.io/nuget/dt/RsqlParserNet?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet) |
+| `RsqlParserNet.Linq` | [![RsqlParserNet.Linq NuGet](https://img.shields.io/nuget/v/RsqlParserNet.Linq?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Linq) | [![RsqlParserNet.Linq Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.Linq?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Linq) |
+| `RsqlParserNet.AspNetCore` | [![RsqlParserNet.AspNetCore NuGet](https://img.shields.io/nuget/v/RsqlParserNet.AspNetCore?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.AspNetCore) | [![RsqlParserNet.AspNetCore Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.AspNetCore?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.AspNetCore) |
+| `RsqlParserNet.EntityFrameworkCore` | [![RsqlParserNet.EntityFrameworkCore NuGet](https://img.shields.io/nuget/v/RsqlParserNet.EntityFrameworkCore?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.EntityFrameworkCore) | [![RsqlParserNet.EntityFrameworkCore Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.EntityFrameworkCore?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.EntityFrameworkCore) |
+| `RsqlParserNet.FastEndpoints` | [![RsqlParserNet.FastEndpoints NuGet](https://img.shields.io/nuget/v/RsqlParserNet.FastEndpoints?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.FastEndpoints) | [![RsqlParserNet.FastEndpoints Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.FastEndpoints?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.FastEndpoints) |
+| `RsqlParserNet.OpenApi` | [![RsqlParserNet.OpenApi NuGet](https://img.shields.io/nuget/v/RsqlParserNet.OpenApi?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.OpenApi) | [![RsqlParserNet.OpenApi Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.OpenApi?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.OpenApi) |
+| `RsqlParserNet.Swashbuckle` | [![RsqlParserNet.Swashbuckle NuGet](https://img.shields.io/nuget/v/RsqlParserNet.Swashbuckle?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Swashbuckle) | [![RsqlParserNet.Swashbuckle Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.Swashbuckle?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.Swashbuckle) |
+| `RsqlParserNet.NSwag` | [![RsqlParserNet.NSwag NuGet](https://img.shields.io/nuget/v/RsqlParserNet.NSwag?logo=nuget&style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.NSwag) | [![RsqlParserNet.NSwag Downloads](https://img.shields.io/nuget/dt/RsqlParserNet.NSwag?style=flat-square)](https://www.nuget.org/packages/RsqlParserNet.NSwag) |
 
 A dependency-light .NET parser for RSQL/FIQL-style REST API query expressions.
 
 `RsqlParserNet` parses query text into a typed AST with source spans and structured diagnostics. The core package does not depend on ASP.NET Core, LINQ, Entity Framework Core, or ORM APIs.
 
-Current status: the latest preview is `0.3.0-preview.1`, with all package versions aligned. Public API changes are still possible before `1.0.0`.
+Current status: `1.0.0` is the first stable release for the aligned package family.
 
 ## Installation
 
@@ -45,31 +45,31 @@ Selectors are parsed as text. They are not reflected onto entity properties by t
 Core parser:
 
 ```bash
-dotnet add package RsqlParserNet --prerelease
+dotnet add package RsqlParserNet
 ```
 
 LINQ adapter:
 
 ```bash
-dotnet add package RsqlParserNet.Linq --prerelease
+dotnet add package RsqlParserNet.Linq
 ```
 
 ASP.NET Core binding:
 
 ```bash
-dotnet add package RsqlParserNet.AspNetCore --prerelease
+dotnet add package RsqlParserNet.AspNetCore
 ```
 
 Entity Framework Core helpers:
 
 ```bash
-dotnet add package RsqlParserNet.EntityFrameworkCore --prerelease
+dotnet add package RsqlParserNet.EntityFrameworkCore
 ```
 
 FastEndpoints helpers:
 
 ```bash
-dotnet add package RsqlParserNet.FastEndpoints --prerelease
+dotnet add package RsqlParserNet.FastEndpoints
 ```
 
 `RsqlParserNet.FastEndpoints` currently requires `FastEndpoints` `7.0.1` or newer. Applications on older FastEndpoints versions can still use the ASP.NET Core query models directly through `RsqlQueryRequest.Parse(...)`.
@@ -77,19 +77,19 @@ dotnet add package RsqlParserNet.FastEndpoints --prerelease
 OpenAPI helpers:
 
 ```bash
-dotnet add package RsqlParserNet.OpenApi --prerelease
+dotnet add package RsqlParserNet.OpenApi
 ```
 
 Swashbuckle helpers:
 
 ```bash
-dotnet add package RsqlParserNet.Swashbuckle --prerelease
+dotnet add package RsqlParserNet.Swashbuckle
 ```
 
 NSwag helpers:
 
 ```bash
-dotnet add package RsqlParserNet.NSwag --prerelease
+dotnet add package RsqlParserNet.NSwag
 ```
 
 For local development, reference the project directly:

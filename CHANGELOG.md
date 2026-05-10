@@ -2,13 +2,23 @@
 
 All notable changes to `RsqlParserNet` will be documented in this file.
 
-The project uses Semantic Versioning. Versions below `1.0.0` are preview releases and may include public API changes while the core parser contract is finalized.
+The project uses Semantic Versioning. Starting with `1.0.0`, public API changes follow normal SemVer compatibility rules.
 
 ## Unreleased
+
+No changes yet.
+
+## 1.0.0
+
+First stable release.
 
 ### Added
 
 - Added NuGet README guidance for choosing packages, reading the core AST model, projecting diagnostics to API errors, and manually applying a safe allowlisted AST subset without the LINQ adapter.
+
+### Changed
+
+- Stabilized the aligned package family for the first `1.0.0` release.
 
 ## 0.3.0-preview.1
 

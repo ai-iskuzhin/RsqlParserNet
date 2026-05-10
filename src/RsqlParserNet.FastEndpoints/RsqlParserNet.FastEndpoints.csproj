@@ -8,11 +8,11 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <PackageId>RsqlParserNet.FastEndpoints</PackageId>
-    <Version>0.3.0-preview.1</Version>
-    <PackageVersion>0.3.0-preview.1</PackageVersion>
-    <AssemblyVersion>0.3.0.0</AssemblyVersion>
-    <FileVersion>0.3.0.0</FileVersion>
-    <InformationalVersion>0.3.0-preview.1</InformationalVersion>
+    <Version>1.0.0</Version>
+    <PackageVersion>1.0.0</PackageVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
     <Title>RsqlParserNet.FastEndpoints</Title>
     <Description>FastEndpoints validation and request helpers for RsqlParserNet query binding.</Description>
     <PackageTags>rsql;fiql;fastendpoints;aspnetcore;query;filtering;binding;validation</PackageTags>
@@ -33,7 +33,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageReleaseNotes>Aligned 0.3.0 FastEndpoints preview with helpers for binding RSQL filter, sort, page query state, and validation failures.</PackageReleaseNotes>
+    <PackageReleaseNotes>First stable release of the FastEndpoints adapter with helpers for binding RSQL filter, sort, page query state, and validation failures.</PackageReleaseNotes>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
