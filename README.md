@@ -27,6 +27,21 @@ Current status: the latest preview is `0.3.0-preview.1`, with all package versio
 
 ## Installation
 
+Choose the smallest package that owns the behavior you need:
+
+| Package | Use it when |
+| --- | --- |
+| `RsqlParserNet` | You only need parsing, diagnostics, and the typed AST. |
+| `RsqlParserNet.Linq` | You want allowlisted expression tree predicates for `IQueryable<T>` or `IEnumerable<T>`. |
+| `RsqlParserNet.AspNetCore` | You want bindable query-string models for `filter`, `sort`, `page`, and `pageSize`. |
+| `RsqlParserNet.EntityFrameworkCore` | You want EF Core async paging helpers over already-composed queries. |
+| `RsqlParserNet.FastEndpoints` | You want FastEndpoints binding and validation failure glue. |
+| `RsqlParserNet.OpenApi` | You want ASP.NET Core built-in OpenAPI query parameter documentation. |
+| `RsqlParserNet.Swashbuckle` | You want Swashbuckle operation filters. |
+| `RsqlParserNet.NSwag` | You want NSwag operation processors. |
+
+Selectors are parsed as text. They are not reflected onto entity properties by the core package. Application code and adapters should explicitly allowlist the selectors they accept.
+
 Core parser:
 
 ```bash
@@ -189,6 +204,120 @@ Current diagnostic codes:
 | `RSQL003` | Invalid selector |
 
 `RsqlParser.Parse` throws `ArgumentException` for empty input and `RsqlParseException` for invalid syntax. `RsqlParseException.Diagnostics` contains the same structured diagnostics returned by `TryParse`.
+
+For API responses, diagnostics can be projected without depending on any ASP.NET Core adapter:
+
+```csharp
+var result = RsqlParser.TryParse(filter);
+
+if (!result.Success)
+{
+    var errors = result.Diagnostics.Select(diagnostic => new
+    {
+        diagnostic.Code,
+        diagnostic.Message,
+        diagnostic.Start.Line,
+        diagnostic.Start.Column
+    });
+
+    return Results.BadRequest(errors);
+}
+```
+
+## Core AST Model
+
+The core parser returns a typed AST and does not assign query semantics to application fields:
+
+| Type | Key properties | Meaning |
+| --- | --- | --- |
+| `RsqlQuery` | `Expression`, `Root` | Parsed query text and root AST node. |
+| `RsqlComparisonNode` | `Selector`, `Operator`, `OperatorText`, `Values` | A selector/operator/value comparison such as `status==active`. |
+| `RsqlLogicalNode` | `Operator`, `Children` | An AND/OR group. `;` maps to AND and `,` maps to OR. |
+| `RsqlValue` | `Text`, `RawText`, `Kind`, `Span` | Parsed value text, original source text, classified value kind, and source span. |
+| `RsqlDiagnostic` | `Code`, `Message`, `Span`, `Start`, `End` | Structured parse error with source location. |
+
+Use `RsqlNodeExtensions.Comparisons()` when you only need to inspect every comparison node:
+
+```csharp
+var query = RsqlParser.Parse("status==active;title==Bike");
+
+foreach (var comparison in query.Root.Comparisons())
+{
+    Console.WriteLine($"{comparison.Selector}: {comparison.Values[0].Text}");
+}
+```
+
+## Manual AST Filtering
+
+Use the core package directly when an endpoint supports a small, controlled subset and does not need `RsqlParserNet.Linq`.
+
+This example supports only:
+
+- AND groups
+- `==`
+- exactly one value
+- explicitly allowlisted selectors
+
+```csharp
+using RsqlParserNet;
+
+static IQueryable<Product> ApplyProductFilter(IQueryable<Product> query, RsqlNode node)
+{
+    return node switch
+    {
+        RsqlComparisonNode comparison => ApplyProductComparison(query, comparison),
+        RsqlLogicalNode { Operator: RsqlLogicalOperator.And } logical =>
+            logical.Children.Aggregate(query, ApplyProductFilter),
+        RsqlLogicalNode { Operator: RsqlLogicalOperator.Or } =>
+            throw new NotSupportedException("OR is not supported by this endpoint."),
+        _ => throw new NotSupportedException("Unsupported RSQL node.")
+    };
+}
+
+static IQueryable<Product> ApplyProductComparison(
+    IQueryable<Product> query,
+    RsqlComparisonNode comparison)
+{
+    if (comparison.Operator is not RsqlComparisonOperator.Equal)
+    {
+        throw new NotSupportedException("Only == is supported by this endpoint.");
+    }
+
+    if (comparison.Values.Count is not 1)
+    {
+        throw new NotSupportedException("Only one comparison value is supported.");
+    }
+
+    var value = comparison.Values[0].Text
+        ?? throw new NotSupportedException("Null values are not supported by this endpoint.");
+
+    return comparison.Selector switch
+    {
+        "status" => query.Where(product => product.Status == value),
+        "title" => query.Where(product => product.Title == value),
+        _ => throw new ArgumentException($"Unsupported filter field '{comparison.Selector}'.")
+    };
+}
+```
+
+Endpoint code can parse first, return syntax diagnostics, and then apply the allowlisted subset:
+
+```csharp
+var result = RsqlParser.TryParse(filter);
+
+if (!result.Success)
+{
+    return Results.BadRequest(result.Diagnostics.Select(diagnostic => new
+    {
+        diagnostic.Code,
+        diagnostic.Message,
+        diagnostic.Start.Line,
+        diagnostic.Start.Column
+    }));
+}
+
+var products = ApplyProductFilter(db.Products, result.Query!.Root);
+```
 
 ## LINQ Adapter
 

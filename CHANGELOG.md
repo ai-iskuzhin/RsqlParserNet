@@ -6,7 +6,9 @@ The project uses Semantic Versioning. Versions below `1.0.0` are preview release
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- Added NuGet README guidance for choosing packages, reading the core AST model, projecting diagnostics to API errors, and manually applying a safe allowlisted AST subset without the LINQ adapter.
 
 ## 0.3.0-preview.1
 
