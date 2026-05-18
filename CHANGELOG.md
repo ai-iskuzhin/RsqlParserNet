@@ -4,7 +4,7 @@ All notable changes to `RsqlParserNet` will be documented in this file.
 
 The project uses Semantic Versioning. Starting with `1.0.0`, public API changes follow normal SemVer compatibility rules.
 
-## Unreleased
+## 1.0.1
 
 ### Added
 
