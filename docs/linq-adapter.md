@@ -87,6 +87,43 @@ Profiles are still explicit allowlists. They are the recommended reuse mechanism
 
 Custom operators are parsed by the core package, and the LINQ adapter translates them only when each operator is mapped intentionally.
 
+## Value Normalization
+
+The LINQ adapter converts literal values to the mapped CLR member type before building expression constants. `DateTimeOffset` literals are normalized to UTC by default:
+
+```csharp
+var filtered = acts.ApplyRsql("date>=2026-05-15T10:30:00+05:00", options =>
+{
+    options.Allow("date", x => x.Date);
+});
+```
+
+This produces a UTC `DateTimeOffset` constant (`2026-05-15T05:30:00+00:00`), which is compatible with EF Core/Npgsql parameters for PostgreSQL `timestamp with time zone` columns.
+
+Set `NormalizeDateTimeOffsetsToUtc` to `false` to preserve the parsed offset:
+
+```csharp
+var filtered = acts.ApplyRsql("date>=2026-05-15T10:30:00+05:00", options =>
+{
+    options.NormalizeDateTimeOffsetsToUtc = false;
+    options.Allow("date", x => x.Date);
+});
+```
+
+For application-specific literal handling, use `NormalizeValue`:
+
+```csharp
+var filtered = acts.ApplyRsql("date>=2026-05-15T10:30:00+05:00", options =>
+{
+    options.NormalizeValue = (value, targetType) =>
+        value is DateTimeOffset dateTimeOffset
+            ? dateTimeOffset.ToUniversalTime()
+            : value;
+
+    options.Allow("date", x => x.Date);
+});
+```
+
 ## Custom Operators
 
 Custom operators require two configuration steps:

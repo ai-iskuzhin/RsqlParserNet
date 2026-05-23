@@ -29,6 +29,25 @@ public sealed class RsqlLinqOptions<T>
     public RsqlStringComparisonMode StringComparisonMode { get; set; } = RsqlStringComparisonMode.ProviderDefault;
 
     /// <summary>
+    /// Gets or sets whether parsed <see cref="DateTimeOffset"/> values are normalized to UTC before expression
+    /// constants are built.
+    /// </summary>
+    /// <remarks>
+    /// The default is <see langword="true"/> so ISO date-times with non-zero offsets can be compared against
+    /// PostgreSQL <c>timestamp with time zone</c> columns through EF Core/Npgsql.
+    /// </remarks>
+    public bool NormalizeDateTimeOffsetsToUtc { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a callback that can normalize converted literal values before expression constants are built.
+    /// </summary>
+    /// <remarks>
+    /// The callback receives the converted value and the mapped CLR target type. It runs after the built-in
+    /// <see cref="NormalizeDateTimeOffsetsToUtc"/> behavior.
+    /// </remarks>
+    public Func<object?, Type, object?>? NormalizeValue { get; set; }
+
+    /// <summary>
     /// Gets the configured field mappings.
     /// </summary>
     internal IReadOnlyDictionary<string, LambdaExpression> Fields => _fields;

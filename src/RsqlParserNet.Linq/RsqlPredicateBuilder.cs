@@ -139,12 +139,28 @@ public static class RsqlPredicateBuilder
         {
             RsqlComparisonOperator.Equal => BuildEqualityComparison(comparison, left, options, negate: false),
             RsqlComparisonOperator.NotEqual => BuildEqualityComparison(comparison, left, options, negate: true),
-            RsqlComparisonOperator.GreaterThan => BuildSingleValueComparison(comparison, left, Expression.GreaterThan),
-            RsqlComparisonOperator.GreaterThanOrEqual => BuildSingleValueComparison(comparison, left, Expression.GreaterThanOrEqual),
-            RsqlComparisonOperator.LessThan => BuildSingleValueComparison(comparison, left, Expression.LessThan),
-            RsqlComparisonOperator.LessThanOrEqual => BuildSingleValueComparison(comparison, left, Expression.LessThanOrEqual),
-            RsqlComparisonOperator.In => BuildContainsComparison(comparison, left, negate: false),
-            RsqlComparisonOperator.NotIn => BuildContainsComparison(comparison, left, negate: true),
+            RsqlComparisonOperator.GreaterThan => BuildSingleValueComparison(
+                comparison,
+                left,
+                options,
+                Expression.GreaterThan),
+            RsqlComparisonOperator.GreaterThanOrEqual => BuildSingleValueComparison(
+                comparison,
+                left,
+                options,
+                Expression.GreaterThanOrEqual),
+            RsqlComparisonOperator.LessThan => BuildSingleValueComparison(
+                comparison,
+                left,
+                options,
+                Expression.LessThan),
+            RsqlComparisonOperator.LessThanOrEqual => BuildSingleValueComparison(
+                comparison,
+                left,
+                options,
+                Expression.LessThanOrEqual),
+            RsqlComparisonOperator.In => BuildContainsComparison(comparison, left, options, negate: false),
+            RsqlComparisonOperator.NotIn => BuildContainsComparison(comparison, left, options, negate: true),
             RsqlComparisonOperator.Custom => BuildCustomComparison(comparison, left, options),
             _ => throw new RsqlLinqException($"Operator '{comparison.OperatorText}' is not supported by the LINQ adapter.")
         };
@@ -162,7 +178,7 @@ public static class RsqlPredicateBuilder
         }
 
         var valueType = handler.ValueTypeSelector(left.Type);
-        var values = comparison.Values.Select(value => ConvertValueExpression(value, valueType)).ToArray();
+        var values = comparison.Values.Select(value => ConvertValueExpression(value, valueType, options)).ToArray();
         var context = new RsqlCustomOperatorExpressionContext(left, values, comparison);
         var expression = handler.Factory(context);
 
@@ -195,14 +211,15 @@ public static class RsqlPredicateBuilder
 
         var expression = isWildcardComparison
             ? BuildWildcardComparison(comparison, left, value.Text!, options.StringComparisonMode)
-            : BuildSingleValueComparison(comparison, left, negate ? Expression.NotEqual : Expression.Equal);
+            : BuildSingleValueComparison(comparison, left, options, negate ? Expression.NotEqual : Expression.Equal);
 
         return negate && isWildcardComparison ? Expression.Not(expression) : expression;
     }
 
-    private static Expression BuildSingleValueComparison(
+    private static Expression BuildSingleValueComparison<T>(
         RsqlComparisonNode comparison,
         Expression left,
+        RsqlLinqOptions<T> options,
         Func<Expression, Expression, BinaryExpression> factory)
     {
         if (comparison.Values.Count != 1)
@@ -210,7 +227,7 @@ public static class RsqlPredicateBuilder
             throw new RsqlLinqException($"Operator '{comparison.OperatorText}' requires exactly one value.");
         }
 
-        var right = ConvertValueExpression(comparison.Values[0], left.Type);
+        var right = ConvertValueExpression(comparison.Values[0], left.Type, options);
 
         try
         {
@@ -289,14 +306,18 @@ public static class RsqlPredicateBuilder
             typeof(string).GetMethod(nameof(string.ToUpper), Type.EmptyTypes)!);
     }
 
-    private static Expression BuildContainsComparison(RsqlComparisonNode comparison, Expression left, bool negate)
+    private static Expression BuildContainsComparison<T>(
+        RsqlComparisonNode comparison,
+        Expression left,
+        RsqlLinqOptions<T> options,
+        bool negate)
     {
         if (comparison.Values.Count == 0)
         {
             throw new RsqlLinqException($"Operator '{comparison.OperatorText}' requires at least one value.");
         }
 
-        var values = comparison.Values.Select(value => ConvertValueExpression(value, left.Type));
+        var values = comparison.Values.Select(value => ConvertValueExpression(value, left.Type, options));
         var array = Expression.NewArrayInit(left.Type, values);
         var contains = Expression.Call(
             typeof(Enumerable),
@@ -314,9 +335,12 @@ public static class RsqlPredicateBuilder
             ?? throw new RsqlLinqException("Field mapping expression could not be rewritten.");
     }
 
-    private static Expression ConvertValueExpression(RsqlValue value, Type targetType)
+    private static Expression ConvertValueExpression<T>(
+        RsqlValue value,
+        Type targetType,
+        RsqlLinqOptions<T> options)
     {
-        var converted = ConvertValue(value, targetType);
+        var converted = ConvertValue(value, targetType, options);
         var nonNullableType = Nullable.GetUnderlyingType(targetType) ?? targetType;
 
         if (converted is null)
@@ -328,7 +352,10 @@ public static class RsqlPredicateBuilder
         return nonNullableType == targetType ? constant : Expression.Convert(constant, targetType);
     }
 
-    private static object? ConvertValue(RsqlValue value, Type targetType)
+    private static object? ConvertValue<T>(
+        RsqlValue value,
+        Type targetType,
+        RsqlLinqOptions<T> options)
     {
         var nonNullableType = Nullable.GetUnderlyingType(targetType) ?? targetType;
 
@@ -339,54 +366,64 @@ public static class RsqlPredicateBuilder
                 throw new RsqlLinqException($"Null cannot be compared with non-nullable mapped type '{targetType.Name}'.");
             }
 
-            return null;
+            return NormalizeValue(null, targetType, options);
         }
 
         var text = value.Text ?? string.Empty;
 
         if (nonNullableType == typeof(string))
         {
-            return text;
+            return NormalizeValue(text, targetType, options);
         }
+
+        object converted;
 
         try
         {
             if (nonNullableType == typeof(bool))
             {
-                return bool.Parse(text);
+                converted = bool.Parse(text);
+                return NormalizeValue(converted, targetType, options);
             }
 
             if (nonNullableType.IsEnum)
             {
-                return Enum.Parse(nonNullableType, text, ignoreCase: true);
+                converted = Enum.Parse(nonNullableType, text, ignoreCase: true);
+                return NormalizeValue(converted, targetType, options);
             }
 
             if (nonNullableType == typeof(Guid))
             {
-                return Guid.Parse(text);
+                converted = Guid.Parse(text);
+                return NormalizeValue(converted, targetType, options);
             }
 
             if (nonNullableType == typeof(DateTime))
             {
-                return DateTime.Parse(text, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+                converted = DateTime.Parse(text, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+                return NormalizeValue(converted, targetType, options);
             }
 
             if (nonNullableType == typeof(DateTimeOffset))
             {
-                return DateTimeOffset.Parse(text, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+                converted = DateTimeOffset.Parse(text, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+                return NormalizeValue(converted, targetType, options);
             }
 
             if (nonNullableType == typeof(DateOnly))
             {
-                return DateOnly.Parse(text, CultureInfo.InvariantCulture);
+                converted = DateOnly.Parse(text, CultureInfo.InvariantCulture);
+                return NormalizeValue(converted, targetType, options);
             }
 
             if (nonNullableType == typeof(TimeOnly))
             {
-                return TimeOnly.Parse(text, CultureInfo.InvariantCulture);
+                converted = TimeOnly.Parse(text, CultureInfo.InvariantCulture);
+                return NormalizeValue(converted, targetType, options);
             }
 
-            return Convert.ChangeType(text, nonNullableType, CultureInfo.InvariantCulture);
+            converted = Convert.ChangeType(text, nonNullableType, CultureInfo.InvariantCulture);
+            return NormalizeValue(converted, targetType, options);
         }
         catch (Exception exception) when (exception is ArgumentException or FormatException or InvalidCastException or OverflowException)
         {
@@ -394,6 +431,21 @@ public static class RsqlPredicateBuilder
                 $"Value '{value.RawText}' cannot be converted to mapped type '{targetType.Name}'.",
                 exception);
         }
+    }
+
+    private static object? NormalizeValue<T>(
+        object? value,
+        Type targetType,
+        RsqlLinqOptions<T> options)
+    {
+        if (options.NormalizeDateTimeOffsetsToUtc && value is DateTimeOffset dateTimeOffset)
+        {
+            value = dateTimeOffset.ToUniversalTime();
+        }
+
+        return options.NormalizeValue is null
+            ? value
+            : options.NormalizeValue(value, targetType);
     }
 
     private sealed class ParameterReplaceVisitor : ExpressionVisitor

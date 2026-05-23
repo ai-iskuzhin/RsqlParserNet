@@ -7,11 +7,11 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <PackageId>RsqlParserNet.Linq</PackageId>
-    <Version>1.0.1</Version>
-    <PackageVersion>1.0.1</PackageVersion>
-    <AssemblyVersion>1.0.1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
-    <InformationalVersion>1.0.1</InformationalVersion>
+    <Version>1.0.2</Version>
+    <PackageVersion>1.0.2</PackageVersion>
+    <AssemblyVersion>1.0.2.0</AssemblyVersion>
+    <FileVersion>1.0.2.0</FileVersion>
+    <InformationalVersion>1.0.2</InformationalVersion>
     <Title>RsqlParserNet.Linq</Title>
     <Description>Allowlisted LINQ expression tree adapter for RsqlParserNet AST queries.</Description>
     <PackageTags>rsql;fiql;linq;expression-trees;query;filtering</PackageTags>
@@ -32,7 +32,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageReleaseNotes>First stable release of the LINQ adapter with allowlisted expression generation, sorting, paging, custom operators, collection helpers, and provider translation coverage.</PackageReleaseNotes>
+    <PackageReleaseNotes>Patch release with LINQ DateTimeOffset UTC value normalization for EF Core/Npgsql timestamp with time zone compatibility.</PackageReleaseNotes>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using RsqlParserNet.Linq;
 
 namespace RsqlParserNet.Linq.Tests;
@@ -479,6 +480,55 @@ public sealed class RsqlQueryableExtensionsTests
     }
 
     [Fact]
+    public void BuildPredicate_NormalizesDateTimeOffsetConstantsToUtcByDefault()
+    {
+        var predicate = RsqlPredicateBuilder.BuildPredicate<AuditRecord>(
+            "occurredAt>=2026-05-15T10:30:00+05:00",
+            options => options.Allow("occurredAt", x => x.OccurredAt));
+
+        var value = Assert.IsType<DateTimeOffset>(GetConstantValue(predicate.Body));
+
+        Assert.Equal(TimeSpan.Zero, value.Offset);
+        Assert.Equal(new DateTimeOffset(2026, 5, 15, 5, 30, 0, TimeSpan.Zero), value);
+    }
+
+    [Fact]
+    public void BuildPredicate_CanKeepDateTimeOffsetConstantsWithOriginalOffset()
+    {
+        var predicate = RsqlPredicateBuilder.BuildPredicate<AuditRecord>(
+            "occurredAt>=2026-05-15T10:30:00+05:00",
+            options =>
+            {
+                options.NormalizeDateTimeOffsetsToUtc = false;
+                options.Allow("occurredAt", x => x.OccurredAt);
+            });
+
+        var value = Assert.IsType<DateTimeOffset>(GetConstantValue(predicate.Body));
+
+        Assert.Equal(TimeSpan.FromHours(5), value.Offset);
+        Assert.Equal(new DateTimeOffset(2026, 5, 15, 10, 30, 0, TimeSpan.FromHours(5)), value);
+    }
+
+    [Fact]
+    public void BuildPredicate_AppliesCustomValueNormalizerAfterConversion()
+    {
+        var predicate = RsqlPredicateBuilder.BuildPredicate<Product>(
+            "count==20",
+            options =>
+            {
+                options.NormalizeValue = (value, targetType) => targetType == typeof(int) ? 10 : value;
+                options.Allow("count", x => x.Count);
+            });
+
+        var result = SampleProducts()
+            .Where(predicate)
+            .Select(x => x.Name)
+            .ToArray();
+
+        Assert.Equal(["Bike"], result);
+    }
+
+    [Fact]
     public void ApplyRsql_FiltersByNullableNullEquality()
     {
         var query = RsqlParser.Parse("archivedReason==null");
@@ -903,4 +953,17 @@ public sealed class RsqlQueryableExtensionsTests
         DateOnly CreatedAt,
         string? ArchivedReason,
         IReadOnlyCollection<string> Tags);
+
+    private sealed record AuditRecord(DateTimeOffset OccurredAt, DateTimeOffset? OptionalOccurredAt);
+
+    private static object? GetConstantValue(Expression expression)
+    {
+        return expression switch
+        {
+            BinaryExpression binary => GetConstantValue(binary.Right),
+            UnaryExpression unary => GetConstantValue(unary.Operand),
+            ConstantExpression constant => constant.Value,
+            _ => throw new InvalidOperationException($"Expression '{expression.NodeType}' did not contain a constant.")
+        };
+    }
 }
