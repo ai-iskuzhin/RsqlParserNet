@@ -351,6 +351,12 @@ public static class RsqlPredicateBuilder
 
         try
         {
+            var converter = TypeDescriptor.GetConverter(nonNullableType);
+            if (converter != null && converter.CanConvertFrom(typeof(string)))
+            {
+                return converter.ConvertFrom(null, CultureInfo.InvariantCulture, text);
+            }
+            
             if (nonNullableType == typeof(bool))
             {
                 return bool.Parse(text);
