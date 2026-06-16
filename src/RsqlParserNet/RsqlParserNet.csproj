@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <PackageId>RsqlParserNet</PackageId>
-    <Version>1.0.2</Version>
-    <PackageVersion>1.0.2</PackageVersion>
-    <AssemblyVersion>1.0.2.0</AssemblyVersion>
-    <FileVersion>1.0.2.0</FileVersion>
-    <InformationalVersion>1.0.2</InformationalVersion>
+    <Version>1.0.3</Version>
+    <PackageVersion>1.0.3</PackageVersion>
+    <AssemblyVersion>1.0.3.0</AssemblyVersion>
+    <FileVersion>1.0.3.0</FileVersion>
+    <InformationalVersion>1.0.3</InformationalVersion>
     <Title>RsqlParserNet</Title>
     <Description>A .NET parser for RSQL/FIQL-style REST API query expressions.</Description>
     <PackageTags>rsql;fiql;parser;rest;query;filtering;ast;diagnostics</PackageTags>
@@ -28,7 +28,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageReleaseNotes>Patch release with LINQ DateTimeOffset UTC value normalization for EF Core/Npgsql timestamp with time zone compatibility.</PackageReleaseNotes>
+    <PackageReleaseNotes>Maintenance release aligning the RsqlParserNet package family at 1.0.3 and adding a dedicated package README.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

@@ -10,6 +10,11 @@ The project uses Semantic Versioning. Starting with `1.0.0`, public API changes 
 
 - Added LINQ adapter support for converting filter values to custom mapped types that expose a `TypeConverter` (e.g. strongly-typed IDs and value objects). Based on an idea from [#3](https://github.com/ai-iskuzhin/RsqlParserNet/pull/3) by [@TitovPavel](https://github.com/TitovPavel).
 
+### Changed
+
+- Aligned the whole `RsqlParserNet` package family at `1.0.3`.
+- Replaced the shared root README on each package with a dedicated per-package README.
+
 ## 1.0.2
 
 ### Added
