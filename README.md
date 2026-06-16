@@ -23,7 +23,7 @@ A dependency-light .NET parser for RSQL/FIQL-style REST API query expressions.
 
 `RsqlParserNet` parses query text into a typed AST with source spans and structured diagnostics. The core package does not depend on ASP.NET Core, LINQ, Entity Framework Core, or ORM APIs.
 
-Current status: `1.0.0` is the first stable release for the aligned package family.
+Current stable release: `1.0.2`.
 
 ## Ready-To-Use API Query Models
 
@@ -425,9 +425,11 @@ The adapter currently supports:
 | `=any=` / `=all=` | Custom collection helpers for allowlisted collection fields |
 | `;` / `,` | `AndAlso` and `OrElse` expression composition |
 
-Values are converted using the mapped member type, including common scalar types, enums, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`.
+Values are converted using the mapped member type, including common scalar types, enums, `Guid`, `DateTime`, `DateTimeOffset`, `DateOnly`, and `TimeOnly`. `DateTimeOffset` literals are normalized to UTC by default before expression constants are built, which keeps EF Core/Npgsql queries compatible with PostgreSQL `timestamp with time zone` parameters.
 
 String helper operators and wildcard equality use the LINQ provider's string comparison behavior by default. APIs can opt into endpoint-wide case-insensitive string matching through `RsqlLinqOptions<T>.StringComparisonMode`.
+
+APIs that need application-specific literal handling can set `RsqlLinqOptions<T>.NormalizeValue`; APIs that need to preserve parsed date-time offsets can set `NormalizeDateTimeOffsetsToUtc` to `false`.
 
 Custom operators can be translated explicitly after they are configured in parser options:
 

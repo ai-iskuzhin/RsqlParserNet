@@ -4,6 +4,16 @@ All notable changes to `RsqlParserNet` will be documented in this file.
 
 The project uses Semantic Versioning. Starting with `1.0.0`, public API changes follow normal SemVer compatibility rules.
 
+## 1.0.2
+
+### Added
+
+- Added LINQ adapter value normalization options, including default UTC normalization for `DateTimeOffset` constants.
+
+### Fixed
+
+- Normalized LINQ adapter `DateTimeOffset` constants to UTC by default so EF Core/Npgsql can compare offset date-time filter values against PostgreSQL `timestamp with time zone` columns.
+
 ## 1.0.1
 
 ### Added
