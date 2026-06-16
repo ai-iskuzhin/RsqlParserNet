@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq.Expressions;
 using RsqlParserNet.Linq;
 
@@ -510,6 +512,18 @@ public sealed class RsqlQueryableExtensionsTests
     }
 
     [Fact]
+    public void BuildPredicate_ConvertsCustomTypesViaTypeConverter()
+    {
+        var predicate = RsqlPredicateBuilder.BuildPredicate<CatalogEntry>(
+            "code==SKU100",
+            options => options.Allow("code", x => x.Code));
+
+        var value = Assert.IsType<ProductCode>(GetConstantValue(predicate.Body));
+
+        Assert.Equal(new ProductCode("SKU100"), value);
+    }
+
+    [Fact]
     public void BuildPredicate_AppliesCustomValueNormalizerAfterConversion()
     {
         var predicate = RsqlPredicateBuilder.BuildPredicate<Product>(
@@ -955,6 +969,20 @@ public sealed class RsqlQueryableExtensionsTests
         IReadOnlyCollection<string> Tags);
 
     private sealed record AuditRecord(DateTimeOffset OccurredAt, DateTimeOffset? OptionalOccurredAt);
+
+    private sealed record CatalogEntry(ProductCode Code);
+
+    [TypeConverter(typeof(ProductCodeConverter))]
+    private readonly record struct ProductCode(string Value);
+
+    private sealed class ProductCodeConverter : TypeConverter
+    {
+        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
+            => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+
+        public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
+            => value is string text ? new ProductCode(text) : base.ConvertFrom(context, culture, value);
+    }
 
     private static object? GetConstantValue(Expression expression)
     {

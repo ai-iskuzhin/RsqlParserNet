@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq.Expressions;
 
@@ -419,6 +420,13 @@ public static class RsqlPredicateBuilder
             if (nonNullableType == typeof(TimeOnly))
             {
                 converted = TimeOnly.Parse(text, CultureInfo.InvariantCulture);
+                return NormalizeValue(converted, targetType, options);
+            }
+
+            var converter = TypeDescriptor.GetConverter(nonNullableType);
+            if (converter.CanConvertFrom(typeof(string)))
+            {
+                converted = converter.ConvertFrom(null, CultureInfo.InvariantCulture, text)!;
                 return NormalizeValue(converted, targetType, options);
             }
 
