@@ -4,6 +4,18 @@ All notable changes to `RsqlParserNet` will be documented in this file.
 
 The project uses Semantic Versioning. Starting with `1.0.0`, public API changes follow normal SemVer compatibility rules.
 
+## 1.1.0
+
+### Security
+
+- Updated the transitive `Microsoft.OpenApi` dependency to `2.7.5` in `RsqlParserNet.OpenApi`, `RsqlParserNet.NSwag`, and `RsqlParserNet.Swashbuckle` to address [CVE-2026-49451](https://github.com/advisories/GHSA-v5pm-xwqc-g5wc), an uncontrolled recursion that can terminate OpenAPI parsing.
+
+### Changed
+
+- **Breaking for `RsqlParserNet.FastEndpoints`:** upgraded to `FastEndpoints` `8.2.0`. Applications must now target FastEndpoints `8.0.0` or newer. Applications on FastEndpoints `7.x` should stay on `RsqlParserNet.FastEndpoints` `1.0.3`, or use the ASP.NET Core query models directly through `RsqlQueryRequest.Parse(...)`.
+- Aligned the whole `RsqlParserNet` package family at `1.1.0`.
+- Updated `Swashbuckle.AspNetCore.SwaggerGen` to `10.2.3`.
+
 ## 1.0.3
 
 ### Added

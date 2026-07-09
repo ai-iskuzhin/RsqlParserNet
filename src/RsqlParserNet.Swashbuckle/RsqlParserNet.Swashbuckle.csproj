@@ -2,17 +2,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RsqlParserNet.OpenApi\RsqlParserNet.OpenApi.csproj" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="10.2.3" />
   </ItemGroup>
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <PackageId>RsqlParserNet.Swashbuckle</PackageId>
-    <Version>1.0.3</Version>
-    <PackageVersion>1.0.3</PackageVersion>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
-    <InformationalVersion>1.0.3</InformationalVersion>
+    <Version>1.1.0</Version>
+    <PackageVersion>1.1.0</PackageVersion>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <InformationalVersion>1.1.0</InformationalVersion>
     <Title>RsqlParserNet.Swashbuckle</Title>
     <Description>Swashbuckle operation filter helpers for documenting RsqlParserNet query parameters.</Description>
     <PackageTags>rsql;fiql;swashbuckle;swagger;openapi;aspnetcore;query;filtering;documentation</PackageTags>
@@ -33,7 +33,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageReleaseNotes>Maintenance release aligning the RsqlParserNet package family at 1.0.3 and adding a dedicated package README.</PackageReleaseNotes>
+    <PackageReleaseNotes>Minor release updating the transitive Microsoft.OpenApi dependency to 2.7.5 to address CVE-2026-49451 (GHSA-v5pm-xwqc-g5wc).</PackageReleaseNotes>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

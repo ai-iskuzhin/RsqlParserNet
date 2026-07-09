@@ -23,7 +23,7 @@ A dependency-light .NET parser for RSQL/FIQL-style REST API query expressions.
 
 `RsqlParserNet` parses query text into a typed AST with source spans and structured diagnostics. The core package does not depend on ASP.NET Core, LINQ, Entity Framework Core, or ORM APIs.
 
-Current stable release: `1.0.2`.
+Current stable release: `1.1.0`.
 
 ## Ready-To-Use API Query Models
 
@@ -112,7 +112,7 @@ FastEndpoints helpers:
 dotnet add package RsqlParserNet.FastEndpoints
 ```
 
-`RsqlParserNet.FastEndpoints` currently requires `FastEndpoints` `7.0.1` or newer. Applications on older FastEndpoints versions can still use the ASP.NET Core query models directly through `RsqlQueryRequest.Parse(...)`.
+`RsqlParserNet.FastEndpoints` requires `FastEndpoints` `8.0.0` or newer. Applications on older FastEndpoints versions can stay on `RsqlParserNet.FastEndpoints` `1.0.3`, or use the ASP.NET Core query models directly through `RsqlQueryRequest.Parse(...)`.
 
 OpenAPI helpers:
 

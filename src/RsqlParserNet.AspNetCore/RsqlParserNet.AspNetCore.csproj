@@ -9,11 +9,11 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <PackageId>RsqlParserNet.AspNetCore</PackageId>
-    <Version>1.0.3</Version>
-    <PackageVersion>1.0.3</PackageVersion>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
-    <InformationalVersion>1.0.3</InformationalVersion>
+    <Version>1.1.0</Version>
+    <PackageVersion>1.1.0</PackageVersion>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <InformationalVersion>1.1.0</InformationalVersion>
     <Title>RsqlParserNet.AspNetCore</Title>
     <Description>ASP.NET Core query binding helpers for RsqlParserNet AST queries.</Description>
     <PackageTags>rsql;fiql;aspnetcore;minimal-api;query;filtering;binding</PackageTags>
@@ -34,7 +34,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>true</EnablePackageValidation>
-    <PackageReleaseNotes>Maintenance release aligning the RsqlParserNet package family at 1.0.3 and adding a dedicated package README.</PackageReleaseNotes>
+    <PackageReleaseNotes>Minor release aligning the RsqlParserNet package family at 1.1.0.</PackageReleaseNotes>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>

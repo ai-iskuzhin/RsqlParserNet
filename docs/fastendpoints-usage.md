@@ -6,7 +6,7 @@ The package does not replace explicit allowlisted profiles. Filtering and sortin
 
 ## Compatibility
 
-`RsqlParserNet.FastEndpoints` currently references `FastEndpoints` `7.0.1` or newer. Applications on FastEndpoints 5.x or 6.x should either upgrade FastEndpoints before installing this adapter or use the framework-neutral `RsqlQueryRequest.Parse(...)` / ASP.NET Core models directly.
+`RsqlParserNet.FastEndpoints` references `FastEndpoints` `8.0.0` or newer. Applications on FastEndpoints 7.x or earlier should either upgrade FastEndpoints before installing this adapter, stay on `RsqlParserNet.FastEndpoints` `1.0.3`, or use the framework-neutral `RsqlQueryRequest.Parse(...)` / ASP.NET Core models directly.
 
 FastEndpoints 7 applications that call `UseAuthorization()` must also register authorization services, for example with `builder.Services.AddAuthorization()`.
 
